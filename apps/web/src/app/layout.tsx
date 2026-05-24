@@ -16,11 +16,20 @@ export const metadata: Metadata = {
     url: "https://getworkbench.dev",
     siteName: "Workbench",
     type: "website",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Workbench — a beautiful, open-source BullMQ dashboard for modern Node apps.",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Workbench — Open-source BullMQ dashboard",
     description: "A modern, drop-in BullMQ dashboard for any Node backend.",
+    images: ["/og.png"],
   },
 };
 
