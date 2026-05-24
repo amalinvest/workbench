@@ -1,3 +1,4 @@
+import { HeartIcon } from "lucide-react";
 import { CopyCommand } from "../components/copy-command";
 import {
   ElysiaLogo,
@@ -10,6 +11,7 @@ import {
 } from "../components/logos";
 
 const GITHUB_URL = "https://github.com/pontusab/workbench";
+const SPONSORS_URL = "https://github.com/sponsors/pontusab";
 const INSTALL_COMMAND = "npx @getworkbench/cli init";
 
 const frameworks = [
@@ -64,6 +66,18 @@ export default function Page() {
             ))}
           </div>
         </div>
+      </section>
+
+      <section className="flex justify-center pb-10">
+        <a
+          href={SPONSORS_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="group inline-flex items-center gap-2 text-xs text-[color:var(--color-muted-foreground)] transition hover:text-[color:var(--color-foreground)]"
+        >
+          <HeartIcon className="h-3 w-3 text-[color:#ff4d8a]/80 transition group-hover:scale-110" />
+          <span>Sponsor Workbench on GitHub</span>
+        </a>
       </section>
     </main>
   );
