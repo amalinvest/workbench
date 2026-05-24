@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "bun run --watch src/index.ts",
     "start": "bun run src/index.ts",
+    "seed": "bun run src/seed.ts",
+    "seed:clean": "bun run src/seed.ts --clean",
+    "workers": "bun run src/workers.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
