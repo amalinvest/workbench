@@ -122,8 +122,9 @@ export class QueueManager {
         // Fallback to regular getJobs if client not available
         const jobs = await queue.getJobs([status], 0, limit * 2);
         return jobs.filter(
-          (job) =>
-            job.finishedOn &&
+          (job): job is Job =>
+            job != null &&
+            !!job.finishedOn &&
             job.finishedOn >= startTime &&
             job.finishedOn <= endTime,
         );
@@ -157,8 +158,9 @@ export class QueueManager {
       // Fallback to regular getJobs on error
       const jobs = await queue.getJobs([status], 0, limit * 2);
       return jobs.filter(
-        (job) =>
-          job.finishedOn &&
+        (job): job is Job =>
+          job != null &&
+          !!job.finishedOn &&
           job.finishedOn >= startTime &&
           job.finishedOn <= endTime,
       );
