@@ -5,6 +5,12 @@ All notable changes to Workbench will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- `@getworkbench/core` `QueueManager.getJobsByTimeRange` no longer crashes with `TypeError: undefined is not an object (evaluating 'job.finishedOn')` when BullMQ returns `null`/`undefined` entries from `queue.getJobs()`. This affected the two fallback paths (missing Redis client, and the `catch` after a failed `ZRANGEBYSCORE`) and showed up as a 500 on `{basePath}/api/metrics` under real queue churn with `removeOnComplete`/`removeOnFail`. Stale entries are now filtered out before the timestamp comparison. Fixes [#5](https://github.com/pontusab/workbench/issues/5).
+
 ## [0.2.1] - 2026-05-24
 
 ### Fixed
