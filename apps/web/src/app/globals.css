@@ -1,16 +1,158 @@
 @import "tailwindcss";
 
+/* -------------------------------------------------------------------------- */
+/* Design tokens                                                              */
+/* -------------------------------------------------------------------------- */
+/*
+ * Tokens are registered in `@theme` so Tailwind generates utilities for them
+ * (`bg-background`, `text-muted-foreground`, etc.). The *values* are CSS
+ * custom properties, which means they can be overridden at runtime by
+ * `[data-theme="..."]` blocks below to swap the whole palette.
+ *
+ * The page chrome (nav, hero, sections, footer, buttons, copy) flips with the
+ * theme. The dashboard mockups intentionally stay dark in both themes — they
+ * are product screenshots, and that's what the actual app looks like. This
+ * matches what Stripe, Vercel, Linear, and Anthropic do on their light-mode
+ * marketing pages.
+ */
+
 @theme {
-  --color-background: #0a0a0a;
-  --color-foreground: #fafafa;
-  --color-muted: #1a1a1a;
-  --color-muted-foreground: #a3a3a3;
-  --color-border: #262626;
-  --color-accent: #fafafa;
+  --color-background: var(--bg);
+  --color-foreground: var(--fg);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-fg);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+
+  /* Brand is theme-invariant — same blue button in both modes. */
+  --color-brand: #2f6cff;
+  --color-brand-hi: #4c87ff;
+  --color-brand-shadow: #1e4ed4;
 
   --font-sans: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-geist-mono), "SF Mono", ui-monospace, monospace;
-  --font-pixel: var(--font-geist-pixel-square), ui-monospace, monospace;
+  --font-pixel: var(--font-geist-pixel-line), ui-monospace, monospace;
+}
+
+/* Default = dark. `next-themes` writes `data-theme="light" | "dark"` on
+   <html> before first paint (via its own injected script), so this `:root`
+   block is really only a backstop for environments where JS is disabled or
+   the provider hasn't booted yet. */
+:root {
+  --bg: #0a0a0a;
+  --fg: #fafafa;
+  --muted: #141414;
+  --muted-fg: #a3a3a3;
+  --border: #262626;
+  --accent: #fafafa;
+
+  /* Glow tints scoped to theme so they don't blow out the page in light mode. */
+  --glow-hero: rgba(47, 108, 255, 0.18);
+  --glow-section: rgba(255, 255, 255, 0.04);
+
+  /* Mockup-vs-page border — slightly stronger in light mode for contrast
+     between the dark mockup and the off-white page. */
+  --mockup-frame: rgba(255, 255, 255, 0.04);
+  --mockup-shadow: rgba(0, 0, 0, 0.6);
+
+  /* ------------------------------------------------------------------------
+     Mockup-internal palette. Every colour the dashboard screenshots reach
+     for goes through these tokens, so the same React mockup renders as
+     dark chrome in dark mode and warm-paper chrome in light mode.
+     Naming: -bg = outermost frame, -surface = card body, -surface-hi =
+     selected/active row, -row-hover = subtle hover band.
+     ------------------------------------------------------------------------ */
+  --mock-bg: #050505;
+  --mock-bg-2: #080808;
+  --mock-surface: #0a0a0a;
+  --mock-surface-hi: #161616;
+  --mock-surface-2a: #2a2a2a;
+  --mock-row-hover: #101010;
+
+  --mock-line-1: #1f1f1f;
+  --mock-line-2: #1a1a1a;
+  --mock-line-3: #101010;
+
+  /* Foreground scale, lightest (1) → darkest (6). Maps to the zinc-100 →
+     zinc-600 ramp the mockups used to hardcode. */
+  --mock-fg-1: #fafafa;
+  --mock-fg-2: #e4e4e7;
+  --mock-fg-3: #d4d4d8;
+  --mock-fg-4: #a1a1aa;
+  --mock-fg-5: #71717a;
+  --mock-fg-6: #52525b;
+
+  --mock-dot: #1a1a1a;
+
+  /* Status colours — neon in dark mode so they pop against #0a0a0a. The
+     alpha derivatives use color-mix so they automatically follow the
+     theme-overridden base colour (CSS substitutes var() at use-site). */
+  --status-success: #1aff5d;
+  --status-failed: #ff3939;
+  --status-active: #1ab8ff;
+  --status-waiting: #ffc11a;
+
+  --status-success-10: color-mix(in srgb, var(--status-success) 10%, transparent);
+  --status-success-30: color-mix(in srgb, var(--status-success) 30%, transparent);
+  --status-success-40: color-mix(in srgb, var(--status-success) 40%, transparent);
+  --status-success-70: color-mix(in srgb, var(--status-success) 70%, transparent);
+
+  color-scheme: dark;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  /* Warm cream page — same warmth signature as Cursor's marketing site. */
+  --bg: #f7f5ec;
+  --fg: #1a1714;
+  --muted: #efebe0;
+  --muted-fg: #5e5a52;
+  --border: #d8d2c4;
+  --accent: #1a1714;
+
+  --glow-hero: rgba(47, 108, 255, 0.10);
+  --glow-section: rgba(0, 0, 0, 0.025);
+
+  /* Mockups in light mode sit on cream; a hairline warm-cool border keeps
+     their white chrome from blending into the page. */
+  --mockup-frame: rgba(0, 0, 0, 0.06);
+  --mockup-shadow: rgba(60, 50, 25, 0.12);
+
+  /* Mockup surfaces — white over cream-tinted neutrals. The active/hover
+     rows lean warmer so selection state still reads as "highlighted". */
+  --mock-bg: #ffffff;
+  --mock-bg-2: #fbf9f2;
+  --mock-surface: #fdfbf5;
+  --mock-surface-hi: #ece7d6;
+  --mock-surface-2a: #c8c1ad;
+  --mock-row-hover: #f3efe2;
+
+  --mock-line-1: #d8d2c2;
+  --mock-line-2: #e6e0cf;
+  --mock-line-3: #ede8d8;
+
+  /* Foreground scale flipped: 1 = darkest text, 6 = lightest. Slight warm
+     undertone so it sits in the cream palette instead of fighting it. */
+  --mock-fg-1: #1a1714;
+  --mock-fg-2: #2c2823;
+  --mock-fg-3: #44403a;
+  --mock-fg-4: #6f6960;
+  --mock-fg-5: #8d877c;
+  --mock-fg-6: #aaa498;
+
+  --mock-dot: #d8d2c2;
+
+  /* Status colours dial back from neon to "natural" hues — deeper greens
+     and reds read as confident on cream without vibrating. */
+  --status-success: #0d8d3a;
+  --status-failed: #c8261b;
+  --status-active: #0a83b8;
+  --status-waiting: #a3680f;
+
+  color-scheme: light;
 }
 
 html,
@@ -26,50 +168,232 @@ body {
   color: var(--color-background);
 }
 
+/* -------------------------------------------------------------------------- */
+/* Hero typography                                                            */
+/* -------------------------------------------------------------------------- */
+
 .hero-outline {
   color: transparent;
   -webkit-text-stroke: 1px var(--color-foreground);
 }
 
+/* Geist Pixel Line at display size — outline-stroke variant of Vercel's
+   pixel font family. Glyphs are drawn as thin lines on the pixel grid
+   instead of filled blocks, which reads as confident-but-quiet at hero
+   scale. Vertical metrics align with Geist Sans/Mono.
+   See https://vercel.com/blog/introducing-geist-pixel. */
 .hero-headline {
-  color: transparent;
-  -webkit-text-stroke: 1.25px var(--color-foreground);
-  letter-spacing: -0.025em;
-  paint-order: stroke fill;
-}
-
-@media (min-width: 768px) {
-  .hero-headline {
-    -webkit-text-stroke-width: 1.5px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .hero-headline {
-    -webkit-text-stroke-width: 2px;
-    letter-spacing: -0.035em;
-  }
-}
-
-.hero-headline .hero-fill {
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  font-style: normal;
   color: var(--color-foreground);
-  -webkit-text-stroke: 0;
+  /* Pixel fonts read best with a touch more breathing room than proportional
+     display fonts — too tight and adjacent letterforms look like they're
+     fighting for the same grid cell. */
+  letter-spacing: -0.005em;
+  line-height: 1;
+  /* Stop browsers from synthesising bold/italic the bitmap font doesn't
+     ship with — pixel grids don't survive slant transforms. */
+  font-synthesis: none;
 }
 
-.hero-headline .hero-italic {
-  font-style: italic;
-  font-weight: 500;
+/* Oversized outlined wordmark used as a quiet "signature" in the footer.
+   We render `workbench` in the same pixel font as the hero, but as a hollow
+   outline via -webkit-text-stroke so it reads as a watermark, not a heading.
+   `currentColor` lets us flip stroke colour from a parent for hover/theme
+   states without re-declaring the rule. */
+.footer-wordmark {
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  line-height: 0.85;
+  letter-spacing: -0.01em;
+  color: transparent;
+  -webkit-text-stroke: 1px
+    color-mix(in oklab, var(--color-foreground) 32%, transparent);
+  font-synthesis: none;
+  user-select: none;
 }
 
-.hero-glow {
+/* -------------------------------------------------------------------------- */
+/* Glow effects (framed mockups only — no full-page gradient)                 */
+/* -------------------------------------------------------------------------- */
+
+.hero-preview-glow {
   position: absolute;
-  inset: 0;
+  inset: -20px;
   z-index: -1;
   pointer-events: none;
   background: radial-gradient(
-    ellipse 60% 55% at 50% 50%,
-    rgba(250, 250, 250, 0.08),
+    ellipse 60% 50% at 50% 50%,
+    var(--glow-hero),
     transparent 70%
   );
   filter: blur(40px);
+}
+
+.section-glow {
+  position: absolute;
+  inset: -10%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 80% 60% at 50% 50%,
+    var(--glow-section),
+    transparent 70%
+  );
+  filter: blur(40px);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Action buttons — pill CTA with an inline keyboard shortcut chip            */
+/* -------------------------------------------------------------------------- */
+
+.action-btn {
+  --pad-x: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.625rem var(--pad-x);
+  /* Rectangular with just a hair of softening — matches the dashboard's
+     sharp-cornered aesthetic without looking harsh. */
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    box-shadow 200ms ease,
+    background 200ms ease,
+    border-color 200ms ease;
+  user-select: none;
+}
+
+.action-btn:active {
+  transform: translateY(0.5px);
+}
+
+/* Primary — saturated blue, soft inner highlight, subtle outer glow.
+   Theme-invariant: the brand button looks the same in both modes. */
+.action-btn-primary {
+  color: #ffffff;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.18) 0%,
+      rgba(255, 255, 255, 0) 35%
+    ),
+    linear-gradient(180deg, var(--color-brand-hi) 0%, var(--color-brand) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.18) inset,
+    0 8px 24px -8px rgba(47, 108, 255, 0.65),
+    0 0 0 1px rgba(47, 108, 255, 0.35);
+}
+
+.action-btn-primary:hover {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.22) 0%,
+      rgba(255, 255, 255, 0) 35%
+    ),
+    linear-gradient(180deg, #6098ff 0%, #3675ff 100%);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.22) inset,
+    0 10px 28px -6px rgba(47, 108, 255, 0.75),
+    0 0 0 1px rgba(47, 108, 255, 0.45);
+}
+
+/* Secondary — graphite chip in dark mode, paper chip in light mode. */
+.action-btn-secondary {
+  color: var(--color-foreground);
+  background: linear-gradient(180deg, #1c1c1c 0%, #131313 100%);
+  border: 1px solid var(--color-border);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.04) inset,
+    0 8px 24px -16px rgba(0, 0, 0, 0.8);
+}
+
+.action-btn-secondary:hover {
+  border-color: #3a3a3a;
+  background: linear-gradient(180deg, #232323 0%, #181818 100%);
+}
+
+[data-theme="light"] .action-btn-secondary {
+  background: linear-gradient(180deg, #ffffff 0%, #f4f4f5 100%);
+  border-color: #d4d4d8;
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.8) inset,
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 8px 24px -16px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .action-btn-secondary:hover {
+  border-color: #a1a1aa;
+  background: linear-gradient(180deg, #ffffff 0%, #ededf0 100%);
+}
+
+/* Keyboard-shortcut chip */
+.action-btn-chip-primary,
+.action-btn-chip-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.action-btn-chip-primary {
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.22);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.18) inset,
+    0 0 0 1px rgba(0, 0, 0, 0.18);
+}
+
+.action-btn-chip-secondary {
+  color: var(--color-foreground);
+  background: #050505;
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.05) inset,
+    0 0 0 1px var(--color-border);
+}
+
+[data-theme="light"] .action-btn-chip-secondary {
+  background: #fafafa;
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
+    0 0 0 1px #d4d4d8;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Mockup chrome — dotted bg for flow diagrams                                */
+/* -------------------------------------------------------------------------- */
+/*
+ * Mockups stay dark in both themes (see top-of-file rationale). The dotted
+ * background lives inside the dark frame, so the dots stay dark too.
+ */
+
+.dotted {
+  background-image: radial-gradient(
+    circle,
+    var(--mock-dot) 0.5px,
+    transparent 0.5px
+  );
+  background-size: 12px 12px;
+}
+
+/* The mockup ring + drop shadow is theme-aware. In dark mode a heavier
+   shadow is needed to lift the frame off the near-black page; on cream
+   the same shadow would smudge so we soften it. */
+.mockup-frame {
+  box-shadow:
+    0 30px 60px -20px var(--mockup-shadow),
+    0 0 0 1px var(--mockup-frame) inset;
 }

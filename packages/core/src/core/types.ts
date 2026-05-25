@@ -35,6 +35,17 @@ export interface WorkbenchOptions {
   readonly?: boolean;
   /** Fields from job.data to extract as filterable tags (e.g., ['teamId', 'userId']) */
   tags?: string[];
+  /**
+   * BullMQ key prefix used during queue auto-discovery from `redis`. Ignored
+   * when `queues` is set explicitly. Defaults to `"bull"`.
+   */
+  prefix?: string;
+  /**
+   * Maximum number of queues to keep when auto-discovering from `redis`.
+   * Prevents connection storms on very large Redis deployments. Defaults to
+   * 100. Ignored when `queues` is set explicitly.
+   */
+  maxQueues?: number;
 }
 
 /**

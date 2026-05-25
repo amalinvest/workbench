@@ -1,0 +1,29 @@
+@import "tailwindcss";
+@import "../../../packages/core/src/ui/styles/globals.css";
+
+/*
+ * Tell Tailwind to scan both this app's source AND the core UI package's
+ * source — without this, classes used by the imported Dashboard component
+ * would be tree-shaken out.
+ */
+@source "../src/**/*.{ts,tsx}";
+@source "../../../packages/core/src/ui/**/*.{ts,tsx}";
+
+@layer components {
+  .titlebar-drag {
+    -webkit-app-region: drag;
+  }
+  .titlebar-no-drag {
+    -webkit-app-region: no-drag;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

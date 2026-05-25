@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!--
+    Entitlements applied to the Bun-compiled sidecar binary by the CI
+    `codesign` step (NOT inherited by the outer .app bundle). Bun ships
+    JavaScriptCore which JITs JavaScript at runtime — the Hardened Runtime
+    needs explicit permission for this, otherwise the process is terminated
+    with SIGKILL on launch.
+
+    `allow-unsigned-executable-memory` is the broader of the two flags
+    JavaScriptCore actually needs; we keep it here so the main app's
+    entitlements file stays minimal.
+  -->
+  <key>com.apple.security.cs.allow-jit</key>
+  <true/>
+  <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+  <true/>
+  <!--
+    The sidecar opens an outbound TCP socket to Redis (often on a remote
+    host) — the main app already declares network.client for its own use,
+    but Hardened Runtime evaluates each Mach-O independently.
+  -->
+  <key>com.apple.security.network.client</key>
+  <true/>
+</dict>
+</plist>

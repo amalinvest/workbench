@@ -1,0 +1,72 @@
+name: Desktop PR
+
+# Lightweight gate for PRs touching the desktop app. Runs typecheck,
+# clippy, and a sidecar smoke check on macOS — matches the deploy target
+# (only mac releases for now) so we catch keyring / codesign linkage
+# issues in review instead of release.
+
+on:
+  pull_request:
+    paths:
+      - "apps/desktop/**"
+      - "packages/core/**"
+      - ".github/workflows/desktop-*.yml"
+  workflow_dispatch:
+
+# Cancel in-flight runs when a new commit lands on the same PR.
+concurrency:
+  group: desktop-pr-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.11
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@1.85.0
+        with:
+          components: clippy
+          targets: aarch64-apple-darwin
+
+      - name: Cache cargo
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: apps/desktop/src-tauri -> target
+          key: pr-aarch64-apple-darwin
+
+      - name: Install JS deps
+        run: bun install
+
+      - name: Build core (turbo)
+        # The desktop app imports `@getworkbench/core` and its `/ui`
+        # subpath — both must be built before typecheck can resolve them.
+        run: bun run --filter=@getworkbench/core build
+
+      - name: Typecheck desktop
+        working-directory: apps/desktop
+        run: bun run typecheck
+
+      - name: Build sidecar binary
+        working-directory: apps/desktop
+        run: bun run build:sidecar -- --triple aarch64-apple-darwin
+
+      - name: Smoke test sidecar
+        working-directory: apps/desktop
+        run: |
+          bin="dist-sidecar/workbench-sidecar-aarch64-apple-darwin"
+          out=$("$bin" < /dev/null 2>&1 | head -1 || true)
+          echo "sidecar said: $out"
+          echo "$out" | grep -q '"event":"error"' || { echo "Sidecar did not emit a structured error event"; exit 1; }
+          echo "$out" | grep -q '"code":"MISSING_REDIS_URL"' || { echo "Sidecar exited with unexpected error code"; exit 1; }
+
+      - name: Clippy
+        working-directory: apps/desktop/src-tauri
+        run: cargo clippy --workspace --all-targets -- -D warnings

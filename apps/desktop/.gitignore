@@ -1,0 +1,14 @@
+node_modules
+dist
+.env.local
+.env.*.local
+
+# Tauri build artifacts
+src-tauri/target
+src-tauri/gen
+src-tauri/Cargo.lock
+
+# Sidecar binaries are produced on demand and per-target — never commit them.
+# Output lives outside `src-tauri/` so it isn't picked up by `tauri dev`'s
+# file watcher. See `apps/desktop/sidecar/build.ts`.
+dist-sidecar/

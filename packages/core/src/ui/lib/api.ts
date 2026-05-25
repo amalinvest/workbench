@@ -14,8 +14,20 @@ import type {
   SchedulerInfo,
   SearchResult,
 } from "@/core/types";
+import { apiBase, getConfigUrl } from "./api-base";
 
-const API_BASE = "./api";
+// Note: `joinApi` would be nicer per call site, but using a thenable-style
+// `toString()` object lets us preserve every existing `${API_BASE}/foo`
+// template literal across this file. Template strings call `toString()` on
+// objects, so the base is resolved at request time — the desktop host can
+// swap connections by mutating `window.__WORKBENCH_RUNTIME__.apiBase`
+// between calls without re-importing this module.
+const API_BASE = {
+  toString() {
+    const base = apiBase();
+    return base ? `${base}/api` : "./api";
+  },
+};
 
 // Default timeout of 60 seconds for API requests
 const DEFAULT_TIMEOUT = 60000;
@@ -257,8 +269,13 @@ export const api = {
     readonly: boolean;
     queues: string[];
     tags: string[];
+    discovery: {
+      total: number;
+      capped: boolean;
+      cap: number;
+    } | null;
   }> {
-    return fetchJson("./config");
+    return fetchJson(getConfigUrl());
   },
 
   /**
