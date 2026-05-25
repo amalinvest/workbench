@@ -116,6 +116,8 @@ export const api = {
     completed: number;
     failed: number;
     delayed: number;
+    prioritized: number;
+    "waiting-children": number;
     total: number;
     timestamp: number;
   }> {

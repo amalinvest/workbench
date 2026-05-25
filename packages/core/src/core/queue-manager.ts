@@ -248,6 +248,8 @@ export class QueueManager {
     completed: number;
     failed: number;
     delayed: number;
+    prioritized: number;
+    "waiting-children": number;
     total: number;
     timestamp: number;
   }> {
@@ -259,6 +261,8 @@ export class QueueManager {
         completed: 0,
         failed: 0,
         delayed: 0,
+        prioritized: 0,
+        "waiting-children": 0,
         total: 0,
         timestamp: Date.now(),
       };
@@ -271,6 +275,8 @@ export class QueueManager {
           totals.completed += counts.completed || 0;
           totals.failed += counts.failed || 0;
           totals.delayed += counts.delayed || 0;
+          totals.prioritized += counts.prioritized || 0;
+          totals["waiting-children"] += counts["waiting-children"] || 0;
         }),
       );
 
@@ -279,7 +285,9 @@ export class QueueManager {
         totals.active +
         totals.completed +
         totals.failed +
-        totals.delayed;
+        totals.delayed +
+        totals.prioritized +
+        totals["waiting-children"];
 
       return totals;
     });
@@ -329,6 +337,8 @@ export class QueueManager {
               completed: counts.completed || 0,
               failed: counts.failed || 0,
               delayed: counts.delayed || 0,
+              prioritized: counts.prioritized || 0,
+              "waiting-children": counts["waiting-children"] || 0,
               paused: counts.paused || 0,
             },
             isPaused,
@@ -353,7 +363,11 @@ export class QueueManager {
 
       for (const queue of queues) {
         totalJobs +=
-          queue.counts.waiting + queue.counts.active + queue.counts.delayed;
+          queue.counts.waiting +
+          queue.counts.active +
+          queue.counts.delayed +
+          queue.counts.prioritized +
+          queue.counts["waiting-children"];
         activeJobs += queue.counts.active;
         failedJobs += queue.counts.failed;
       }
@@ -854,7 +868,15 @@ export class QueueManager {
 
     const types = status
       ? [status]
-      : ["waiting", "active", "completed", "failed", "delayed"];
+      : [
+          "active",
+          "waiting",
+          "waiting-children",
+          "prioritized",
+          "completed",
+          "failed",
+          "delayed",
+        ];
 
     // Fetch counts once before the loop (same for all types in a queue)
     const counts = await this.getCachedJobCounts(queue);
@@ -1137,7 +1159,9 @@ export class QueueManager {
           (counts.active || 0) > 0 ||
           (counts.completed || 0) > 0 ||
           (counts.failed || 0) > 0 ||
-          (counts.delayed || 0) > 0;
+          (counts.delayed || 0) > 0 ||
+          (counts.prioritized || 0) > 0 ||
+          (counts["waiting-children"] || 0) > 0;
         return { queueName, queue, hasJobs };
       }),
     );
@@ -1148,7 +1172,15 @@ export class QueueManager {
     }
 
     // Process all queues in parallel instead of sequentially
-    const types = ["waiting", "active", "completed", "failed", "delayed"];
+    const types = [
+      "active",
+      "waiting",
+      "waiting-children",
+      "prioritized",
+      "completed",
+      "failed",
+      "delayed",
+    ];
     const fetchLimit = Math.min(limit * 2, 50); // Reduced from 100 - only fetch what we need
 
     // WeakMap for caching stringified job data
@@ -1267,8 +1299,10 @@ export class QueueManager {
 
     // Fetch from all queues in parallel - single call per queue with all types
     const allTypes: JobStatus[] = [
-      "waiting",
       "active",
+      "waiting",
+      "waiting-children",
+      "prioritized",
       "completed",
       "failed",
       "delayed",
@@ -1360,7 +1394,15 @@ export class QueueManager {
     // Determine which job types to fetch based on status filter
     const types = filters?.status
       ? [filters.status]
-      : ["waiting", "active", "completed", "failed", "delayed"];
+      : [
+          "active",
+          "waiting",
+          "waiting-children",
+          "prioritized",
+          "completed",
+          "failed",
+          "delayed",
+        ];
 
     const hasTimeRange = !!filters?.timeRange;
     const numQueues = Math.max(queueEntries.length, 1);
@@ -1665,7 +1707,15 @@ export class QueueManager {
     limit = 50,
   ): Promise<{ value: string; count: number }[]> {
     const valueMap = new Map<string, number>();
-    const types = ["waiting", "active", "completed", "failed", "delayed"];
+    const types = [
+      "active",
+      "waiting",
+      "waiting-children",
+      "prioritized",
+      "completed",
+      "failed",
+      "delayed",
+    ];
 
     // Fetch jobs from all queues in parallel
     const queueEntries = Array.from(this.queues.entries());
@@ -2046,8 +2096,10 @@ export class QueueManager {
 
             // Fetch other types with reduced limits
             const otherTypes = [
-              "waiting",
               "active",
+              "waiting",
+              "waiting-children",
+              "prioritized",
               "completed",
               "failed",
               "delayed",

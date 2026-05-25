@@ -5,6 +5,16 @@ All notable changes to Workbench will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- BullMQ `prioritized` and `waiting-children` job states are now supported in queue and run filters, job fetching, counts, sidebar summaries, badges, flow nodes, and command palette status indicators.
+
+### Changed
+
+- Job status UI ordering.
+
 ## [0.2.1] - 2026-05-24
 
 ### Fixed
