@@ -62,7 +62,7 @@
   },
   "plugins": {
     "updater": {
-      "pubkey": "REPLACE_BEFORE_RELEASE_RUN_tauri_signer_generate",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDZEQ0QyQjdDOTgxNDIwQTQKUldTa0lCU1lmQ3ZOYmFmWEdIQis0SlBITW9iUm9DOHpkdlJHQVNaemdjRzU2Tmtlb1pBQ0pqZHUK",
       "endpoints": [
         "https://github.com/pontusab/workbench/releases/latest/download/latest.json"
       ]
