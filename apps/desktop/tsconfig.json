@@ -1,0 +1,27 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "target": "ES2022",
+    "types": ["vite/client", "bun"],
+    "skipLibCheck": true,
+    "noEmit": true,
+    "strict": false,
+    "strictNullChecks": true,
+    "paths": {
+      "@/core/*": ["../../packages/core/src/core/*"],
+      "@/*": ["../../packages/core/src/ui/*"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "sidecar/**/*.ts",
+    "*.config.ts",
+    "*.config.js"
+  ]
+}

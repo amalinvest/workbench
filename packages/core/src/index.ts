@@ -12,6 +12,7 @@ export {
 } from "./api/handlers";
 export { createApiRoutes } from "./api/router";
 
+export { discoverQueues } from "./core/discover";
 export { QueueManager } from "./core/queue-manager";
 export type {
   ActivityBucket,
@@ -45,12 +46,13 @@ export type {
   WorkbenchOptions,
   WorkerInfo,
 } from "./core/types";
-export { WorkbenchCore } from "./core/workbench";
+export { type DiscoveryMeta, WorkbenchCore } from "./core/workbench";
 export { computeBasePath, resolveBasePath } from "./server/base-path";
 export {
   BASIC_AUTH_CHALLENGE,
   checkBasicAuth,
 } from "./server/basic-auth";
+export { buildWorkbenchApiApp } from "./server/hono-api-app";
 export { buildWorkbenchApp } from "./server/hono-app";
 export {
   type IndexHtmlResult,

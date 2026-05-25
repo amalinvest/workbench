@@ -1,18 +1,19 @@
 import { GeistMono } from "geist/font/mono";
-import { GeistPixelSquare } from "geist/font/pixel";
+import { GeistPixelLine } from "geist/font/pixel";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
+import { ThemeProvider } from "../components/theme-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://getworkbench.dev"),
-  title: "Workbench — Open-source BullMQ dashboard",
+  title: "Workbench — The missing dashboard for BullMQ",
   description:
-    "A modern, drop-in BullMQ dashboard for any Node backend. Flows, metrics, schedulers, search. MIT licensed.",
+    "A local-first, native desktop app to inspect, debug, and replay your BullMQ queues. Discover queues automatically, watch runs in real time, and never SSH into Redis again.",
   openGraph: {
-    title: "Workbench — Open-source BullMQ dashboard",
+    title: "Workbench — The missing dashboard for BullMQ",
     description:
-      "A modern, drop-in BullMQ dashboard for any Node backend. Flows, metrics, schedulers, search.",
+      "Native macOS app. Local-first. Inspect, debug, and replay your BullMQ queues. MIT licensed, no telemetry.",
     url: "https://getworkbench.dev",
     siteName: "Workbench",
     type: "website",
@@ -27,9 +28,13 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Workbench — Open-source BullMQ dashboard",
-    description: "A modern, drop-in BullMQ dashboard for any Node backend.",
+    title: "Workbench — The missing dashboard for BullMQ",
+    description:
+      "Native macOS app. Local-first. Inspect, debug, and replay your BullMQ queues.",
     images: ["/og.png"],
+  },
+  icons: {
+    icon: "/app-icon.svg",
   },
 };
 
@@ -41,9 +46,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${GeistSans.variable} ${GeistMono.variable} ${GeistPixelSquare.variable}`}
+      suppressHydrationWarning
+      className={`${GeistSans.variable} ${GeistMono.variable} ${GeistPixelLine.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }

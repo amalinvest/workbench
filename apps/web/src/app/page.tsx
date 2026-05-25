@@ -1,4 +1,21 @@
-import { HeartIcon } from "lucide-react";
+import {
+  Activity,
+  AlertCircle,
+  ArrowRight,
+  BarChart3,
+  Clock,
+  Code,
+  Command,
+  Download,
+  FlaskConical,
+  Github,
+  Heart,
+  Network,
+  TerminalSquare,
+  Twitter,
+} from "lucide-react";
+import Image from "next/image";
+import { ActionButton } from "../components/action-button";
 import { CopyCommand } from "../components/copy-command";
 import {
   ElysiaLogo,
@@ -9,76 +26,552 @@ import {
   NestjsLogo,
   NextLogo,
 } from "../components/logos";
+import {
+  ErrorsMockup,
+  FlowsMockup,
+  OverviewMockup,
+  RunsMockup,
+  SchedulersMockup,
+  TestMockup,
+} from "../components/mockups";
+import { ThemeToggle } from "../components/theme-toggle";
 
+/** Update once the desktop app has a tagged GitHub Release. */
+const MAC_DOWNLOAD_URL =
+  "https://github.com/pontusab/workbench/releases/latest";
 const GITHUB_URL = "https://github.com/pontusab/workbench";
 const SPONSORS_URL = "https://github.com/sponsors/pontusab";
+const TWITTER_URL = "https://x.com/pontusab";
+const DOCS_URL = "https://github.com/pontusab/workbench#readme";
 const INSTALL_COMMAND = "npx @getworkbench/cli init";
 
+/**
+ * Each framework logo links straight to its `@getworkbench/<framework>` npm
+ * page so the "works with" strip doubles as a per-framework install affordance
+ * — npm gives visitors the install command, rendered README, and version, all
+ * of which is what they're hunting for when they click a logo on a dashboard
+ * landing page. Linking to GitHub would just drop everyone at the monorepo
+ * root, and linking to the framework's own site would send them away from
+ * Workbench entirely.
+ *
+ * Hyper has no published adapter yet, so it falls back to the GitHub repo as a
+ * placeholder.
+ */
+const NPM_BASE = "https://www.npmjs.com/package/@getworkbench";
+const npmAdapter = (slug: string) => ({
+  href: `${NPM_BASE}/${slug}`,
+  title: `Install @getworkbench/${slug}`,
+});
 const frameworks = [
-  { name: "Hono", Logo: HonoLogo },
-  { name: "Elysia", Logo: ElysiaLogo },
-  { name: "Express", Logo: ExpressLogo },
-  { name: "Fastify", Logo: FastifyLogo },
-  { name: "NestJS", Logo: NestjsLogo },
-  { name: "Next.js", Logo: NextLogo },
-  { name: "Hyper", Logo: HyperLogo },
+  { name: "Hono", Logo: HonoLogo, ...npmAdapter("hono") },
+  { name: "Elysia", Logo: ElysiaLogo, ...npmAdapter("elysia") },
+  { name: "Express", Logo: ExpressLogo, ...npmAdapter("express") },
+  { name: "Fastify", Logo: FastifyLogo, ...npmAdapter("fastify") },
+  { name: "NestJS", Logo: NestjsLogo, ...npmAdapter("nestjs") },
+  { name: "Next.js", Logo: NextLogo, ...npmAdapter("next") },
+  {
+    name: "Hyper",
+    Logo: HyperLogo,
+    href: GITHUB_URL,
+    title: "Hyper adapter — coming soon",
+  },
 ];
 
 export default function Page() {
   return (
-    <main className="flex min-h-dvh flex-col px-6 py-6 md:px-10 md:py-8">
-      <nav className="flex items-center justify-between text-sm">
-        <div className="font-mono lowercase tracking-tight text-[color:var(--color-foreground)]">
+    <main className="relative isolate">
+      <Nav />
+
+      <Hero />
+
+      <Section
+        eyebrow="Overview"
+        title="Every queue, every job — at a glance."
+        body="Live counters, p50/p95 latency, throughput sparklines, and per-queue health without ever shelling into Redis. Built for the way modern apps actually run on BullMQ."
+        align="left"
+        mockup={<OverviewMockup />}
+      />
+
+      <Section
+        eyebrow="Runs"
+        title="Inspect every run. Replay any failure."
+        body="A virtualized table with sharp status colors, real timestamps, and full job payloads one click away. Filter by status, search by ID, retry from the keyboard."
+        align="right"
+        mockup={<RunsMockup />}
+      />
+
+      <Section
+        eyebrow="Flows"
+        title="Visualize FlowProducer graphs."
+        body="Parent/child relationships rendered as a real DAG with per-node status and duration. Drill into any node, replay subtrees, and see where time is going."
+        align="left"
+        mockup={<FlowsMockup />}
+      />
+
+      <Section
+        eyebrow="Schedulers"
+        title="Cron + delayed jobs you can actually trust."
+        body="See which schedulers are active, when they last ran, and what's next. Pause, resume, and edit cron expressions without redeploying."
+        align="right"
+        mockup={<SchedulersMockup />}
+      />
+
+      <DualFeature />
+
+      <BuiltForDevs />
+
+      <InstallSection />
+
+      <Footer />
+    </main>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Nav                                                                        */
+/* -------------------------------------------------------------------------- */
+
+function Nav() {
+  return (
+    <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-[color:var(--color-border)]/60 bg-[color:var(--color-background)]/70 px-6 py-3 backdrop-blur-md md:px-10">
+      <a href="/" className="flex items-center gap-2">
+        <Image
+          src="/app-icon.svg"
+          alt=""
+          width={28}
+          height={28}
+          className="h-7 w-7"
+          priority
+        />
+        <span className="font-mono text-sm lowercase tracking-tight">
           workbench
-        </div>
+        </span>
+      </a>
+      <div className="flex items-center gap-5 text-sm text-[color:var(--color-muted-foreground)] md:gap-6">
+        <a
+          href={DOCS_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="hidden transition hover:text-[color:var(--color-foreground)] md:inline"
+        >
+          Docs
+        </a>
         <a
           href={GITHUB_URL}
           target="_blank"
           rel="noreferrer"
-          className="text-[color:var(--color-muted-foreground)] transition hover:text-[color:var(--color-foreground)]"
+          className="hidden transition hover:text-[color:var(--color-foreground)] md:inline"
         >
-          Github
+          GitHub
         </a>
-      </nav>
-
-      <section className="relative flex flex-1 flex-col items-center justify-center gap-10 py-16 text-center md:py-24">
-        <div className="relative">
-          <div className="hero-glow" aria-hidden />
-          <h1 className="hero-headline mx-auto max-w-5xl text-balance text-5xl font-bold leading-[1.02] sm:text-6xl md:text-7xl lg:text-8xl">
-            a <span className="hero-italic">beautiful</span>, open-source{" "}
-            <span className="hero-fill">BullMQ</span> dashboard for modern Node
-            apps.
-          </h1>
-        </div>
-
-        <CopyCommand command={INSTALL_COMMAND} variant="inline" />
-
-        <div className="flex flex-col items-center gap-3">
-          <span className="text-xs uppercase tracking-[0.2em] text-[color:var(--color-muted-foreground)]">
-            Featuring
-          </span>
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-[color:var(--color-foreground)]">
-            {frameworks.map(({ name, Logo }) => (
-              <span key={name} className="inline-flex items-center gap-2">
-                <Logo className="h-4 w-4" />
-                <span className="text-sm">{name}</span>
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="flex justify-center pb-10">
         <a
           href={SPONSORS_URL}
           target="_blank"
           rel="noreferrer"
-          className="group inline-flex items-center gap-2 text-xs text-[color:var(--color-muted-foreground)] transition hover:text-[color:var(--color-foreground)]"
+          className="transition hover:text-[color:var(--color-foreground)]"
         >
-          <HeartIcon className="h-3 w-3 text-[color:#ff4d8a]/80 transition group-hover:scale-110" />
-          <span>Sponsor Workbench on GitHub</span>
+          Sponsor
         </a>
-      </section>
-    </main>
+        <ThemeToggle />
+      </div>
+    </nav>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Hero                                                                       */
+/* -------------------------------------------------------------------------- */
+
+function Hero() {
+  return (
+    // Bottom padding is *zero* on this section because the dashboard
+    // screenshot bleeds straight into the section divider below — no air
+    // gap, no drop shadow. The eye reads it as a real window into the app
+    // that you can scroll past.
+    <section className="relative overflow-hidden px-6 pt-16 md:px-10 md:pt-24">
+      <div className="relative mx-auto flex max-w-4xl flex-col items-center text-center">
+        <h1 className="hero-headline text-balance text-5xl sm:text-6xl md:text-[76px]">
+          The missing dashboard for BullMQ.
+        </h1>
+
+        <p className="mt-6 max-w-2xl text-balance text-base leading-relaxed text-[color:var(--color-muted-foreground)] md:text-lg">
+          Inspect, debug, and replay your BullMQ queues. Run it as a native
+          desktop app, or drop the same dashboard into any Node framework.
+        </p>
+
+        <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row sm:gap-4">
+          <ActionButton
+            href={MAC_DOWNLOAD_URL}
+            label="Download for Mac"
+            icon={<Download className="h-[18px] w-[18px]" strokeWidth={2.25} />}
+            shortcut="D"
+            variant="primary"
+            external
+          />
+          <ActionButton
+            href="#install"
+            label="Install in your app"
+            icon={
+              <TerminalSquare
+                className="h-[18px] w-[18px]"
+                strokeWidth={2.25}
+              />
+            }
+            shortcut="I"
+            variant="secondary"
+          />
+        </div>
+
+        <p className="mt-4 font-mono text-[11px] text-[color:var(--color-muted-foreground)]">
+          macOS 11+ · Apple-signed · MIT
+        </p>
+      </div>
+
+      <div className="relative mx-auto mt-14 max-w-6xl">
+        <HeroFrameworks />
+        <div className="hero-preview-glow" aria-hidden />
+        <OverviewMockup bleed />
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Compact "works with" strip that sits between the hero CTAs and the product
+ * screenshot. Doubles as social proof and as a visual key to the framework
+ * list referenced throughout the page, so we don't need a standalone band
+ * lower down.
+ */
+function HeroFrameworks() {
+  return (
+    <div className="mt-4 mb-14 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-[color:var(--color-foreground)]">
+      {frameworks.map(({ name, Logo, href, title }) => (
+        <a
+          key={name}
+          href={href}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1.5 opacity-70 transition hover:opacity-100"
+          title={title}
+        >
+          <Logo className="h-4 w-4" />
+          <span className="text-[12px] tracking-tight">{name}</span>
+        </a>
+      ))}
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Generic two-column feature section                                         */
+/* -------------------------------------------------------------------------- */
+
+interface SectionProps {
+  eyebrow: string;
+  title: string;
+  body: string;
+  mockup: React.ReactNode;
+  align: "left" | "right";
+}
+
+function Section({ eyebrow, title, body, mockup, align }: SectionProps) {
+  return (
+    <section className="relative border-t border-[color:var(--color-border)]/60 px-6 py-20 md:px-10 md:py-28">
+      <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 md:grid-cols-12">
+        <div
+          className={`md:col-span-5 ${
+            align === "right" ? "md:order-2 md:col-start-8" : ""
+          }`}
+        >
+          <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-[color:var(--color-muted-foreground)]">
+            {eyebrow}
+          </div>
+          <h2 className="mt-3 text-balance text-3xl font-semibold leading-tight tracking-tight md:text-4xl">
+            {title}
+          </h2>
+          <p className="mt-4 text-balance text-base leading-relaxed text-[color:var(--color-muted-foreground)]">
+            {body}
+          </p>
+        </div>
+        <div
+          className={`md:col-span-7 ${align === "right" ? "md:order-1" : ""}`}
+        >
+          <div className="relative">
+            <div className="section-glow" aria-hidden />
+            {mockup}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Dual feature row (Test + Errors)                                           */
+/* -------------------------------------------------------------------------- */
+
+function DualFeature() {
+  return (
+    <section className="border-t border-[color:var(--color-border)]/60 px-6 py-20 md:px-10 md:py-28">
+      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 md:grid-cols-2">
+        <div className="flex flex-col gap-4">
+          <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-[color:var(--color-muted-foreground)]">
+            Test
+          </div>
+          <h3 className="text-2xl font-semibold tracking-tight">
+            Enqueue jobs straight from the dashboard.
+          </h3>
+          <p className="text-[color:var(--color-muted-foreground)]">
+            Compose a payload, pick a queue, hit ⌘↵. Validates against your
+            schema and shows the run on the next render.
+          </p>
+          <TestMockup />
+        </div>
+        <div className="flex flex-col gap-4">
+          <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-[color:var(--color-muted-foreground)]">
+            Errors
+          </div>
+          <h3 className="text-2xl font-semibold tracking-tight">
+            Triage failures, not log files.
+          </h3>
+          <p className="text-[color:var(--color-muted-foreground)]">
+            Errors are grouped by class, ranked by frequency, and trended over
+            time so you can spot regressions the moment they hit production.
+          </p>
+          <ErrorsMockup />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Built-for-devs feature grid                                                */
+/* -------------------------------------------------------------------------- */
+
+function BuiltForDevs() {
+  const items = [
+    {
+      icon: BarChart3,
+      title: "Live counters",
+      body: "Completed, failed, active, waiting — per queue, updated as workers move jobs. p50/p95 latency and throughput tracked alongside.",
+    },
+    {
+      icon: Activity,
+      title: "Run inspector",
+      body: "A virtualized table of every job. Filter by status, search by ID, expand the full payload and attempts history without leaving the row.",
+    },
+    {
+      icon: AlertCircle,
+      title: "Error triage",
+      body: "Failures grouped by error class and ranked by frequency, with a 24h trend per class. See the regression the moment it spikes.",
+    },
+    {
+      icon: Code,
+      title: "Open in Cursor",
+      body: "Click any line in a failed job's stack trace — Workbench jumps straight to that file in Cursor or VS Code. No copy-paste, no grep.",
+    },
+    {
+      icon: Network,
+      title: "FlowProducer DAG",
+      body: "Parent/child flows rendered as a real graph with per-node status and duration. Drill into any node, replay subtrees, see where time is going.",
+    },
+    {
+      icon: Clock,
+      title: "Cron + delayed schedulers",
+      body: "Which schedulers are active, when they last ran, what's next. Pause, resume, edit cron expressions — without a redeploy.",
+    },
+    {
+      icon: FlaskConical,
+      title: "Enqueue from the UI",
+      body: "Compose a payload, pick a queue, hit ⌘↵. Validates against your schema and shows the run on the next render. Faster than `redis-cli`.",
+    },
+    {
+      icon: Command,
+      title: "Keyboard for everything",
+      body: "⌘K to search, ⌥1–9 to switch queues, R to retry, ↵ to drill in. Every action you reach for has a binding — no menu hunting.",
+    },
+  ];
+
+  return (
+    <section className="border-t border-[color:var(--color-border)]/60 px-6 py-20 md:px-10 md:py-28">
+      <div className="mx-auto max-w-6xl">
+        <div className="max-w-2xl">
+          <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-[color:var(--color-muted-foreground)]">
+            What's inside
+          </div>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight md:text-4xl">
+            Everything a BullMQ dashboard should do.
+          </h2>
+          <p className="mt-3 text-[color:var(--color-muted-foreground)]">
+            Metrics, runs, errors, flows, schedulers, and an enqueue form —
+            wired together so the thing you need next is always one keystroke
+            away.
+          </p>
+        </div>
+
+        <div className="mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-xl bg-[color:var(--color-border)]/80 sm:grid-cols-2 lg:grid-cols-4">
+          {items.map(({ icon: Icon, title, body }) => (
+            <div
+              key={title}
+              className="flex flex-col gap-3 bg-[color:var(--color-background)] p-6"
+            >
+              <Icon className="h-4 w-4 text-[color:var(--color-foreground)]" />
+              <div className="text-sm font-medium tracking-tight">{title}</div>
+              <p className="text-sm leading-relaxed text-[color:var(--color-muted-foreground)]">
+                {body}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Install / final CTA                                                        */
+/* -------------------------------------------------------------------------- */
+
+function InstallSection() {
+  return (
+    <section
+      id="install"
+      className="scroll-mt-16 border-t border-[color:var(--color-border)]/60 px-6 py-24 md:px-10 md:py-32"
+    >
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-12 max-w-2xl">
+          <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-[color:var(--color-muted-foreground)]">
+            Install
+          </div>
+          <h2 className="mt-3 text-balance text-3xl font-semibold tracking-tight md:text-4xl">
+            One dashboard. Two ways to run it.
+          </h2>
+          <p className="mt-3 text-[color:var(--color-muted-foreground)]">
+            Native macOS app for local debugging, or one command to mount the
+            same dashboard inside your Node server. Same UI, same open-source
+            core.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <InstallCard
+            eyebrow="Desktop"
+            title="Native macOS app"
+            body="Local-first. Auto-discovers queues from any Redis URL. Stores credentials in the OS keychain. Auto-updates via signed releases."
+            action={
+              <ActionButton
+                href={MAC_DOWNLOAD_URL}
+                label="Download for Mac"
+                icon={
+                  <Download className="h-[18px] w-[18px]" strokeWidth={2.25} />
+                }
+                variant="primary"
+                external
+              />
+            }
+          />
+
+          <InstallCard
+            eyebrow="Embed"
+            title="Drop into your Node app"
+            body="One command wires the dashboard into your existing server. Works with Hono, Elysia, Express, Fastify, NestJS, and Next.js — share the same Redis as your workers."
+            action={<CopyCommand command={INSTALL_COMMAND} variant="button" />}
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function InstallCard({
+  eyebrow,
+  title,
+  body,
+  action,
+}: {
+  eyebrow: string;
+  title: string;
+  body: string;
+  action: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-col gap-5 rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-muted)]/30 p-6 md:p-8">
+      <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-[color:var(--color-muted-foreground)]">
+        {eyebrow}
+      </div>
+      <h3 className="text-2xl font-semibold tracking-tight">{title}</h3>
+      <p className="text-[color:var(--color-muted-foreground)]">{body}</p>
+      <div className="mt-auto">{action}</div>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Footer                                                                     */
+/* -------------------------------------------------------------------------- */
+
+function Footer() {
+  return (
+    <footer className="border-t border-[color:var(--color-border)]/60 px-6 pt-16 pb-10 md:px-10">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 text-xs text-[color:var(--color-muted-foreground)] md:flex-row">
+        <div className="flex items-center gap-2 font-mono lowercase tracking-tight">
+          <Image src="/app-icon.svg" alt="" width={18} height={18} />
+          <span>workbench</span>
+        </div>
+        <div className="flex items-center gap-6">
+          <a
+            href={GITHUB_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 transition hover:text-[color:var(--color-foreground)]"
+          >
+            <Github className="h-3.5 w-3.5" />
+            <span>GitHub</span>
+          </a>
+          <a
+            href={TWITTER_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 transition hover:text-[color:var(--color-foreground)]"
+          >
+            <Twitter className="h-3.5 w-3.5" />
+            <span>@pontusab</span>
+          </a>
+          <a
+            href={DOCS_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="transition hover:text-[color:var(--color-foreground)]"
+          >
+            Docs
+          </a>
+          <a
+            href={SPONSORS_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 transition hover:text-[color:var(--color-foreground)]"
+          >
+            <Heart className="h-3.5 w-3.5 text-[#ff4d8a]/80" />
+            <span>Sponsor</span>
+          </a>
+        </div>
+      </div>
+
+      {/* Oversized outlined wordmark — a quiet signature, not a heading.
+          Bleeds past the footer's `px` so it stretches the full viewport
+          width. 16vw is the sweet spot for 9 glyphs of GeistPixelLine
+          (~0.67em wide each): the wordmark fills ~96% of any viewport
+          without clipping the trailing characters. overflow-hidden acts as
+          a safety net in case the font ever ships a slightly wider weight. */}
+      <div
+        aria-hidden
+        className="-mx-6 mt-16 overflow-hidden leading-none md:-mx-10"
+      >
+        <span className="footer-wordmark block text-center text-[16vw]">
+          workbench
+        </span>
+      </div>
+    </footer>
   );
 }
