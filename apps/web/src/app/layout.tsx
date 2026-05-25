@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import { GeistMono } from "geist/font/mono";
 import { GeistPixelLine } from "geist/font/pixel";
 import { GeistSans } from "geist/font/sans";
@@ -51,6 +52,7 @@ export default function RootLayout({
     >
       <body>
         <ThemeProvider>{children}</ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
