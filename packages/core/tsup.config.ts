@@ -5,7 +5,7 @@ export default defineConfig({
   format: ["esm"],
   dts: true,
   sourcemap: true,
-  clean: true,
+  clean: false,
   target: "node18",
   outDir: "dist",
   external: ["bullmq", "hono", "ioredis", "lru-cache"],

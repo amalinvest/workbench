@@ -1,6 +1,6 @@
 {
   "name": "@getworkbench/core",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Core of Workbench — QueueManager, API router, and bundled UI.",
   "type": "module",
   "main": "./dist/index.js",
@@ -26,7 +26,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "bun run build:ui && bun run build:lib",
+    "build": "bun run clean && bun run build:ui && bun run build:lib",
     "build:lib": "tsup",
     "build:ui": "vite build",
     "dev": "tsup --watch",

@@ -5,6 +5,15 @@ All notable changes to Workbench will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.2] - 2026-05-26
+
+### Fixed
+
+- **Critical: `@getworkbench/core@0.3.1` shipped without the dashboard UI bundle.** Flipping `tsup` to `clean: true` in 0.3.1 made the `tsup` lib build wipe `dist/` *after* `vite build` had populated `dist/ui/`, so the published tarball contained no `dist/ui/index.html` or `dist/ui/assets/*`. Adapters serving the dashboard from `UI_DIST_PATH` would 404 on every dashboard request. The core build script now does `rm -rf dist` once up-front (`bun run clean && bun run build:ui && bun run build:lib`) and `tsup` keeps `clean: false`, so vite's output survives. Verified `dist/ui/` ships in the 0.3.2 tarball. **Upgrade immediately from 0.3.1.**
+- Sidebar queue list is scrollable when there are many queues. The HoverCard popover now caps at `min(70svh, 32rem)` with `overflow-y-auto` instead of growing past the viewport. Long queue names also truncate inside the popover (with a `title` tooltip) so the paused indicator no longer gets pushed out. Fixes [#7](https://github.com/pontusab/workbench/issues/7).
+- Queue names on the overview cards truncate with `min-w-0` + `truncate` and a `title` tooltip when too long, and the "Paused" chip is now `shrink-0`. Long names no longer overlap the status chip. Fixes [#8](https://github.com/pontusab/workbench/issues/8).
+- Sidebar nav icons (and every other `<button>`) show a pointer cursor on hover again. Tailwind v4's preflight dropped `cursor: pointer` from the default button reset — a global `button:not(:disabled), [role="button"]:not([aria-disabled="true"]) { cursor: pointer; }` rule restores v3 behavior. Part of [#7](https://github.com/pontusab/workbench/issues/7).
+
 ## [0.3.1] - 2026-05-26
 
 ### Fixed
