@@ -43,7 +43,9 @@ function QueueCounts({ queueName }: { queueName: string }) {
     counts.active +
     counts.completed +
     counts.failed +
-    counts.delayed;
+    counts.delayed +
+    counts.prioritized +
+    counts["waiting-children"];
 
   return (
     <div className="flex gap-2 text-[9px]">
@@ -53,8 +55,22 @@ function QueueCounts({ queueName }: { queueName: string }) {
       {counts.waiting > 0 && (
         <span className="text-muted-foreground">{counts.waiting} waiting</span>
       )}
+      {counts["waiting-children"] > 0 && (
+        <span className="text-muted-foreground">
+          {counts["waiting-children"]} waiting children
+        </span>
+      )}
+      {counts.prioritized > 0 && (
+        <span className="text-chart-4">{counts.prioritized} prioritized</span>
+      )}
+      {counts.completed > 0 && (
+        <span className="text-chart-1">{counts.completed} completed</span>
+      )}
       {counts.failed > 0 && (
         <span className="text-chart-3">{counts.failed} failed</span>
+      )}
+      {counts.delayed > 0 && (
+        <span className="text-chart-5">{counts.delayed} delayed</span>
       )}
       {total === 0 && <span className="text-muted-foreground">empty</span>}
     </div>
