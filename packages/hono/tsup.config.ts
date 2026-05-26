@@ -8,5 +8,5 @@ export default defineConfig({
   clean: false,
   target: "node18",
   outDir: "dist",
-  external: ["@getworkbench/core", "bullmq", "hono"],
+  external: ["@getworkbench/core", "@getworkbench/core/hono", "bullmq", "hono"],
 });

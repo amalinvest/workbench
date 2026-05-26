@@ -9,11 +9,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- BullMQ `prioritized` and `waiting-children` job states are now supported in queue and run filters, job fetching, counts, sidebar summaries, badges, flow nodes, and command palette status indicators.
+- BullMQ `prioritized` and `waiting-children` job states are now supported in queue and run filters, job fetching, counts, sidebar summaries, badges, flow nodes, and command palette status indicators. (Merged via #2 after 0.3.0 was published; will ship in the next release.)
 
 ### Changed
 
 - Job status UI ordering.
+
+## [0.3.0] - 2026-05-26
+
+### Fixed
+
+- `@getworkbench/core` no longer leaks `hono` into the public TypeScript surface of the non-Hono adapters. Previously, importing anything from `@getworkbench/express`, `@getworkbench/fastify`, `@getworkbench/nestjs`, `@getworkbench/next`, or `@getworkbench/elysia` caused `tsc` to load `node_modules/hono/dist/types/types.d.ts`, which uses `const` type parameters introduced in TypeScript 5.0. On TS 4.x this produced dozens of `TS1128: Declaration or statement expected` parse errors that `skipLibCheck` could not suppress, breaking the consumer's build even though their own code never imported Hono.
+
+### Changed
+
+- The Hono-typed core helpers — `buildWorkbenchApp`, `buildWorkbenchApiApp`, and `createApiRoutes` — moved from the main `@getworkbench/core` entry to a new `@getworkbench/core/hono` subpath. Only `@getworkbench/hono` and the desktop sidecar (the two places that actually need a `Hono` instance) import from the new subpath; all other adapters now type-check cleanly on TypeScript 4.x.
+- `@getworkbench/hono` continues to require TypeScript 5.0+ because its own public types reference `Hono`. Documented in its README.
+
+### Added
+
+- `engines: { node: ">=18" }` on `@getworkbench/core` and every adapter package so the existing Node 18+ requirement is surfaced by package managers at install time. (`@getworkbench/cli` already declared this.)
 
 ## [0.2.1] - 2026-05-24
 
