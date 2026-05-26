@@ -92,10 +92,26 @@
   --status-active: #1ab8ff;
   --status-waiting: #ffc11a;
 
-  --status-success-10: color-mix(in srgb, var(--status-success) 10%, transparent);
-  --status-success-30: color-mix(in srgb, var(--status-success) 30%, transparent);
-  --status-success-40: color-mix(in srgb, var(--status-success) 40%, transparent);
-  --status-success-70: color-mix(in srgb, var(--status-success) 70%, transparent);
+  --status-success-10: color-mix(
+    in srgb,
+    var(--status-success) 10%,
+    transparent
+  );
+  --status-success-30: color-mix(
+    in srgb,
+    var(--status-success) 30%,
+    transparent
+  );
+  --status-success-40: color-mix(
+    in srgb,
+    var(--status-success) 40%,
+    transparent
+  );
+  --status-success-70: color-mix(
+    in srgb,
+    var(--status-success) 70%,
+    transparent
+  );
 
   color-scheme: dark;
 }
@@ -113,7 +129,7 @@
   --border: #d8d2c4;
   --accent: #1a1714;
 
-  --glow-hero: rgba(47, 108, 255, 0.10);
+  --glow-hero: rgba(47, 108, 255, 0.1);
   --glow-section: rgba(0, 0, 0, 0.025);
 
   /* Mockups in light mode sit on cream; a hairline warm-cool border keeps
@@ -242,6 +258,86 @@ body {
     transparent 70%
   );
   filter: blur(40px);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Hero framework marquee — continuously rolling "works with" strip           */
+/* -------------------------------------------------------------------------- */
+/*
+ * Why marquee instead of a wrapping flex row?
+ *   With 11 adapters the static row would either wrap to two lines on tablet
+ *   widths (visually awkward at the top of the hero) or have to elide some
+ *   logos. A horizontal rolling strip shows the entire roster regardless of
+ *   viewport width and lends the hero some quiet motion without competing
+ *   with the dashboard screenshot below it.
+ *
+ * Why margin-right instead of flex `gap`?
+ *   Each item owns its trailing spacing, so the total track width is exactly
+ *   `2 * N * (item_width + spacing)` — i.e. a clean multiple of the per-item
+ *   pitch. That makes `translateX(-50%)` land pixel-perfect on the second
+ *   copy of the list, and the loop point becomes invisible. With flex `gap`
+ *   the spacing between copies and within copies differ by one gap, which
+ *   shows up as a visible jump every cycle.
+ *
+ * Mask gradient
+ *   Fades the leftmost and rightmost ~6% so items enter/exit smoothly rather
+ *   than clipping at the section edge. The mask is set on both the standard
+ *   and `-webkit-` properties for Safari.
+ *
+ * Pause + reduced motion
+ *   Hovering anywhere on the strip pauses the scroll so visitors can read
+ *   labels and click. `prefers-reduced-motion` disables the animation
+ *   entirely — important for vestibular-disorder accessibility.
+ */
+.hero-marquee {
+  position: relative;
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 6%,
+    black 94%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 6%,
+    black 94%,
+    transparent
+  );
+}
+
+.hero-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: hero-marquee 38s linear infinite;
+  will-change: transform;
+}
+
+.hero-marquee:hover .hero-marquee-track,
+.hero-marquee:focus-within .hero-marquee-track {
+  animation-play-state: paused;
+}
+
+.hero-marquee-item {
+  flex-shrink: 0;
+  margin-right: 2.25rem;
+}
+
+@keyframes hero-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-marquee-track {
+    animation: none;
+  }
 }
 
 /* -------------------------------------------------------------------------- */

@@ -9,9 +9,21 @@ export type Framework =
   | "express"
   | "fastify"
   | "next"
-  | "nestjs";
+  | "nestjs"
+  | "koa"
+  | "astro"
+  | "nuxt"
+  | "bun"
+  | "h3";
 
-const FRAMEWORK_REGEX: Record<Exclude<Framework, "next">, RegExp> = {
+/**
+ * Frameworks whose entry file we edit in place. Next.js, Astro, and Nuxt
+ * scaffold a route file instead of editing user code, so they don't need a
+ * source regex.
+ */
+type EditableFramework = Exclude<Framework, "next" | "astro" | "nuxt">;
+
+const FRAMEWORK_REGEX: Record<EditableFramework, RegExp> = {
   hono: /new\s+Hono\s*\(/,
   elysia: /new\s+Elysia\s*\(/,
   fastify:
@@ -19,24 +31,46 @@ const FRAMEWORK_REGEX: Record<Exclude<Framework, "next">, RegExp> = {
   express:
     /(?:require\s*\(\s*["']express["']\s*\)|from\s+["']express["']|express\s*\(\s*\))/,
   nestjs: /NestFactory\s*\.\s*create\s*\(/,
+  koa: /(?:require\s*\(\s*["']koa["']\s*\)|from\s+["']koa["']|new\s+Koa\s*\()/,
+  bun: /Bun\s*\.\s*serve\s*\(/,
+  h3: /(?:from\s+["']h3["']|require\s*\(\s*["']h3["']\s*\)|createApp\s*\(|toNodeListener\s*\()/,
 };
 
-const PACKAGE_NAMES: Record<Framework, string> = {
+/**
+ * Each framework's authoritative npm package name in `package.json`.
+ * For Bun we accept either `@types/bun` or `bun-types` since the runtime
+ * itself isn't an npm dep.
+ */
+const PACKAGE_NAMES: Record<Framework, string | string[]> = {
   hono: "hono",
   elysia: "elysia",
   fastify: "fastify",
   express: "express",
   next: "next",
   nestjs: "@nestjs/core",
+  koa: "koa",
+  astro: "astro",
+  nuxt: "nuxt",
+  bun: ["@types/bun", "bun-types"],
+  h3: "h3",
 };
 
+/**
+ * Detection order matters: higher-level frameworks come first so that a
+ * Nuxt project (which has h3 transitively) isn't reported as h3, etc.
+ */
 const DETECTION_PRIORITY: Framework[] = [
   "next",
+  "nuxt",
+  "astro",
   "nestjs",
   "elysia",
   "fastify",
   "express",
+  "koa",
   "hono",
+  "h3",
+  "bun",
 ];
 
 export interface DetectionResult {
@@ -62,7 +96,7 @@ export async function detectFramework(
   deps: Record<string, string>,
 ): Promise<DetectionResult | null> {
   for (const framework of DETECTION_PRIORITY) {
-    if (!deps[PACKAGE_NAMES[framework]]) continue;
+    if (!hasDep(deps, PACKAGE_NAMES[framework])) continue;
 
     if (framework === "next") {
       const hasAppDir = existsSync(join(cwd, "app"));
@@ -75,6 +109,26 @@ export async function detectFramework(
       continue;
     }
 
+    if (framework === "astro") {
+      if (existsSync(join(cwd, "src/pages"))) {
+        return { framework, entry: null };
+      }
+      continue;
+    }
+
+    if (framework === "nuxt") {
+      // Nuxt projects always have a top-level nuxt.config.* — that's a
+      // stronger signal than the `nuxt` dep alone (which a few unrelated
+      // tools also pull in transitively).
+      const hasConfig = ["nuxt.config.ts", "nuxt.config.js", "nuxt.config.mjs"]
+        .map((f) => join(cwd, f))
+        .some(existsSync);
+      if (hasConfig) {
+        return { framework, entry: null };
+      }
+      continue;
+    }
+
     const entry = await findFrameworkEntry(cwd, framework);
     if (entry) return { framework, entry };
   }
@@ -82,9 +136,17 @@ export async function detectFramework(
   return null;
 }
 
+function hasDep(
+  deps: Record<string, string>,
+  names: string | string[],
+): boolean {
+  if (typeof names === "string") return Boolean(deps[names]);
+  return names.some((name) => Boolean(deps[name]));
+}
+
 async function findFrameworkEntry(
   cwd: string,
-  framework: Exclude<Framework, "next">,
+  framework: EditableFramework,
 ): Promise<string | null> {
   const regex = FRAMEWORK_REGEX[framework];
   const files = await fg(

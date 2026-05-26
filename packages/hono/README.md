@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://getworkbench.dev">
+    <img src="https://raw.githubusercontent.com/pontusab/workbench/main/hero.png" alt="Workbench — the missing dashboard for BullMQ" />
+  </a>
+</p>
+
 # @getworkbench/hono
 
 Hono adapter for [Workbench](https://getworkbench.dev) — a beautiful, open-source BullMQ dashboard for modern Node apps.

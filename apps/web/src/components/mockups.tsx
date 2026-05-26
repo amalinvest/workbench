@@ -715,9 +715,7 @@ function FlowNode({
   return (
     <div
       className={`absolute w-[150px] border bg-(--mock-surface) px-2.5 py-1.5 ${
-        parent
-          ? "border-(--status-success-40)"
-          : "border-(--mock-line-1)"
+        parent ? "border-(--status-success-40)" : "border-(--mock-line-1)"
       }`}
       style={{ left: `${(x / 600) * 100}%`, top: `${(y / 360) * 100}%` }}
     >
@@ -827,9 +825,7 @@ export function SchedulersMockup() {
             >
               <span
                 className={`flex h-3 w-3 items-center justify-center ${
-                  s.active
-                    ? "text-(--status-success)"
-                    : "text-(--mock-fg-6)"
+                  s.active ? "text-(--status-success)" : "text-(--mock-fg-6)"
                 }`}
               >
                 {s.active ? (

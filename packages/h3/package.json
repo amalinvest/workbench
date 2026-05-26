@@ -1,0 +1,42 @@
+{
+  "name": "@getworkbench/h3",
+  "version": "0.4.0",
+  "description": "h3 adapter for Workbench — drop-in BullMQ dashboard for h3, Nitro, Nuxt, SolidStart, Analog.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@getworkbench/core": "workspace:*",
+    "h3": "^1.10.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "bullmq": "^5.71.1",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
+  },
+  "peerDependencies": {
+    "bullmq": ">=5.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

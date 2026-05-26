@@ -9,7 +9,12 @@
       "!**/.turbo",
       "!**/.next",
       "!**/.react-email",
-      "!**/.wrangler"
+      "!**/.wrangler",
+      "!**/.nuxt",
+      "!**/.output",
+      "!**/.astro",
+      "!apps/desktop/src-tauri/target",
+      "!apps/desktop/src-tauri/gen"
     ]
   },
   "css": {

@@ -1,0 +1,26 @@
+{
+  "name": "example-with-nuxt",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k -n web,worker -c cyan,magenta \"nuxt dev --port ${PORT:-3000}\" \"tsx watch scripts/worker.ts\"",
+    "web": "nuxt dev",
+    "worker": "tsx watch scripts/worker.ts",
+    "build": "nuxt build",
+    "preview": "nuxt preview",
+    "start": "concurrently -k -n web,worker -c cyan,magenta \"node .output/server/index.mjs\" \"tsx scripts/worker.ts\"",
+    "typecheck": "nuxt prepare && tsc --noEmit"
+  },
+  "dependencies": {
+    "@getworkbench/nuxt": "workspace:*",
+    "bullmq": "^5.71.1",
+    "nuxt": "^3.14.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "concurrently": "^9.1.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

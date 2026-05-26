@@ -1,0 +1,26 @@
+{
+  "name": "example-with-astro",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k -n web,worker -c cyan,magenta \"astro dev --port ${PORT:-3000}\" \"tsx watch src/worker.ts\"",
+    "web": "astro dev",
+    "worker": "tsx watch src/worker.ts",
+    "build": "astro build",
+    "start": "concurrently -k -n web,worker -c cyan,magenta \"node ./dist/server/entry.mjs\" \"tsx src/worker.ts\"",
+    "typecheck": "astro sync && tsc --noEmit"
+  },
+  "dependencies": {
+    "@astrojs/node": "^9.0.0",
+    "@getworkbench/astro": "workspace:*",
+    "astro": "^5.0.0",
+    "bullmq": "^5.71.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "concurrently": "^9.1.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

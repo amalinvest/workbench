@@ -18,13 +18,17 @@ import Image from "next/image";
 import { ActionButton } from "../components/action-button";
 import { CopyCommand } from "../components/copy-command";
 import {
+  AstroLogo,
+  BunLogo,
   ElysiaLogo,
   ExpressLogo,
   FastifyLogo,
+  H3Logo,
   HonoLogo,
-  HyperLogo,
+  KoaLogo,
   NestjsLogo,
   NextLogo,
+  NuxtLogo,
 } from "../components/logos";
 import {
   ErrorsMockup,
@@ -54,8 +58,10 @@ const INSTALL_COMMAND = "npx @getworkbench/cli init";
  * root, and linking to the framework's own site would send them away from
  * Workbench entirely.
  *
- * Hyper has no published adapter yet, so it falls back to the GitHub repo as a
- * placeholder.
+ * Order is intentional: the most popular adapters lead the strip so the first
+ * thing visible to a visitor (before the marquee rolls) is the framework they
+ * already use. The marquee loops continuously so every adapter eventually
+ * cycles into view regardless of starting position.
  */
 const NPM_BASE = "https://www.npmjs.com/package/@getworkbench";
 const npmAdapter = (slug: string) => ({
@@ -69,12 +75,11 @@ const frameworks = [
   { name: "Fastify", Logo: FastifyLogo, ...npmAdapter("fastify") },
   { name: "NestJS", Logo: NestjsLogo, ...npmAdapter("nestjs") },
   { name: "Next.js", Logo: NextLogo, ...npmAdapter("next") },
-  {
-    name: "Hyper",
-    Logo: HyperLogo,
-    href: GITHUB_URL,
-    title: "Hyper adapter — coming soon",
-  },
+  { name: "Koa", Logo: KoaLogo, ...npmAdapter("koa") },
+  { name: "Astro", Logo: AstroLogo, ...npmAdapter("astro") },
+  { name: "Nuxt", Logo: NuxtLogo, ...npmAdapter("nuxt") },
+  { name: "Bun", Logo: BunLogo, ...npmAdapter("bun") },
+  { name: "h3", Logo: H3Logo, ...npmAdapter("h3") },
 ];
 
 export default function Page() {
@@ -148,6 +153,12 @@ function Nav() {
         </span>
       </a>
       <div className="flex items-center gap-5 text-sm text-[color:var(--color-muted-foreground)] md:gap-6">
+        <a
+          href="/blog"
+          className="hidden transition hover:text-[color:var(--color-foreground)] md:inline"
+        >
+          Blog
+        </a>
         <a
           href={DOCS_URL}
           target="_blank"
@@ -241,23 +252,57 @@ function Hero() {
  * screenshot. Doubles as social proof and as a visual key to the framework
  * list referenced throughout the page, so we don't need a standalone band
  * lower down.
+ *
+ * The strip rolls continuously left-to-right via CSS transform. The trick to
+ * a seamless loop is rendering the framework list twice in a row and animating
+ * the track from `translateX(0)` to `translateX(-50%)` — at the loop point the
+ * second copy is exactly where the first started, so the jump is invisible.
+ *
+ * Each item carries its inter-item spacing as `margin-right` (rather than a
+ * flex `gap`) so the total layout width is a clean multiple of the per-item
+ * pitch, which is what makes the `-50%` translate land pixel-perfect on the
+ * second copy. With flex `gap` the boundary between the two copies skips one
+ * gap and the loop visibly stutters.
+ *
+ * Edges fade out via a mask so logos enter and exit smoothly instead of
+ * clipping at hard boundaries. Hover pauses the animation, and
+ * `prefers-reduced-motion` halts it entirely. Duplicate items are marked
+ * aria-hidden so screen readers only announce the framework list once.
  */
 function HeroFrameworks() {
   return (
-    <div className="mt-4 mb-14 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-[color:var(--color-foreground)]">
-      {frameworks.map(({ name, Logo, href, title }) => (
-        <a
-          key={name}
-          href={href}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center gap-1.5 opacity-70 transition hover:opacity-100"
-          title={title}
-        >
-          <Logo className="h-4 w-4" />
-          <span className="text-[12px] tracking-tight">{name}</span>
-        </a>
-      ))}
+    <div
+      className="hero-marquee mb-14 text-[color:var(--color-foreground)]"
+      aria-label="Works with these frameworks"
+    >
+      <div className="hero-marquee-track">
+        {frameworks.map(({ name, Logo, href, title }) => (
+          <a
+            key={`primary-${name}`}
+            href={href}
+            target="_blank"
+            rel="noreferrer"
+            className="hero-marquee-item inline-flex items-center gap-1.5 opacity-70 transition hover:opacity-100"
+            title={title}
+          >
+            <Logo className="h-4 w-4" />
+            <span className="text-[12px] tracking-tight">{name}</span>
+          </a>
+        ))}
+        {/* Visual duplicate so the loop is seamless. These are presentational
+            only — screen readers announce the framework list once via the
+            primary copy above, then ignore everything inside this group. */}
+        {frameworks.map(({ name, Logo }) => (
+          <span
+            key={`mirror-${name}`}
+            className="hero-marquee-item inline-flex items-center gap-1.5 opacity-70"
+            aria-hidden="true"
+          >
+            <Logo className="h-4 w-4" />
+            <span className="text-[12px] tracking-tight">{name}</span>
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
@@ -475,7 +520,7 @@ function InstallSection() {
           <InstallCard
             eyebrow="Embed"
             title="Drop into your Node app"
-            body="One command wires the dashboard into your existing server. Works with Hono, Elysia, Express, Fastify, NestJS, and Next.js — share the same Redis as your workers."
+            body="One command wires the dashboard into your existing server. Works with Hono, Elysia, Express, Fastify, NestJS, Next.js, Koa, Astro, Nuxt, Bun, and h3 — share the same Redis as your workers."
             action={<CopyCommand command={INSTALL_COMMAND} variant="button" />}
           />
         </div>

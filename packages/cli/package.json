@@ -1,6 +1,6 @@
 {
   "name": "@getworkbench/cli",
-  "version": "0.2.1",
+  "version": "0.4.0",
   "description": "One-command setup for Workbench — `npx @getworkbench/cli init`",
   "type": "module",
   "bin": {

@@ -32,6 +32,11 @@ const FRAMEWORK_LABEL: Record<Framework, string> = {
   fastify: "Fastify",
   next: "Next.js",
   nestjs: "NestJS",
+  koa: "Koa",
+  astro: "Astro",
+  nuxt: "Nuxt",
+  bun: "Bun.serve",
+  h3: "h3",
 };
 
 const FRAMEWORK_PACKAGE: Record<Framework, string> = {
@@ -41,6 +46,11 @@ const FRAMEWORK_PACKAGE: Record<Framework, string> = {
   fastify: "@getworkbench/fastify",
   next: "@getworkbench/next",
   nestjs: "@getworkbench/nestjs",
+  koa: "@getworkbench/koa",
+  astro: "@getworkbench/astro",
+  nuxt: "@getworkbench/nuxt",
+  bun: "@getworkbench/bun",
+  h3: "@getworkbench/h3",
 };
 
 export async function init(opts: InitOptions): Promise<void> {
@@ -72,7 +82,7 @@ export async function init(opts: InitOptions): Promise<void> {
   if (!detected) {
     log.warn(
       `Workbench ships adapters for ${pc.bold(
-        "Hono, Elysia, Express, Fastify, NestJS, and Next.js",
+        "Hono, Elysia, Express, Fastify, Koa, NestJS, Next.js, Astro, Nuxt, Bun.serve, and h3",
       )}. Add one of them to your project and re-run ${pc.cyan(
         "npx @getworkbench/cli init",
       )}.`,
@@ -323,6 +333,126 @@ function snippetFor(
         pc.dim(`    basePath: "${mountPath}",`),
         authLine,
         pc.dim("  });"),
+        "",
+        `Dashboard will be live at ${pc.cyan(`http://localhost:PORT${mountPath}`)}`,
+        `Docs & README: ${pc.cyan("https://getworkbench.dev")}`,
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+    case "koa":
+      return [
+        "Add your BullMQ queues to the middleware:",
+        "",
+        pc.dim('  import { workbench } from "@getworkbench/koa";'),
+        pc.dim("  app.use(workbench({"),
+        pc.dim("    queues: [/* your BullMQ Queue instances */],"),
+        pc.dim(`    basePath: "${mountPath}",`),
+        authLine,
+        pc.dim("  }));"),
+        "",
+        `Dashboard will be live at ${pc.cyan(`http://localhost:PORT${mountPath}`)}`,
+        `Docs & README: ${pc.cyan("https://getworkbench.dev")}`,
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+    case "astro":
+      return [
+        "Edit the scaffolded route file and add your BullMQ queues:",
+        "",
+        pc.dim(`  src/pages${mountPath}/[...workbench].ts`),
+        "",
+        pc.dim('  import { Queue } from "bullmq";'),
+        pc.dim('  import { workbench } from "@getworkbench/astro";'),
+        "",
+        pc.dim("  const queues = [/* your BullMQ Queue instances */];"),
+        "",
+        pc.dim(
+          "  export const { GET, POST, PUT, PATCH, DELETE, prerender } = workbench({",
+        ),
+        pc.dim("    queues,"),
+        pc.dim(`    basePath: "${mountPath}",`),
+        authLine,
+        pc.dim("  });"),
+        "",
+        pc.dim(
+          '  // Make sure astro.config.* sets `output: "server"` or `"hybrid"`.',
+        ),
+        "",
+        `Dashboard will be live at ${pc.cyan(`http://localhost:PORT${mountPath}`)}`,
+        `Docs & README: ${pc.cyan("https://getworkbench.dev")}`,
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+    case "nuxt":
+      return [
+        "Edit the scaffolded server route and add your BullMQ queues:",
+        "",
+        pc.dim(`  server/routes${mountPath}/[...].ts`),
+        "",
+        pc.dim('  import { Queue } from "bullmq";'),
+        pc.dim('  import { workbench } from "@getworkbench/nuxt";'),
+        "",
+        pc.dim("  const queues = [/* your BullMQ Queue instances */];"),
+        "",
+        pc.dim("  export default workbench({"),
+        pc.dim("    queues,"),
+        pc.dim(`    basePath: "${mountPath}",`),
+        authLine,
+        pc.dim("  });"),
+        "",
+        `Dashboard will be live at ${pc.cyan(`http://localhost:PORT${mountPath}`)}`,
+        `Docs & README: ${pc.cyan("https://getworkbench.dev")}`,
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+    case "bun":
+      return [
+        "Wire Workbench into your Bun.serve fetch handler:",
+        "",
+        pc.dim('  import { workbench } from "@getworkbench/bun";'),
+        "",
+        pc.dim("  const workbenchHandler = workbench({"),
+        pc.dim("    queues: [/* your BullMQ Queue instances */],"),
+        pc.dim(`    basePath: "${mountPath}",`),
+        authLine,
+        pc.dim("  });"),
+        "",
+        pc.dim("  Bun.serve({"),
+        pc.dim("    fetch(req) {"),
+        pc.dim(
+          "      return workbenchHandler(req, () => new Response('home'));",
+        ),
+        pc.dim("    },"),
+        pc.dim("  });"),
+        "",
+        `Dashboard will be live at ${pc.cyan(`http://localhost:PORT${mountPath}`)}`,
+        `Docs & README: ${pc.cyan("https://getworkbench.dev")}`,
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+    case "h3":
+      return [
+        "Add your BullMQ queues and register the handler at both mounts:",
+        "",
+        pc.dim('  import { workbench } from "@getworkbench/h3";'),
+        "",
+        pc.dim("  const workbenchHandler = workbench({"),
+        pc.dim("    queues: [/* your BullMQ Queue instances */],"),
+        pc.dim(`    basePath: "${mountPath}",`),
+        authLine,
+        pc.dim("  });"),
+        "",
+        pc.dim(`  app.use("${mountPath}", workbenchHandler);`),
+        pc.dim(`  app.use("${mountPath}/**", workbenchHandler);`),
+        "",
+        pc.dim(
+          `  // h3's \`**\` only matches one-or-more sub-segments, so both lines are needed.`,
+        ),
         "",
         `Dashboard will be live at ${pc.cyan(`http://localhost:PORT${mountPath}`)}`,
         `Docs & README: ${pc.cyan("https://getworkbench.dev")}`,

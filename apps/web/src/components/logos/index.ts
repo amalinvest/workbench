@@ -1,7 +1,12 @@
+export { AstroLogo } from "./astro";
+export { BunLogo } from "./bun";
 export { ElysiaLogo } from "./elysia";
 export { ExpressLogo } from "./express";
 export { FastifyLogo } from "./fastify";
+export { H3Logo } from "./h3";
 export { HonoLogo } from "./hono";
 export { HyperLogo } from "./hyper";
+export { KoaLogo } from "./koa";
 export { NestjsLogo } from "./nestjs";
 export { NextLogo } from "./next";
+export { NuxtLogo } from "./nuxt";

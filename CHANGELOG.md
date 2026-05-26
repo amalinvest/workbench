@@ -5,6 +5,27 @@ All notable changes to Workbench will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-05-26
+
+### Added
+
+- `@getworkbench/h3` — [h3](https://h3.unjs.io) adapter. Works for standalone h3 on Node as well as anything built on h3 (Nitro, Nuxt 3, SolidStart, Analog). Returns an `EventHandler`; register at both `/<mount>` and `/<mount>/**` because h3's `**` matches one-or-more sub-segments only.
+- `@getworkbench/nuxt` — Nuxt (Nitro / h3) adapter. Thin wrapper around `@getworkbench/h3` exposing a Nuxt-specific name and docs. CLI scaffolds the three-file pattern (`server/utils/workbench.ts` + `server/routes/<mount>.ts` + `server/routes/<mount>/[...].ts`) so both the bare prefix and the catch-all are covered.
+- `@getworkbench/koa` — Koa adapter. Returns a Koa middleware that does its own prefix matching based on `basePath` and falls through to `next()` for non-dashboard requests.
+- `@getworkbench/astro` — Astro adapter for `output: "server"` / `"hybrid"` apps. Place in a catch-all route file (`src/pages/<mount>/[...workbench].ts`) and re-export `{ GET, POST, PUT, PATCH, DELETE, prerender }`. Note: Astro 5's default `security.checkOrigin` CSRF protection blocks non-browser POST/PUT/DELETE on the dashboard route — disable it (or scope around the dashboard) in your `astro.config.*`.
+- `@getworkbench/bun` — `Bun.serve`-native adapter. Returns a fetch handler that drops straight into `Bun.serve({ fetch })`, with an optional `next` fallback so you can compose Workbench with your own routes.
+- CLI auto-detects Koa, Astro, Nuxt, Bun, and h3 projects. Koa entry files get a `app.use(workbench({...}))` injection; Astro and Nuxt scaffold catch-all route files; Bun rewrites the existing `Bun.serve({ fetch })` handler to consult the dashboard first; h3 wires `app.use("<mount>", handler)` + `app.use("<mount>/**", handler)` immediately before `createServer(...)`/`listen(...)`.
+- `examples/with-koa`, `examples/with-astro`, `examples/with-nuxt`, `examples/with-bun`, `examples/with-h3` — fully runnable, each with an in-process or sibling worker so the dashboard is never empty.
+- Smoke test entries for the five new examples (`bun run smoke koa astro nuxt bun h3`). The suite now also asserts `GET /config`, `POST /api/refresh` (write + CORS header), and an optional fall-through assertion (`spec.passthrough`) that catches adapter bugs where the dashboard accidentally swallows non-dashboard routes.
+- Marketing site (`apps/web`) gained a continuously-rolling "works with" framework strip in the hero that now cycles through all 11 official adapters (Hono, Elysia, Express, Fastify, NestJS, Next.js, Koa, Astro, Nuxt, Bun, h3). Single-color SVG icons live under `apps/web/src/components/logos/` and adapt to both themes.
+- New `/blog` section with 11 per-framework announcement posts (`/blog/bullmq-dashboard-for-<framework>`) and a dedicated `/blog/workbench-vs-bull-board` comparison. Every post is statically generated, ships a per-page Open Graph image rendered via `next/og` (Workbench × framework lockup), and emits JSON-LD `Article` schema for rich-result eligibility. `/sitemap.xml` and `/robots.txt` now expose the full URL set to search engines.
+- `hero.png` added to every published package README via `raw.githubusercontent.com` so npm and GitHub render the same hero across all 13 packages.
+
+### Changed
+
+- All 13 publishable packages (`@getworkbench/core`, `cli`, `hono`, `elysia`, `express`, `fastify`, `nestjs`, `next`, `koa`, `astro`, `nuxt`, `bun`, `h3`) are now versioned together at `0.4.0`. The CLI moves from `0.2.1` → `0.4.0` to line up with the rest of the surface.
+- `biome.json` excludes the Tauri build artefacts under `apps/desktop/src-tauri/{target,gen}` from linting. The directories are already gitignored; this stops `bun run lint` from picking them up when they exist locally.
+
 ## [0.3.2] - 2026-05-26
 
 ### Fixed

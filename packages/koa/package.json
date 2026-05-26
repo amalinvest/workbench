@@ -1,0 +1,44 @@
+{
+  "name": "@getworkbench/koa",
+  "version": "0.4.0",
+  "description": "Koa adapter for Workbench — drop-in BullMQ dashboard.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@getworkbench/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.15.0",
+    "@types/node": "^22.10.2",
+    "bullmq": "^5.71.1",
+    "koa": "^2.15.3",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
+  },
+  "peerDependencies": {
+    "bullmq": ">=5.0.0",
+    "koa": ">=2.14.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://getworkbench.dev">
+    <img src="https://raw.githubusercontent.com/pontusab/workbench/main/hero.png" alt="Workbench — the missing dashboard for BullMQ" />
+  </a>
+</p>
+
 # Workbench
 
 Open-source BullMQ dashboard. Drop-in for any Node or Bun backend.
@@ -5,7 +11,7 @@ Open-source BullMQ dashboard. Drop-in for any Node or Bun backend.
 Workbench is a modern dashboard for [BullMQ](https://docs.bullmq.io/). Runs jobs, flows, schedulers and metrics, all served from your own backend behind your own auth.
 
 - Zero infrastructure — mounts as a route in your existing app
-- Adapters for Hono, Elysia, Express, Fastify, NestJS, and Next.js
+- Adapters for Hono, Elysia, Express, Fastify, Koa, NestJS, Next.js, Astro, Nuxt, Bun.serve, and h3
 - Flows & DAG view, metrics, schedulers, search
 - Dark-mode UI, basic-auth-protected by default
 - MIT licensed
@@ -162,6 +168,134 @@ export const { GET, POST, PUT, PATCH, DELETE } = workbench({
 
 </details>
 
+<details>
+<summary><strong>Koa</strong></summary>
+
+```bash
+npm i @getworkbench/koa bullmq koa
+```
+
+```ts
+import Koa from "koa";
+import { Queue } from "bullmq";
+import { workbench } from "@getworkbench/koa";
+
+const app = new Koa();
+const emailQueue = new Queue("email", { connection: { url: process.env.REDIS_URL! } });
+
+app.use(workbench({ queues: [emailQueue], basePath: "/jobs" }));
+app.listen(3000);
+```
+
+> Koa has no built-in mount helper — pass `basePath` so the middleware can
+> match its own prefix and forward everything else to the next middleware.
+
+</details>
+
+<details>
+<summary><strong>Astro</strong></summary>
+
+```bash
+npm i @getworkbench/astro bullmq
+```
+
+```ts
+// src/pages/jobs/[...workbench].ts
+import { Queue } from "bullmq";
+import { workbench } from "@getworkbench/astro";
+
+const emailQueue = new Queue("email", { connection: { url: process.env.REDIS_URL! } });
+
+export const { GET, POST, PUT, PATCH, DELETE, prerender } = workbench({
+  queues: [emailQueue],
+  basePath: "/jobs",
+});
+```
+
+> Astro must be in server output mode (`output: "server"` or `"hybrid"`).
+> Astro doesn't host BullMQ workers itself — run them in a sibling process.
+> See [examples/with-astro](./examples/with-astro/).
+
+</details>
+
+<details>
+<summary><strong>Nuxt</strong></summary>
+
+```bash
+npm i @getworkbench/nuxt bullmq
+```
+
+```ts
+// server/routes/jobs/[...].ts
+import { Queue } from "bullmq";
+import { workbench } from "@getworkbench/nuxt";
+
+const emailQueue = new Queue("email", { connection: { url: process.env.REDIS_URL! } });
+
+export default workbench({
+  queues: [emailQueue],
+  basePath: "/jobs",
+});
+```
+
+> Nuxt's server runtime (Nitro / h3) doesn't host BullMQ workers itself —
+> run them in a sibling process. See [examples/with-nuxt](./examples/with-nuxt/).
+
+</details>
+
+<details>
+<summary><strong>Bun.serve</strong></summary>
+
+```bash
+bun add @getworkbench/bun bullmq
+```
+
+```ts
+import { Queue } from "bullmq";
+import { workbench } from "@getworkbench/bun";
+
+const emailQueue = new Queue("email", { connection: { url: process.env.REDIS_URL! } });
+
+const handler = workbench({ queues: [emailQueue], basePath: "/jobs" });
+
+Bun.serve({
+  port: 3000,
+  fetch(req) {
+    return handler(req, () => new Response("home"));
+  },
+});
+```
+
+</details>
+
+<details>
+<summary><strong>h3 (standalone — also for Nitro, SolidStart, Analog)</strong></summary>
+
+```bash
+npm i @getworkbench/h3 bullmq h3
+```
+
+```ts
+import { createServer } from "node:http";
+import { createApp, createRouter, toNodeListener } from "h3";
+import { Queue } from "bullmq";
+import { workbench } from "@getworkbench/h3";
+
+const emailQueue = new Queue("email", { connection: { url: process.env.REDIS_URL! } });
+
+const handler = workbench({ queues: [emailQueue], basePath: "/jobs" });
+
+const router = createRouter().use("/jobs", handler).use("/jobs/**", handler);
+const app = createApp().use(router);
+
+createServer(toNodeListener(app)).listen(3000);
+```
+
+> h3's `**` only matches one-or-more sub-segments, so register the handler
+> at both `/jobs` and `/jobs/**`.
+
+</details>
+
 Visit `http://localhost:PORT/jobs`.
 
 ## Configuration
@@ -172,7 +306,7 @@ Visit `http://localhost:PORT/jobs`.
 | `auth`     | `{ username, password }`            | Basic auth credentials. Strongly recommended in prod.      |
 | `title`    | `string`                            | Dashboard title. Default: `"Workbench"`.                   |
 | `logo`     | `string`                            | Logo URL to display in the nav.                            |
-| `basePath` | `string`                            | Override base path detection. Required for `@getworkbench/elysia` and `@getworkbench/next`. |
+| `basePath` | `string`                            | Override base path detection. Required for `@getworkbench/elysia`, `@getworkbench/koa`, `@getworkbench/next`, `@getworkbench/astro`, `@getworkbench/nuxt`, and `@getworkbench/h3`. |
 | `readonly` | `boolean`                           | Disable actions (retry, remove, promote).                  |
 | `tags`     | `string[]`                          | Fields from `job.data` to extract as filterable tags.      |
 
@@ -184,9 +318,14 @@ Visit `http://localhost:PORT/jobs`.
 | [`@getworkbench/hono`](./packages/hono)                                 | Hono adapter                 |
 | [`@getworkbench/elysia`](./packages/elysia)                             | Elysia adapter               |
 | [`@getworkbench/express`](./packages/express)                           | Express adapter              |
-| [`@getworkbench/fastify`](./packages/fastify)                           | Fastify adapter              |
+| [`@getworkbench/fastify`](./packages/fastify)                           | Fastify adapter               |
+| [`@getworkbench/koa`](./packages/koa)                                   | Koa adapter                  |
 | [`@getworkbench/nestjs`](./packages/nestjs)                             | NestJS adapter               |
 | [`@getworkbench/next`](./packages/next)                                 | Next.js App Router adapter   |
+| [`@getworkbench/astro`](./packages/astro)                               | Astro adapter                |
+| [`@getworkbench/nuxt`](./packages/nuxt)                                 | Nuxt (Nitro/h3) adapter      |
+| [`@getworkbench/h3`](./packages/h3)                                     | h3 adapter (Nitro/SolidStart/Analog) |
+| [`@getworkbench/bun`](./packages/bun)                                   | Bun.serve adapter            |
 | [`@getworkbench/cli`](./packages/cli)                                   | `npx @getworkbench/cli init` |
 
 [Hyper](https://hyperjs.ai) is distributed via a source-component registry, so its Workbench integration ships separately as a `hyper add @getworkbench` component in the [pontusab/hyper](https://github.com/pontusab/hyper) repo.
@@ -195,7 +334,7 @@ Visit `http://localhost:PORT/jobs`.
 
 **Is it BullMQ-only?** Yes. Bull (legacy) is not supported.
 
-**What Node version?** 18+ (or Bun 1.1+ for the Elysia adapter).
+**What Node version?** 18+ (or Bun 1.1+ for the Elysia and Bun.serve adapters).
 
 **What TypeScript version?** Any TypeScript 4.x or 5.x for the non-Hono adapters (Express, Fastify, NestJS, Next.js, Elysia) and `@getworkbench/core`. **`@getworkbench/hono` requires TypeScript 5.0+** because Hono 4's own bundled `.d.ts` uses `const` type parameters introduced in TS 5.0.
 
