@@ -102,6 +102,58 @@ export const COMPARISON_ROWS: ComparisonRow[] = [
 ];
 
 /**
+ * Q&A for the bull-board comparison post.
+ *
+ * Surfaced both as a visible "Frequently asked questions" section at the
+ * bottom of the post body *and* as `FAQPage` JSON-LD attached to the page.
+ * The visible/structured pair is what AI search engines actually reward:
+ * Google's spam policy requires the Q&A be visible if you mark it up, and
+ * Perplexity / ChatGPT extract the verbatim answers from JSON-LD when they
+ * cite the page.
+ *
+ * Answers are written as self-contained statements (40–80 words each) so
+ * they're directly quotable as a snippet without needing surrounding
+ * context — the same pattern as a featured-snippet answer block.
+ */
+export const COMPARISON_FAQ: Array<{ question: string; answer: string }> = [
+  {
+    question: "What is the best alternative to bull-board?",
+    answer:
+      "Workbench is the modern open-source alternative to bull-board for BullMQ. It ships first-party adapters for eleven Node.js frameworks (Hono, Elysia, Express, Fastify, NestJS, Next.js, Koa, Astro, Nuxt, Bun, and h3), adds a native macOS desktop app for local-first inspection, and includes FlowProducer DAG visualisation, error triage grouped by exception class, and a scheduler timeline — features bull-board does not ship out of the box.",
+  },
+  {
+    question: "Does Workbench work with the same BullMQ version as bull-board?",
+    answer:
+      "Yes. Workbench reads from the same Redis your workers already use, so it works with any BullMQ version that ships modern Queue and FlowProducer APIs. There is no separate Redis instance, no migration step, and no schema change — the dashboard simply attaches to your existing queues.",
+  },
+  {
+    question: "Is Workbench open source and free?",
+    answer:
+      "Workbench is MIT-licensed and free. Both the desktop app and every @getworkbench/* framework adapter are open source on GitHub at github.com/pontusab/workbench. There is no paid tier, no telemetry, and no account required.",
+  },
+  {
+    question: "Which frameworks does Workbench support?",
+    answer:
+      "Workbench ships first-party adapters for Hono, Elysia, Express, Fastify, NestJS, Next.js, Koa, Astro, Nuxt, Bun (Bun.serve), and h3. Each adapter is published as @getworkbench/<framework> on npm and ships with a runnable example in the monorepo. bull-board officially supports Express, Fastify, Hapi, and Koa.",
+  },
+  {
+    question: "How do I install Workbench in my existing Node.js app?",
+    answer:
+      "Run `npx @getworkbench/cli init` from your project root. The CLI auto-detects your framework, installs the matching @getworkbench/* adapter, and injects the mount call into your server bootstrap. Visit `/jobs` after restarting and the dashboard renders with every Queue you passed in.",
+  },
+  {
+    question: "How do I migrate from bull-board to Workbench?",
+    answer:
+      "Remove the @bull-board/* packages and the existing mount call, then run `npx @getworkbench/cli init`. Pass the same Queue instances you previously passed to bull-board. If you had basic auth in front of bull-board, the CLI offers to wire equivalent auth for Workbench. Migration is normally a five-minute change.",
+  },
+  {
+    question: "Does Workbench support FlowProducer and BullMQ Pro?",
+    answer:
+      "Yes. Workbench renders FlowProducer parent / child relationships as a real DAG (not a flat list), with per-node duration and status, and supports drilling into subtrees and replaying nodes. BullMQ Pro is supported in both the desktop app and the embedded server dashboard.",
+  },
+];
+
+/**
  * The "headline" trade-offs we surface in every framework announcement, in
  * one place so each post stays consistent and updates with the codebase.
  */

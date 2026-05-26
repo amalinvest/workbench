@@ -1,3 +1,4 @@
+import { COMPARISON_FAQ } from "./comparison";
 import { FRAMEWORK_ORDER, FRAMEWORKS } from "./frameworks";
 import {
   BullBoardComparisonBody,
@@ -70,6 +71,7 @@ const bullBoardPost: BlogPost = {
   eyebrow: "Comparison",
   heading: "Workbench vs Bull Board",
   lede: "Bull Board has been the default BullMQ dashboard for years. Here's an honest, evidence-backed look at where Workbench fits, where Bull Board still wins, and how to migrate if you decide to switch.",
+  faq: COMPARISON_FAQ,
   body: () => <BullBoardComparisonBody />,
 };
 

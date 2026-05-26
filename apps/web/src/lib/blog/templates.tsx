@@ -2,7 +2,11 @@ import Link from "next/link";
 import { CompareTable } from "../../components/blog/compare-table";
 import { CodeBlock, Prose } from "../../components/blog/prose";
 import { CopyCommand } from "../../components/copy-command";
-import { BULL_BOARD_HEADLINES, COMPARISON_ROWS } from "./comparison";
+import {
+  BULL_BOARD_HEADLINES,
+  COMPARISON_FAQ,
+  COMPARISON_ROWS,
+} from "./comparison";
 import type { FrameworkMeta } from "./types";
 
 /**
@@ -322,6 +326,29 @@ export function BullBoardComparisonBody() {
           </li>
         ))}
       </ol>
+
+      <SectionHeading>Frequently asked questions</SectionHeading>
+
+      {/*
+        The visible Q&A here is the same content emitted as `FAQPage` JSON-LD
+        in the post page. Both halves are required: Google's spam policy
+        forbids FAQ schema without the same content rendered on the page,
+        and Perplexity / ChatGPT / Claude extract verbatim answers from
+        JSON-LD when they cite the page. Keep COMPARISON_FAQ in sync with
+        whatever you actually want quoted in an AI answer.
+      */}
+      <dl className="not-prose my-6 divide-y divide-[color:var(--color-border)]/60 border-y border-[color:var(--color-border)]/60">
+        {COMPARISON_FAQ.map(({ question, answer }) => (
+          <div key={question} className="py-5">
+            <dt className="text-[15px] font-medium tracking-tight text-[color:var(--color-foreground)]">
+              {question}
+            </dt>
+            <dd className="mt-2 text-[14px] leading-relaxed text-[color:var(--color-muted-foreground)]">
+              {answer}
+            </dd>
+          </div>
+        ))}
+      </dl>
 
       <div className="not-prose mt-10 flex flex-col items-start gap-4 rounded-xl border border-[color:var(--color-border)] bg-[color:var(--color-muted)]/30 p-6 md:p-8">
         <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-[color:var(--color-muted-foreground)]">

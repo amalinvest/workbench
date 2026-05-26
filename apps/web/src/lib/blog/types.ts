@@ -34,6 +34,12 @@ export interface FrameworkMeta {
 
 export type PostCategory = "Announcement" | "Comparison" | "Guide";
 
+export interface FaqEntry {
+  question: string;
+  /** Plain-text answer; surfaced in the visible FAQ block and in FAQPage JSON-LD. */
+  answer: string;
+}
+
 export interface BlogPost {
   slug: string;
   /** Page <title>. Optimise for SEO; lead with the keyword. */
@@ -45,6 +51,11 @@ export interface BlogPost {
   category: PostCategory;
   /** ISO date string. */
   publishedAt: string;
+  /** Optional ISO date string for the last meaningful content update.
+   * Falls back to `publishedAt` if absent. Used for `dateModified` in the
+   * Article JSON-LD — LLM-based search weights recency heavily, so keeping
+   * this honest is what lets a refreshed post climb back into AI citations. */
+  updatedAt?: string;
   /** Short eyebrow shown above the H1 (e.g. "Now supported"). */
   eyebrow: string;
   /** H1 shown in the post hero. */
@@ -57,6 +68,17 @@ export interface BlogPost {
    * per-framework announcement.
    */
   framework?: FrameworkMeta;
+  /**
+   * Optional FAQ entries. When set, the post page emits a `FAQPage`
+   * JSON-LD block alongside the `Article` schema. Perplexity in particular
+   * favours pages with FAQ structured data (its citation rate jumps
+   * noticeably for FAQ-schema'd pages), and ChatGPT / Claude both extract
+   * Q&A pairs verbatim when they're available in JSON-LD. The body
+   * renderer is responsible for surfacing the same Q&A visibly on the
+   * page — `FAQPage` schema without the same content visible is a Google
+   * spam-policy violation.
+   */
+  faq?: FaqEntry[];
   /**
    * Body renderer. Returns JSX rather than markdown so we don't take a hard
    * dependency on MDX for this small library of posts. Each post owns its own

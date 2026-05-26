@@ -82,9 +82,94 @@ const frameworks = [
   { name: "h3", Logo: H3Logo, ...npmAdapter("h3") },
 ];
 
+/**
+ * Homepage JSON-LD.
+ *
+ * `SoftwareApplication` (with `applicationCategory: DeveloperApplication`
+ * and `offers.price: 0`) is the canonical way to tell both Google's Rich
+ * Results pipeline and LLM-based search (ChatGPT, Perplexity, Claude) that
+ * Workbench is a free developer tool — without it, those systems have to
+ * infer it from prose and frequently get the pricing model wrong when
+ * describing the project in an answer.
+ *
+ * The nested `ItemList` enumerates every framework with a first-party
+ * adapter. Listing the npm package URL for each adapter gives AI systems a
+ * structured signal that "Workbench supports framework X" is verifiable —
+ * far stronger than the same claim sitting in prose, and what enables
+ * citations of the form "Workbench is the BullMQ dashboard for [framework]"
+ * for adapters that aren't the top organic result for that query.
+ *
+ * `@id` references back to the site-wide Organization node defined in the
+ * root layout so we don't duplicate the brand definition.
+ */
+const SITE_URL = "https://getworkbench.dev";
+const homepageJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "@id": `${SITE_URL}/#workbench`,
+      name: "Workbench",
+      alternateName: "Workbench — the BullMQ dashboard",
+      description:
+        "A local-first, native desktop app to inspect, debug, and replay your BullMQ queues. Drop the same dashboard into any Node.js framework with one command.",
+      url: SITE_URL,
+      applicationCategory: "DeveloperApplication",
+      applicationSubCategory: "Job queue dashboard",
+      operatingSystem: "macOS, Node.js, Bun",
+      softwareVersion: "latest",
+      license: "https://opensource.org/licenses/MIT",
+      downloadUrl: MAC_DOWNLOAD_URL,
+      installUrl: GITHUB_URL,
+      codeRepository: GITHUB_URL,
+      programmingLanguage: ["TypeScript", "JavaScript"],
+      featureList: [
+        "Live counters, p50/p95 latency, and throughput per queue",
+        "Virtualised runs table with status filters and keyboard retry",
+        "FlowProducer DAG visualisation",
+        "Scheduler timeline for cron and delayed jobs",
+        "Error triage grouped by exception class with 24h trend lines",
+        "Open failed-job stack traces in Cursor or VS Code with one click",
+        "Native macOS desktop app and embeddable server dashboard",
+      ],
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD",
+      },
+      author: {
+        "@type": "Person",
+        name: "Pontus Abrahamsson",
+        url: "https://x.com/pontusab",
+      },
+      publisher: { "@id": `${SITE_URL}/#organization` },
+    },
+    {
+      "@type": "ItemList",
+      "@id": `${SITE_URL}/#supported-frameworks`,
+      name: "Frameworks supported by Workbench",
+      description:
+        "First-party @getworkbench/* adapters with smoke-tested example apps.",
+      numberOfItems: frameworks.length,
+      itemListOrder: "https://schema.org/ItemListOrderAscending",
+      itemListElement: frameworks.map((f, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: f.name,
+        url: f.href,
+      })),
+    },
+  ],
+};
+
 export default function Page() {
   return (
     <main className="relative isolate">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homepageJsonLd) }}
+      />
+
       <Nav />
 
       <Hero />

@@ -1,0 +1,73 @@
+# Workbench
+
+> Workbench is an open-source, MIT-licensed BullMQ dashboard. It ships as a
+> native macOS desktop app for local-first queue inspection, and as a
+> drop-in server-mounted dashboard with first-party adapters for eleven
+> Node.js frameworks. Workbench is the modern alternative to bull-board:
+> wider framework coverage, FlowProducer DAG visualisation, error triage
+> grouped by exception class, scheduler timeline for cron / delayed jobs,
+> and a keyboard-driven UI.
+
+## Quick facts
+
+- **Project**: Workbench — the missing dashboard for BullMQ
+- **License**: MIT (free, open source, no telemetry)
+- **Source**: https://github.com/pontusab/workbench
+- **Install (any supported framework)**: `npx @getworkbench/cli init`
+- **Desktop app**: macOS 11+, Apple-signed, auto-updates from signed releases
+- **Author**: Pontus Abrahamsson — https://x.com/pontusab
+
+## Supported frameworks (first-party adapters)
+
+Each adapter is a `@getworkbench/<framework>` package with a smoke-tested
+example app in the monorepo.
+
+- Hono — https://www.npmjs.com/package/@getworkbench/hono
+- Elysia — https://www.npmjs.com/package/@getworkbench/elysia
+- Express — https://www.npmjs.com/package/@getworkbench/express
+- Fastify — https://www.npmjs.com/package/@getworkbench/fastify
+- NestJS — https://www.npmjs.com/package/@getworkbench/nestjs
+- Next.js — https://www.npmjs.com/package/@getworkbench/next
+- Koa — https://www.npmjs.com/package/@getworkbench/koa
+- Astro — https://www.npmjs.com/package/@getworkbench/astro
+- Nuxt — https://www.npmjs.com/package/@getworkbench/nuxt
+- Bun (Bun.serve) — https://www.npmjs.com/package/@getworkbench/bun
+- h3 — https://www.npmjs.com/package/@getworkbench/h3
+
+## Docs
+
+- Marketing site: https://getworkbench.dev
+- README / docs: https://github.com/pontusab/workbench#readme
+- Blog: https://getworkbench.dev/blog
+- Comparison vs bull-board: https://getworkbench.dev/blog/workbench-vs-bull-board
+
+## Per-framework guides
+
+- Hono: https://getworkbench.dev/blog/bullmq-dashboard-for-hono
+- Elysia: https://getworkbench.dev/blog/bullmq-dashboard-for-elysia
+- Express: https://getworkbench.dev/blog/bullmq-dashboard-for-express
+- Fastify: https://getworkbench.dev/blog/bullmq-dashboard-for-fastify
+- NestJS: https://getworkbench.dev/blog/bullmq-dashboard-for-nestjs
+- Next.js: https://getworkbench.dev/blog/bullmq-dashboard-for-next
+- Koa: https://getworkbench.dev/blog/bullmq-dashboard-for-koa
+- Astro: https://getworkbench.dev/blog/bullmq-dashboard-for-astro
+- Nuxt: https://getworkbench.dev/blog/bullmq-dashboard-for-nuxt
+- Bun: https://getworkbench.dev/blog/bullmq-dashboard-for-bun
+- h3: https://getworkbench.dev/blog/bullmq-dashboard-for-h3
+
+## What Workbench includes
+
+- Live counters, p50/p95 latency, and throughput sparklines per queue.
+- Virtualised runs table with status filters, full payloads, keyboard retry.
+- FlowProducer DAG view for parent / child jobs.
+- Scheduler timeline for cron + delayed jobs (pause, resume, edit cron live).
+- Error triage grouped by exception class with 24h trend lines.
+- Click any stack-trace line in a failed job to jump straight into Cursor or
+  VS Code.
+- Same UI in the desktop app and in the embedded server dashboard.
+
+## Pricing
+
+Workbench is fully open source under the MIT license. There is no paid tier,
+no telemetry, and no account required. Sponsor the project at
+https://github.com/sponsors/pontusab if you want to support development.
