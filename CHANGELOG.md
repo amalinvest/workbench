@@ -5,6 +5,23 @@ All notable changes to Workbench will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-05-26
+
+### Added
+
+- **"Run now" for repeatable schedulers.** New per-row action on the Schedulers page that enqueues a one-off clone of a scheduler's job (same `name`, `data`, and `opts`) so it executes immediately, without touching the cron / `every` schedule. Modern schedulers (`upsertJobScheduler`) use the stored template; legacy repeatables (`queue.add(name, data, { repeat })`) fall back to cloning the next pending iteration so the real payload + options are preserved. Surfaces in the UI as a `Play` button → confirmation dialog → clickable "Triggered job `<id>`" link that opens the job detail view. Backed by new `QueueManager.runSchedulerNow(queue, key)` and `POST /schedulers/:queue/:key/run` (respects readonly mode). Integration-tested against Redis on BullMQ 5.77.3 for both scheduler styles. (Thanks [@emilnator](https://github.com/emilnator), [#10](https://github.com/pontusab/workbench/pull/10).)
+
+### Fixed
+
+- **`@getworkbench/core`** scheduler "Next Run" no longer renders as a malformed negative string. `formatRelativeTime` now detects future timestamps and formats them as `in Xs / Xm / Xh / Xd` (mirroring the existing `X ago` for past times), so a Next Run ~10h out shows `in 10h` instead of `-37022s ago`. Also rebalances the Delayed tab's 12-col grid (Job ID `2→3`, Executes `3→2`) so the time column lines up with the Repeatable tab's Next Run, and renames the column header from `Executes At` to `Executes` for the natural-reading "Executes in 10h". (Thanks [@emilnator](https://github.com/emilnator), [#12](https://github.com/pontusab/workbench/pull/12).)
+- **`@getworkbench/core`** Schedulers page's Delayed tab no longer mirrors the Repeatable tab. `getSchedulers()` skips delayed jobs that carry a `repeatJobKey` — BullMQ tags a scheduler's pending next-run with that key, while ad-hoc `queue.add(name, data, { delay })` jobs have none. The Delayed tab now shows only genuine ad-hoc delayed jobs; the `Delayed (N)` badge updates automatically. (Thanks [@emilnator](https://github.com/emilnator), [#11](https://github.com/pontusab/workbench/pull/11).)
+
+### Changed
+
+- **`@getworkbench/core`** migrated off BullMQ's deprecated `Queue.getRepeatableJobs()` to `Queue.getJobSchedulers()`. The new method is the only one in BullMQ v6 (where the old method is removed) and is what gives `runSchedulerNow` access to the scheduler `key` and stored `template`. The `SchedulerInfo.every` field is now passed through as-is from BullMQ instead of being coerced through `Number()` (the underlying type widened — coercion was redundant and lossy for object-shaped values).
+- All 12 publishable adapter packages (`@getworkbench/core`, `hono`, `elysia`, `express`, `fastify`, `nestjs`, `next`, `koa`, `astro`, `nuxt`, `bun`, `h3`) bump together to `0.5.0` to keep the lockstep `workspace:*` ranges valid. `@getworkbench/cli` stays at `0.4.0` — its public surface (command-line flags) hasn't changed.
+- Marketing site (`apps/web`) is now optimised for citation by AI search engines (ChatGPT, Perplexity, Claude, Gemini, Google AI Overviews). `robots.txt` explicitly allows `GPTBot`, `ChatGPT-User`, `OAI-SearchBot`, `PerplexityBot`, `ClaudeBot`, `anthropic-ai`, `Google-Extended`, `Bingbot`, and `Applebot-Extended`, and blocks `CCBot` (training-only). A new site-wide JSON-LD graph emits `Organization`, `WebSite`, and per-page `SoftwareApplication` (with `Offer` + `ItemList` of every framework adapter), and the blog posts now emit `TechArticle` / `Article` with named author attribution, `BreadcrumbList`, `dateModified`, and `FAQPage` schema on the bull-board comparison post. A new `/llms.txt` at the site root gives AI systems and autonomous agents a machine-readable summary of the project, license, and per-framework adapter URLs.
+
 ## [0.4.0] - 2026-05-26
 
 ### Added
