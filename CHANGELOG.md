@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `@getworkbench/core` `QueueManager.getJobsByTimeRange` no longer crashes with `TypeError: undefined is not an object (evaluating 'job.finishedOn')` when BullMQ returns `null`/`undefined` entries from `queue.getJobs()`. This affected the two fallback paths (missing Redis client, and the `catch` after a failed `ZRANGEBYSCORE`) and showed up as a 500 on `{basePath}/api/metrics` under real queue churn with `removeOnComplete`/`removeOnFail`. Stale entries are now filtered out before the timestamp comparison. Fixes [#5](https://github.com/pontusab/workbench/issues/5). (Thanks @Stormix, #6.)
+
 ### Added
 
 - BullMQ `prioritized` and `waiting-children` job states are now supported in queue and run filters, job fetching, counts, sidebar summaries, badges, flow nodes, and command palette status indicators. (Merged via #2 after 0.3.0 was published; will ship in the next release.)
