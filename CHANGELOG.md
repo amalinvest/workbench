@@ -5,20 +5,22 @@ All notable changes to Workbench will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.3.1] - 2026-05-26
 
 ### Fixed
 
-- `@getworkbench/core` `QueueManager.getJobsByTimeRange` no longer crashes with `TypeError: undefined is not an object (evaluating 'job.finishedOn')` when BullMQ returns `null`/`undefined` entries from `queue.getJobs()`. This affected the two fallback paths (missing Redis client, and the `catch` after a failed `ZRANGEBYSCORE`) and showed up as a 500 on `{basePath}/api/metrics` under real queue churn with `removeOnComplete`/`removeOnFail`. Stale entries are now filtered out before the timestamp comparison. Fixes [#5](https://github.com/pontusab/workbench/issues/5). (Thanks @Stormix, #6.)
-- Command palette (cmdk menu) now renders correctly in light mode. The Tailwind v4 `dark` variant is registered in `globals.css`, and the dialog surface, border, and selected-item state use light-mode-aware colors so highlighted items are visible. Previously the palette appeared the same as the dark mode sheet with no visible selection state when the app was in light mode. (Thanks @NoahGdev, #1.)
+- `@getworkbench/core` `QueueManager.getJobsByTimeRange` no longer crashes with `TypeError: undefined is not an object (evaluating 'job.finishedOn')` when BullMQ returns `null`/`undefined` entries from `queue.getJobs()`. This affected the two fallback paths (missing Redis client, and the `catch` after a failed `ZRANGEBYSCORE`) and showed up as a 500 on `{basePath}/api/metrics` under real queue churn with `removeOnComplete`/`removeOnFail`. Stale entries are now filtered out before the timestamp comparison. Fixes [#5](https://github.com/pontusab/workbench/issues/5). (Thanks [@Stormix](https://github.com/Stormix), [#6](https://github.com/pontusab/workbench/pull/6).)
+- "Enqueue test job" from the dashboard no longer hits a 400 from the backend. The frontend payload now matches the API's `TestJobRequest` shape (`{ queueName, jobName, data, opts: { delay } }`) instead of sending `{ queueName, name, data, delay }`. (Thanks [@goyalshivansh2805](https://github.com/goyalshivansh2805), [#4](https://github.com/pontusab/workbench/pull/4).)
+- Command palette (cmdk menu) now renders correctly in light mode. The Tailwind v4 `dark` variant is registered in `globals.css`, and the dialog surface, border, and selected-item state use light-mode-aware colors so highlighted items are visible. Previously the palette appeared the same as the dark mode sheet with no visible selection state when the app was in light mode. (Thanks [@NoahGdev](https://github.com/NoahGdev), [#1](https://github.com/pontusab/workbench/pull/1).)
 
 ### Added
 
-- BullMQ `prioritized` and `waiting-children` job states are now supported in queue and run filters, job fetching, counts, sidebar summaries, badges, flow nodes, and command palette status indicators. (Merged via #2 after 0.3.0 was published; will ship in the next release.)
+- BullMQ `prioritized` and `waiting-children` job states are now supported in queue and run filters, job fetching, counts, sidebar summaries, badges, flow nodes, and command palette status indicators. (Thanks [@phibr0](https://github.com/phibr0), [#2](https://github.com/pontusab/workbench/pull/2).)
 
 ### Changed
 
-- Job status UI ordering.
+- Job status UI ordering, alongside the `prioritized` / `waiting-children` additions above.
+- Every adapter's `tsup.config.ts` now has `clean: true`, so stale hashed chunk artifacts no longer linger in `dist/` between rebuilds. The `@getworkbench/core@0.3.0` tarball shipped one such unreferenced 19 KB `.d.ts` chunk; 0.3.1 ships a clean dist.
 
 ## [0.3.0] - 2026-05-26
 
