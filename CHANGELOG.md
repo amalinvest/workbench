@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - `@getworkbench/core` `QueueManager.getJobsByTimeRange` no longer crashes with `TypeError: undefined is not an object (evaluating 'job.finishedOn')` when BullMQ returns `null`/`undefined` entries from `queue.getJobs()`. This affected the two fallback paths (missing Redis client, and the `catch` after a failed `ZRANGEBYSCORE`) and showed up as a 500 on `{basePath}/api/metrics` under real queue churn with `removeOnComplete`/`removeOnFail`. Stale entries are now filtered out before the timestamp comparison. Fixes [#5](https://github.com/pontusab/workbench/issues/5). (Thanks @Stormix, #6.)
+- Command palette (cmdk menu) now renders correctly in light mode. The Tailwind v4 `dark` variant is registered in `globals.css`, and the dialog surface, border, and selected-item state use light-mode-aware colors so highlighted items are visible. Previously the palette appeared the same as the dark mode sheet with no visible selection state when the app was in light mode. (Thanks @NoahGdev, #1.)
 
 ### Added
 
