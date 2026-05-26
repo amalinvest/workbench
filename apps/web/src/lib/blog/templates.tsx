@@ -7,6 +7,7 @@ import {
   COMPARISON_FAQ,
   COMPARISON_ROWS,
 } from "./comparison";
+import { MCP_FAQ } from "./mcp";
 import type { FrameworkMeta } from "./types";
 
 /**
@@ -358,6 +359,347 @@ export function BullBoardComparisonBody() {
           One command, eleven frameworks.
         </div>
         <CopyCommand command={cmd} variant="button" />
+      </div>
+    </Prose>
+  );
+}
+
+/**
+ * Body for the @getworkbench/mcp launch post.
+ *
+ * Conceptually the same shape as the framework announcement template
+ * (intro → install → what-you-get → why-it-matters → FAQ → CTA) but the
+ * "install" surface is an MCP-client JSON config rather than a server
+ * mount snippet, and "what you get" enumerates the 18 tools the MCP
+ * exposes grouped by intent (inspect vs operate) so the LLM reading this
+ * page can also use it as a reference card for the package itself.
+ *
+ * Like every other AI-SEO-tuned post, the FAQ block at the bottom is
+ * what the page-level `FAQPage` JSON-LD points at — both halves must be
+ * present and identical for the schema to be valid under Google's policy.
+ */
+export function McpAnnouncementBody() {
+  const packageUrl = "https://www.npmjs.com/package/@getworkbench/mcp";
+  const readmeUrl =
+    "https://github.com/pontusab/workbench/tree/main/packages/mcp#readme";
+
+  // Single source of truth for the JSON-RPC config block — kept here
+  // rather than in a constants file because no other post needs it.
+  const cursorConfig = `{
+  "mcpServers": {
+    "workbench": {
+      "command": "npx",
+      "args": ["-y", "@getworkbench/mcp"],
+      "env": {
+        "WORKBENCH_URL": "http://localhost:3000/jobs",
+        "WORKBENCH_USERNAME": "admin",
+        "WORKBENCH_PASSWORD": "hunter2"
+      }
+    }
+  }
+}`;
+
+  const inspectTools = [
+    {
+      name: "workbench_get_overview",
+      what: "Per-queue snapshot — names, paused state, count summary.",
+    },
+    {
+      name: "workbench_list_queues",
+      what: "Queues with full per-status counts.",
+    },
+    {
+      name: "workbench_get_quick_counts",
+      what: "Lightweight counts, cheap for polling.",
+    },
+    {
+      name: "workbench_get_metrics",
+      what: "Per-queue p50 / p95 latency and throughput.",
+    },
+    {
+      name: "workbench_get_activity",
+      what: "24h completed / failed buckets for the activity heatmap.",
+    },
+    {
+      name: "workbench_list_jobs",
+      what: "Jobs in a queue, status-filtered, paginated.",
+    },
+    {
+      name: "workbench_list_runs",
+      what: "Cross-queue runs with text, status, time, and tag filters.",
+    },
+    {
+      name: "workbench_get_job",
+      what: "Full payload + attempts + stack trace for one job.",
+    },
+    {
+      name: "workbench_search_jobs",
+      what: "Free-text search across job ids, names, and indexed tag values.",
+    },
+    {
+      name: "workbench_list_schedulers",
+      what: "Repeatable + delayed scheduler entries.",
+    },
+    {
+      name: "workbench_list_flows",
+      what: "Recent FlowProducer roots.",
+    },
+    {
+      name: "workbench_get_flow",
+      what: "Full DAG for a FlowProducer flow.",
+    },
+    {
+      name: "workbench_list_tag_values",
+      what: "Distinct values for a configured tag field.",
+    },
+  ];
+
+  const operateTools = [
+    { name: "workbench_retry_job", what: "Retry a single failed job." },
+    { name: "workbench_remove_job", what: "Delete a job (any state)." },
+    { name: "workbench_promote_job", what: "Force a delayed job to run now." },
+    { name: "workbench_pause_queue", what: "Pause a queue." },
+    { name: "workbench_resume_queue", what: "Resume a paused queue." },
+    {
+      name: "workbench_run_scheduler_now",
+      what: "One-off trigger for a repeatable scheduler.",
+    },
+    { name: "workbench_enqueue_job", what: "Add a new job to a queue." },
+    {
+      name: "workbench_clean_jobs",
+      what: "Bulk-remove completed or failed jobs.",
+    },
+    {
+      name: "workbench_bulk_retry",
+      what: "Retry many failed jobs in one call.",
+    },
+    {
+      name: "workbench_bulk_delete",
+      what: "Delete many jobs in one call.",
+    },
+  ];
+
+  return (
+    <Prose>
+      <p>
+        Workbench 0.5.1 ships{" "}
+        <a
+          href={packageUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="underline decoration-[color:var(--color-border)] decoration-1 underline-offset-[6px] hover:decoration-[color:var(--color-foreground)]"
+        >
+          <Code>@getworkbench/mcp</Code>
+        </a>{" "}
+        — a{" "}
+        <a
+          href="https://modelcontextprotocol.io"
+          target="_blank"
+          rel="noreferrer"
+          className="underline decoration-[color:var(--color-border)] decoration-1 underline-offset-[6px] hover:decoration-[color:var(--color-foreground)]"
+        >
+          Model Context Protocol
+        </a>{" "}
+        server that lets Cursor, Claude Desktop, Zed, Continue.dev, and any
+        other MCP-aware agent see, debug, and operate your BullMQ queues from
+        the same chat box you already use for code.
+      </p>
+
+      <p>
+        Workbench already gives developers a beautiful BullMQ dashboard. The MCP
+        gives <em>agents</em> the same surface. Same data, same operations, same
+        permissions — but reachable from your editor.
+      </p>
+
+      <SectionHeading>What it lets the agent do</SectionHeading>
+
+      <p>Real prompts the MCP unlocks today:</p>
+
+      <ul className="not-prose my-6 space-y-2 pl-0">
+        {[
+          "“Why is email-send backed up?” — the agent calls workbench_get_metrics, sees p95 latency spiked at 14:02, calls workbench_list_runs with status=failed and from=14:00, finds the regression in the stack trace.",
+          "“Retry every failed webhook-deliver from the last hour.” — workbench_list_runs then workbench_bulk_retry.",
+          "“Run the nightly billing scheduler now so I can verify the fix.” — workbench_list_schedulers then workbench_run_scheduler_now, the one-off trigger added in Workbench 0.5.0.",
+        ].map((item) => (
+          <li key={item} className="flex gap-3">
+            <span className="mt-2 inline-block h-1 w-1 shrink-0 rounded-full bg-[color:var(--color-foreground)]/60" />
+            <span className="text-[15px] leading-relaxed">{item}</span>
+          </li>
+        ))}
+      </ul>
+
+      <SectionHeading>Install in 30 seconds</SectionHeading>
+
+      <p>
+        The MCP is a tiny <Code>npx</Code>-runnable binary — no global install,
+        no port to manage. In Cursor, drop the following into{" "}
+        <Code>~/.cursor/mcp.json</Code>:
+      </p>
+
+      <CodeBlock code={cursorConfig} language="json" />
+
+      <p>
+        Restart Cursor and the 18 <Code>workbench_*</Code> tools appear in the
+        chat. The same pattern works for Claude Desktop, Zed, and Continue.dev
+        with their respective config paths — full snippets for each editor live
+        in the{" "}
+        <a
+          href={readmeUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="underline decoration-[color:var(--color-border)] decoration-1 underline-offset-[6px] hover:decoration-[color:var(--color-foreground)]"
+        >
+          package README
+        </a>
+        .
+      </p>
+
+      <p>
+        Only one env var is required: <Code>WORKBENCH_URL</Code>, pointing at
+        the URL where you&apos;d open the dashboard in a browser.{" "}
+        <Code>WORKBENCH_USERNAME</Code> + <Code>WORKBENCH_PASSWORD</Code> (or{" "}
+        <Code>WORKBENCH_TOKEN</Code>) cover the same Basic Auth your dashboard
+        was started with.
+      </p>
+
+      <SectionHeading>The 18 tools</SectionHeading>
+
+      <p>
+        Tools are grouped by intent and annotated so MCP clients know how to
+        gate them. Inspect tools are tagged <Code>readOnlyHint: true</Code> so
+        clients like Cursor can auto-approve them; operate tools are tagged{" "}
+        <Code>destructiveHint: true</Code> so the user is prompted before each
+        call.
+      </p>
+
+      <h3 className="mt-8 mb-3 text-base font-medium tracking-tight text-[color:var(--color-muted-foreground)]">
+        Inspect (read-only)
+      </h3>
+
+      <dl className="not-prose my-4 divide-y divide-[color:var(--color-border)]/40 border-y border-[color:var(--color-border)]/40">
+        {inspectTools.map(({ name, what }) => (
+          <div
+            key={name}
+            className="flex flex-col gap-1 py-3 md:flex-row md:gap-6"
+          >
+            <dt className="font-mono text-[13px] text-[color:var(--color-foreground)] md:w-72 md:shrink-0">
+              {name}
+            </dt>
+            <dd className="text-[14px] leading-relaxed text-[color:var(--color-muted-foreground)]">
+              {what}
+            </dd>
+          </div>
+        ))}
+      </dl>
+
+      <h3 className="mt-8 mb-3 text-base font-medium tracking-tight text-[color:var(--color-muted-foreground)]">
+        Operate (gated, prompts the user)
+      </h3>
+
+      <dl className="not-prose my-4 divide-y divide-[color:var(--color-border)]/40 border-y border-[color:var(--color-border)]/40">
+        {operateTools.map(({ name, what }) => (
+          <div
+            key={name}
+            className="flex flex-col gap-1 py-3 md:flex-row md:gap-6"
+          >
+            <dt className="font-mono text-[13px] text-[color:var(--color-foreground)] md:w-72 md:shrink-0">
+              {name}
+            </dt>
+            <dd className="text-[14px] leading-relaxed text-[color:var(--color-muted-foreground)]">
+              {what}
+            </dd>
+          </div>
+        ))}
+      </dl>
+
+      <SectionHeading>How it works</SectionHeading>
+
+      <p>
+        The MCP is deliberately not a second connection to Redis. It speaks
+        JSON-RPC over stdio to your editor (the standard MCP transport, what
+        every client in the wild expects) and HTTP to your running Workbench
+        dashboard — the dashboard is the one that owns the Redis connection, the
+        auth, the readonly flag, and the queue config.
+      </p>
+
+      <pre className="not-prose my-6 overflow-x-auto rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-muted)]/30 p-5 font-mono text-[12px] leading-relaxed text-[color:var(--color-muted-foreground)]">
+        {`Cursor / Claude / Zed / Continue ─┐
+                                         │  JSON-RPC (stdio)
+                                         ▼
+                                workbench-mcp
+                                         │  HTTP + Basic Auth
+                                         ▼
+                              Workbench dashboard
+                                         │  ioredis
+                                         ▼
+                                   Redis / BullMQ`}
+      </pre>
+
+      <p>
+        That layering is the whole point of shipping this as an optional,
+        separate package: no second source of truth for permissions, no parallel
+        Redis pool to keep in sync, no duplicated business logic. If your
+        dashboard is in <Code>readonly: true</Code>, every write tool returns a
+        403 the agent can show you verbatim instead of silently mutating
+        production.
+      </p>
+
+      <SectionHeading>
+        Auth and readonly are inherited end-to-end
+      </SectionHeading>
+
+      <p>
+        For unattended agents, run the dashboard with{" "}
+        <Code>readonly: true</Code> and pass the MCP the same Basic Auth
+        credentials. Every operate tool will refuse cleanly with an actionable
+        error message; every inspect tool keeps working. For regular use, leave
+        the dashboard as you already have it — the MCP will prompt before any
+        destructive call thanks to the <Code>destructiveHint</Code> annotation.
+      </p>
+
+      <SectionHeading>Frequently asked questions</SectionHeading>
+
+      {/*
+        Mirror of the FAQPage JSON-LD emitted on the post page. Both
+        halves must be present and identical: Google's spam policy
+        rejects FAQ schema without visible Q&A, and Perplexity / ChatGPT
+        / Claude lift verbatim answers from the JSON-LD when they cite.
+        Keep MCP_FAQ in sync with whatever you actually want quoted.
+      */}
+      <dl className="not-prose my-6 divide-y divide-[color:var(--color-border)]/60 border-y border-[color:var(--color-border)]/60">
+        {MCP_FAQ.map(({ question, answer }) => (
+          <div key={question} className="py-5">
+            <dt className="text-[15px] font-medium tracking-tight text-[color:var(--color-foreground)]">
+              {question}
+            </dt>
+            <dd className="mt-2 text-[14px] leading-relaxed text-[color:var(--color-muted-foreground)]">
+              {answer}
+            </dd>
+          </div>
+        ))}
+      </dl>
+
+      <div className="not-prose mt-10 flex flex-col items-start gap-4 rounded-xl border border-[color:var(--color-border)] bg-[color:var(--color-muted)]/30 p-6 md:p-8">
+        <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-[color:var(--color-muted-foreground)]">
+          Try it
+        </div>
+        <div className="text-xl font-semibold tracking-tight md:text-2xl">
+          Bring your queues into your editor.
+        </div>
+        <CopyCommand command="npx -y @getworkbench/mcp" variant="button" />
+        <div className="text-[13px] text-[color:var(--color-muted-foreground)]">
+          Full setup snippets for Cursor, Claude Desktop, Zed, and Continue.dev
+          in the{" "}
+          <a
+            href={readmeUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="underline decoration-[color:var(--color-border)] decoration-1 underline-offset-[6px] hover:decoration-[color:var(--color-foreground)]"
+          >
+            package README
+          </a>
+          .
+        </div>
       </div>
     </Prose>
   );

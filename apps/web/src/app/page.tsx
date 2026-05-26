@@ -130,6 +130,7 @@ const homepageJsonLd = {
         "Error triage grouped by exception class with 24h trend lines",
         "Open failed-job stack traces in Cursor or VS Code with one click",
         "Native macOS desktop app and embeddable server dashboard",
+        "MCP server for Cursor, Claude Desktop, Zed, and Continue.dev",
       ],
       offers: {
         "@type": "Offer",
@@ -157,6 +158,27 @@ const homepageJsonLd = {
         name: f.name,
         url: f.href,
       })),
+    },
+    {
+      // Kept separate from #supported-frameworks because MCP isn't a
+      // framework adapter — it's a different product axis (drive the
+      // dashboard from an AI agent vs mount the dashboard in a server).
+      // Folding it into the framework list would make Schema.org consumers
+      // mis-categorise Cursor / Claude Desktop as "Node.js frameworks".
+      "@type": "ItemList",
+      "@id": `${SITE_URL}/#ai-integrations`,
+      name: "AI agent integrations for Workbench",
+      description:
+        "MCP servers and AI tooling for driving Workbench from agents like Cursor, Claude Desktop, Zed, and Continue.dev.",
+      numberOfItems: 1,
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "@getworkbench/mcp — Model Context Protocol server",
+          url: "https://www.npmjs.com/package/@getworkbench/mcp",
+        },
+      ],
     },
   ],
 };

@@ -12,6 +12,7 @@ Workbench is a modern dashboard for [BullMQ](https://docs.bullmq.io/). Runs jobs
 
 - Zero infrastructure — mounts as a route in your existing app
 - Adapters for Hono, Elysia, Express, Fastify, Koa, NestJS, Next.js, Astro, Nuxt, Bun.serve, and h3
+- MCP server for Cursor, Claude Desktop, Zed, and Continue.dev — drive your queues from your editor's chat
 - Flows & DAG view, metrics, schedulers, search
 - Dark-mode UI, basic-auth-protected by default
 - MIT licensed
@@ -327,6 +328,7 @@ Visit `http://localhost:PORT/jobs`.
 | [`@getworkbench/h3`](./packages/h3)                                     | h3 adapter (Nitro/SolidStart/Analog) |
 | [`@getworkbench/bun`](./packages/bun)                                   | Bun.serve adapter            |
 | [`@getworkbench/cli`](./packages/cli)                                   | `npx @getworkbench/cli init` |
+| [`@getworkbench/mcp`](./packages/mcp)                                   | Model Context Protocol server — Cursor/Claude/Zed/Continue |
 
 [Hyper](https://hyperjs.ai) is distributed via a source-component registry, so its Workbench integration ships separately as a `hyper add @getworkbench` component in the [pontusab/hyper](https://github.com/pontusab/hyper) repo.
 

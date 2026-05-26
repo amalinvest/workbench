@@ -32,7 +32,11 @@ export interface FrameworkMeta {
   Logo: LogoComponent;
 }
 
-export type PostCategory = "Announcement" | "Comparison" | "Guide";
+export type PostCategory =
+  | "Announcement"
+  | "Comparison"
+  | "Guide"
+  | "Integration";
 
 export interface FaqEntry {
   question: string;

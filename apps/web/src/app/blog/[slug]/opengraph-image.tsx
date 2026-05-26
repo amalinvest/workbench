@@ -46,6 +46,12 @@ export default async function OgImage({
   const border = "#262626";
 
   const Logo = post.framework?.Logo;
+  // Slug-driven branch for posts that aren't tied to a framework but
+  // still want a "W × X" lockup in the OG image. Today this is just the
+  // MCP launch post; if we add more standalone posts (e.g. a future Hyper
+  // post that needs its own mark) we can extend this lookup rather than
+  // forcing them through the `framework` shape.
+  const isMcpPost = slug === "bullmq-mcp-server";
 
   return new ImageResponse(
     <div
@@ -110,7 +116,7 @@ export default async function OgImage({
       <div
         style={{ display: "flex", flexDirection: "column", marginTop: "auto" }}
       >
-        {Logo && (
+        {(Logo || isMcpPost) && (
           <div
             style={{
               display: "flex",
@@ -141,8 +147,42 @@ export default async function OgImage({
               ×
             </span>
             <Tile>
-              <Logo width={72} height={72} style={{ color: fg }} />
+              {Logo ? (
+                <Logo width={72} height={72} style={{ color: fg }} />
+              ) : (
+                // MCP wordmark — kept inline so we don't drag a new logo
+                // file in for a single use site. The protocol doesn't have
+                // a widely-recognised glyph; the literal letters are the
+                // most legible thing at OG-thumbnail scale.
+                <span
+                  style={{
+                    fontSize: 44,
+                    fontWeight: 700,
+                    color: fg,
+                    letterSpacing: -1.5,
+                    fontFamily:
+                      "ui-monospace, SFMono-Regular, Menlo, monospace",
+                  }}
+                >
+                  MCP
+                </span>
+              )}
             </Tile>
+          </div>
+        )}
+
+        {isMcpPost && (
+          <div
+            style={{
+              marginBottom: 24,
+              fontSize: 16,
+              color: muted,
+              fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+              letterSpacing: 1.5,
+              textTransform: "uppercase",
+            }}
+          >
+            Model Context Protocol server
           </div>
         )}
 

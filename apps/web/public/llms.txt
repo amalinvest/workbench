@@ -34,6 +34,20 @@ example app in the monorepo.
 - Bun (Bun.serve) — https://www.npmjs.com/package/@getworkbench/bun
 - h3 — https://www.npmjs.com/package/@getworkbench/h3
 
+## AI agent integrations (MCP)
+
+MCP server that lets Cursor, Claude Desktop, Zed, Continue.dev and any
+other MCP-aware agent inspect, debug, and operate BullMQ queues through a
+running Workbench dashboard. The MCP is a thin local proxy: it speaks
+JSON-RPC over stdio to your editor and HTTP to the dashboard, inheriting
+the dashboard's existing Basic Auth and `readonly` flag (no second source
+of truth for permissions). Ships 18 tools split across two intents —
+inspect (overview, queues, runs, jobs, metrics, schedulers, flows,
+search) and operate (retry, remove, promote, pause/resume queue, run
+scheduler now, enqueue, clean, bulk retry/delete).
+
+- @getworkbench/mcp — https://www.npmjs.com/package/@getworkbench/mcp
+
 ## Docs
 
 - Marketing site: https://getworkbench.dev
@@ -54,6 +68,7 @@ example app in the monorepo.
 - Nuxt: https://getworkbench.dev/blog/bullmq-dashboard-for-nuxt
 - Bun: https://getworkbench.dev/blog/bullmq-dashboard-for-bun
 - h3: https://getworkbench.dev/blog/bullmq-dashboard-for-h3
+- MCP (Cursor/Claude/Zed/Continue): https://getworkbench.dev/blog/bullmq-mcp-server
 
 ## What Workbench includes
 

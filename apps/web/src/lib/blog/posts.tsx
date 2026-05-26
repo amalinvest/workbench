@@ -1,8 +1,10 @@
 import { COMPARISON_FAQ } from "./comparison";
 import { FRAMEWORK_ORDER, FRAMEWORKS } from "./frameworks";
+import { MCP_FAQ } from "./mcp";
 import {
   BullBoardComparisonBody,
   FrameworkAnnouncementBody,
+  McpAnnouncementBody,
 } from "./templates";
 import type { BlogPost } from "./types";
 
@@ -75,7 +77,44 @@ const bullBoardPost: BlogPost = {
   body: () => <BullBoardComparisonBody />,
 };
 
-export const POSTS: BlogPost[] = [bullBoardPost, ...frameworkPosts];
+/**
+ * Launch post for `@getworkbench/mcp` (the AI-agent MCP server).
+ *
+ * Modelled on `bullBoardPost` (standalone, no `framework`) rather than the
+ * per-framework template — MCP isn't a framework adapter, it's a different
+ * product axis (drive Workbench from an agent vs mount Workbench in a
+ * server). Slug matches the literal phrase developers search for
+ * ("bullmq mcp server" / "mcp server bullmq").
+ *
+ * Lives ahead of the bull-board post in `POSTS` so it leads the /blog
+ * index — it's the freshest launch as of 0.5.1.
+ */
+const mcpPost: BlogPost = {
+  slug: "bullmq-mcp-server",
+  title: "BullMQ in your editor — the Workbench MCP server",
+  description:
+    "Workbench now ships @getworkbench/mcp — a Model Context Protocol server that lets Cursor, Claude Desktop, Zed, and Continue.dev inspect, debug, and operate your BullMQ queues from your editor's chat.",
+  keywords: [
+    "bullmq mcp",
+    "mcp server bullmq",
+    "cursor bullmq",
+    "claude desktop bullmq",
+    "zed bullmq",
+    "continue.dev bullmq",
+    "model context protocol bullmq",
+    "ai bullmq dashboard",
+    "ai job queue",
+  ],
+  category: "Integration",
+  publishedAt: FRAMEWORK_ANNOUNCEMENT_DATE,
+  eyebrow: "New integration",
+  heading: "Drive BullMQ from your editor",
+  lede: "Workbench 0.5.1 ships @getworkbench/mcp — a Model Context Protocol server that lets Cursor, Claude Desktop, Zed, and Continue.dev see, debug, and operate your BullMQ queues from the same chat box you already use for code.",
+  faq: MCP_FAQ,
+  body: () => <McpAnnouncementBody />,
+};
+
+export const POSTS: BlogPost[] = [mcpPost, bullBoardPost, ...frameworkPosts];
 
 export function getPost(slug: string): BlogPost | undefined {
   return POSTS.find((p) => p.slug === slug);
