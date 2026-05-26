@@ -1,7 +1,6 @@
 import {
   Activity,
   AlertCircle,
-  ArrowRight,
   BarChart3,
   Clock,
   Code,

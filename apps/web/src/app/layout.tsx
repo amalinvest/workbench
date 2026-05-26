@@ -101,10 +101,7 @@ const siteJsonLd = {
         "@type": "Person",
         name: "Pontus Abrahamsson",
         url: "https://x.com/pontusab",
-        sameAs: [
-          "https://x.com/pontusab",
-          "https://github.com/pontusab",
-        ],
+        sameAs: ["https://x.com/pontusab", "https://github.com/pontusab"],
       },
     },
     {

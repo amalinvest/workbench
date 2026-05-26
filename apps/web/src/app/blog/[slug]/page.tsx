@@ -68,7 +68,8 @@ export default async function BlogPostPage({ params }: RouteParams) {
 
   const postUrl = `${SITE_URL}/blog/${post.slug}`;
   const ogImageUrl = `${postUrl}/opengraph-image`;
-  const articleType = post.category === "Comparison" ? "Article" : "TechArticle";
+  const articleType =
+    post.category === "Comparison" ? "Article" : "TechArticle";
 
   /**
    * JSON-LD graph for the post.
@@ -125,10 +126,7 @@ export default async function BlogPostPage({ params }: RouteParams) {
         "@type": "Person",
         name: "Pontus Abrahamsson",
         url: "https://x.com/pontusab",
-        sameAs: [
-          "https://x.com/pontusab",
-          "https://github.com/pontusab",
-        ],
+        sameAs: ["https://x.com/pontusab", "https://github.com/pontusab"],
       },
       publisher: { "@id": `${SITE_URL}/#organization` },
       mainEntityOfPage: { "@id": postUrl },
