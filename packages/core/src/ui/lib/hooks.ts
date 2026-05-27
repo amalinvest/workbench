@@ -22,6 +22,8 @@ export const queryKeys = {
     ["jobs", queueName, status, sort] as const,
   jobsAll: (queueName: string) => ["jobs", queueName] as const, // For invalidation
   job: (queueName: string, jobId: string) => ["job", queueName, jobId] as const,
+  jobLogs: (queueName: string, jobId: string) =>
+    ["job-logs", queueName, jobId] as const,
   runs: (
     sort?: string,
     filters?: {
@@ -159,6 +161,22 @@ export function useJob(queueName: string, jobId: string) {
     queryKey: queryKeys.job(queueName, jobId),
     queryFn: () => api.getJob(queueName, jobId),
     refetchInterval: 5000,
+  });
+}
+
+/**
+ * Hook for fetching job.log() entries (lazy — enable when Logs tab is open)
+ */
+export function useJobLogs(
+  queueName: string,
+  jobId: string,
+  options?: { enabled?: boolean; pollWhileActive?: boolean },
+) {
+  return useQuery({
+    queryKey: queryKeys.jobLogs(queueName, jobId),
+    queryFn: () => api.getJobLogs(queueName, jobId),
+    enabled: options?.enabled ?? true,
+    refetchInterval: options?.pollWhileActive ? 5000 : false,
   });
 }
 

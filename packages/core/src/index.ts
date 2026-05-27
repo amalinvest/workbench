@@ -25,6 +25,7 @@ export type {
   FlowSummary,
   HourlyBucket,
   JobInfo,
+  JobLogsResponse,
   JobStatus,
   JobTags,
   MetricsResponse,

@@ -97,7 +97,9 @@ export type SchedulersSearch = z.infer<typeof schedulersSearchSchema>;
 
 // Search params schema for the Job page
 export const jobSearchSchema = z.object({
-  tab: z.enum(["payload", "output", "error", "retries", "timeline"]).optional(),
+  tab: z
+    .enum(["payload", "output", "error", "retries", "timeline", "logs"])
+    .optional(),
 });
 
 export type JobSearch = z.infer<typeof jobSearchSchema>;

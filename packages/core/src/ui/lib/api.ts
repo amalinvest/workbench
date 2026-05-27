@@ -5,6 +5,7 @@ import type {
   FlowNode,
   FlowSummary,
   JobInfo,
+  JobLogsResponse,
   JobStatus,
   MetricsResponse,
   OverviewStats,
@@ -200,6 +201,15 @@ export const api = {
   async getJob(queueName: string, jobId: string): Promise<JobInfo> {
     return fetchJson(
       `${API_BASE}/jobs/${encodeURIComponent(queueName)}/${encodeURIComponent(jobId)}`,
+    );
+  },
+
+  /**
+   * Get worker logs written via job.log()
+   */
+  async getJobLogs(queueName: string, jobId: string): Promise<JobLogsResponse> {
+    return fetchJson(
+      `${API_BASE}/jobs/${encodeURIComponent(queueName)}/${encodeURIComponent(jobId)}/logs`,
     );
   },
 

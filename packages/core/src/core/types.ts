@@ -118,6 +118,14 @@ export interface JobInfo {
 }
 
 /**
+ * BullMQ job.log() entries for a single job
+ */
+export interface JobLogsResponse {
+  logs: string[];
+  count: number;
+}
+
+/**
  * Overview stats for dashboard
  */
 export interface OverviewStats {
