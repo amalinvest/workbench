@@ -5,6 +5,21 @@ All notable changes to Workbench will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.2] - 2026-05-27
+
+### Added
+
+- **`@getworkbench/core`** Job Details **Logs** tab for BullMQ `job.log()` output. New `GET /jobs/:queue/:id/logs` endpoint backed by `queue.getJobLogs()`, with a lazy-loaded tab that polls while a job is active. Closes [#15](https://github.com/pontusab/workbench/issues/15).
+
+### Changed
+
+- **`@getworkbench/core`** sidebar logo is now the Workbench app icon as an inline React SVG (`WorkbenchIcon`), with favicon links in the bundled dashboard. **`@getworkbench/express`** and **`@getworkbench/fastify`** serve `app-icon.svg` at the mount root for browser tabs.
+- All 12 publishable adapter packages (`@getworkbench/core`, `hono`, `elysia`, `express`, `fastify`, `nestjs`, `next`, `koa`, `astro`, `nuxt`, `bun`, `h3`) bump together to `0.5.2`. `@getworkbench/cli` stays at `0.4.0`; `@getworkbench/mcp` stays at `0.5.1`.
+
+### Fixed
+
+- **`@getworkbench/core`** sidebar queue popover scrolls when there are many queues. The list now caps height with Radix's `--radix-hover-card-content-available-height` instead of growing off-screen.
+
 ## [0.5.1] - 2026-05-26
 
 ### Added
