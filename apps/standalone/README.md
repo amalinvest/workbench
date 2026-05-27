@@ -1,6 +1,6 @@
 # Workbench Standalone
 
-Standalone Bun server for Workbench. Useful for hosted deployments such as Railway.
+Standalone Bun server for Workbench. Useful for any Docker-based deployment.
 
 ## Run Locally
 
@@ -60,8 +60,8 @@ ghcr.io/<owner>/workbench-standalone:<version>
 ghcr.io/<owner>/workbench-standalone:latest
 ```
 
-## Railway
+## Deployment
 
-Use published GHCR image or point Railway at this repo with Dockerfile path `apps/standalone/Dockerfile`.
+Use the published GHCR image or build from this repo with Dockerfile path `apps/standalone/Dockerfile`.
 
 Set at least `REDIS_URL` and `QUEUE_NAMES`.
