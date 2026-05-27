@@ -205,12 +205,13 @@ export function AppSidebar({
                 side="right"
                 align="start"
                 sideOffset={16}
-                className="w-auto min-w-[140px] max-w-[260px] p-1"
+                collisionPadding={12}
+                className="w-auto min-w-[140px] max-w-[260px] overflow-hidden p-1"
               >
                 <div className="px-2 py-1.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
                   Queues
                 </div>
-                <div className="max-h-[min(70svh,32rem)] space-y-0.5 overflow-y-auto pr-0.5">
+                <div className="mb-3 max-h-[calc(var(--radix-hover-card-content-available-height)-25px)] space-y-0.5 overflow-y-auto pr-0.5">
                   {queues.map((queue) => (
                     <button
                       key={queue}
