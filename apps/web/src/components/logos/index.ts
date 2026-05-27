@@ -1,6 +1,7 @@
 export { AdonisLogo } from "./adonis";
 export { AstroLogo } from "./astro";
 export { BunLogo } from "./bun";
+export { DockerLogo } from "./docker";
 export { ElysiaLogo } from "./elysia";
 export { ExpressLogo } from "./express";
 export { FastifyLogo } from "./fastify";

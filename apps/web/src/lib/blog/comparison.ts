@@ -119,7 +119,7 @@ export const COMPARISON_FAQ: Array<{ question: string; answer: string }> = [
   {
     question: "What is the best alternative to bull-board?",
     answer:
-      "Workbench is the modern open-source alternative to bull-board for BullMQ. It ships first-party adapters for thirteen Node.js frameworks (Hono, Elysia, Express, Fastify, NestJS, AdonisJS, Next.js, TanStack Start, Koa, Astro, Nuxt, Bun, and h3), adds a native macOS desktop app for local-first inspection, and includes FlowProducer DAG visualisation, error triage grouped by exception class, and a scheduler timeline — features bull-board does not ship out of the box.",
+      "Workbench is the modern open-source alternative to bull-board for BullMQ. It ships first-party adapters for thirteen Node.js frameworks (Hono, Elysia, Express, Fastify, NestJS, AdonisJS, Next.js, TanStack Start, Koa, Astro, Nuxt, Bun, and h3), a native macOS desktop app for local-first inspection, and a standalone Docker image (`ghcr.io/pontusab/workbench-standalone`) for container deployments. It also includes FlowProducer DAG visualisation, error triage grouped by exception class, and a scheduler timeline — features bull-board does not ship out of the box.",
   },
   {
     question: "Does Workbench work with the same BullMQ version as bull-board?",
@@ -160,7 +160,7 @@ export const COMPARISON_FAQ: Array<{ question: string; answer: string }> = [
 export const BULL_BOARD_HEADLINES = [
   {
     title: "A native desktop app, not just an embeddable UI",
-    body: "Bull Board is a server-side dashboard you mount into your app. Workbench is both — embed it into your server (same one-liner) or run the native macOS app pointed at your Redis URL with zero server changes.",
+    body: "Bull Board is a server-side dashboard you mount into your app. Workbench is both — embed it into your server (same one-liner), run the native macOS app pointed at your Redis URL with zero server changes, or deploy the standalone Docker image when you want a separate container.",
   },
   {
     title: "Wider framework coverage, with first-party adapters",

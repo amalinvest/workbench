@@ -3,7 +3,8 @@
 > Workbench is an open-source, MIT-licensed BullMQ dashboard. It ships as a
 > native macOS desktop app for local-first queue inspection, and as a
 > drop-in server-mounted dashboard with first-party adapters for thirteen
-> Node.js frameworks. Workbench is the modern alternative to bull-board:
+> Node.js frameworks, plus a standalone Docker image for container deployments.
+> Workbench is the modern alternative to bull-board:
 > wider framework coverage, FlowProducer DAG visualisation, error triage
 > grouped by exception class, scheduler timeline for cron / delayed jobs,
 > and a keyboard-driven UI.
@@ -15,6 +16,7 @@
 - **Source**: https://github.com/pontusab/workbench
 - **Install (any supported framework)**: `npx @getworkbench/cli init`
 - **Desktop app**: macOS 11+, Apple-signed, auto-updates from signed releases
+- **Docker**: `ghcr.io/pontusab/workbench-standalone` — standalone Bun server; set `REDIS_URL` and `QUEUE_NAMES`
 - **Author**: Pontus Abrahamsson — https://x.com/pontusab
 
 ## Supported frameworks (first-party adapters)
@@ -35,6 +37,19 @@ example app in the monorepo.
 - Nuxt — https://www.npmjs.com/package/@getworkbench/nuxt
 - Bun (Bun.serve) — https://www.npmjs.com/package/@getworkbench/bun
 - h3 — https://www.npmjs.com/package/@getworkbench/h3
+
+## Docker (standalone)
+
+Run Workbench without embedding it in your app server:
+
+```bash
+docker run --rm -p 3000:3000 \
+  -e REDIS_URL=redis://host.docker.internal:6379 \
+  -e QUEUE_NAMES=default \
+  ghcr.io/pontusab/workbench-standalone:latest
+```
+
+Docs: https://github.com/pontusab/workbench/tree/main/apps/standalone
 
 ## AI agent integrations (MCP)
 

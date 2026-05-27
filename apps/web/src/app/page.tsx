@@ -20,6 +20,7 @@ import {
   AdonisLogo,
   AstroLogo,
   BunLogo,
+  DockerLogo,
   ElysiaLogo,
   ExpressLogo,
   FastifyLogo,
@@ -45,6 +46,12 @@ import { ThemeToggle } from "../components/theme-toggle";
 const MAC_DOWNLOAD_URL =
   "https://github.com/pontusab/workbench/releases/latest";
 const GITHUB_URL = "https://github.com/pontusab/workbench";
+const STANDALONE_DOCS_URL = `${GITHUB_URL}/tree/main/apps/standalone`;
+const STANDALONE_IMAGE = "ghcr.io/pontusab/workbench-standalone:latest";
+const DOCKER_RUN_COMMAND = `docker run --rm -p 3000:3000 \\
+  -e REDIS_URL=redis://host.docker.internal:6379 \\
+  -e QUEUE_NAMES=default \\
+  ${STANDALONE_IMAGE}`;
 const SPONSORS_URL = "https://github.com/sponsors/pontusab";
 const TWITTER_URL = "https://x.com/pontusab";
 const DOCS_URL = "https://github.com/pontusab/workbench#readme";
@@ -89,6 +96,17 @@ const frameworks = [
   { name: "h3", Logo: H3Logo, ...npmAdapter("h3") },
 ];
 
+/** Deployment option — not an npm adapter; links to standalone docs. */
+const dockerDeployment = {
+  name: "Docker",
+  Logo: DockerLogo,
+  href: STANDALONE_DOCS_URL,
+  title: "Run Workbench as a standalone Docker container",
+};
+
+/** Hero marquee shows framework adapters plus Docker. */
+const heroStrip = [...frameworks, dockerDeployment];
+
 /**
  * Homepage JSON-LD.
  *
@@ -123,7 +141,7 @@ const homepageJsonLd = {
       url: SITE_URL,
       applicationCategory: "DeveloperApplication",
       applicationSubCategory: "Job queue dashboard",
-      operatingSystem: "macOS, Node.js, Bun",
+      operatingSystem: "macOS, Node.js, Bun, Docker",
       softwareVersion: "latest",
       license: "https://opensource.org/licenses/MIT",
       downloadUrl: MAC_DOWNLOAD_URL,
@@ -137,7 +155,7 @@ const homepageJsonLd = {
         "Scheduler timeline for cron and delayed jobs",
         "Error triage grouped by exception class with 24h trend lines",
         "Open failed-job stack traces in Cursor or VS Code with one click",
-        "Native macOS desktop app and embeddable server dashboard",
+        "Native macOS desktop app, embeddable server dashboard, and standalone Docker image",
         "MCP server for Cursor, Claude Desktop, Zed, and Continue.dev",
       ],
       offers: {
@@ -185,6 +203,22 @@ const homepageJsonLd = {
           position: 1,
           name: "@getworkbench/mcp — Model Context Protocol server",
           url: "https://www.npmjs.com/package/@getworkbench/mcp",
+        },
+      ],
+    },
+    {
+      "@type": "ItemList",
+      "@id": `${SITE_URL}/#container-deployments`,
+      name: "Container deployments for Workbench",
+      description:
+        "Standalone Docker image for running Workbench without embedding it in an app server.",
+      numberOfItems: 1,
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "workbench-standalone on GHCR",
+          url: STANDALONE_DOCS_URL,
         },
       ],
     },
@@ -321,7 +355,8 @@ function Hero() {
 
         <p className="mt-6 max-w-2xl text-balance text-base leading-relaxed text-[color:var(--color-muted-foreground)] md:text-lg">
           Inspect, debug, and replay your BullMQ queues. Run it as a native
-          desktop app, or drop the same dashboard into any Node framework.
+          desktop app, drop it into any Node framework, or deploy it as a
+          standalone Docker container.
         </p>
 
         <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row sm:gap-4">
@@ -387,10 +422,10 @@ function HeroFrameworks() {
   return (
     <div
       className="hero-marquee mb-14 text-[color:var(--color-foreground)]"
-      aria-label="Works with these frameworks"
+      aria-label="Works with these frameworks and Docker"
     >
       <div className="hero-marquee-track">
-        {frameworks.map(({ name, Logo, href, title }) => (
+        {heroStrip.map(({ name, Logo, href, title }) => (
           <a
             key={`primary-${name}`}
             href={href}
@@ -406,7 +441,7 @@ function HeroFrameworks() {
         {/* Visual duplicate so the loop is seamless. These are presentational
             only — screen readers announce the framework list once via the
             primary copy above, then ignore everything inside this group. */}
-        {frameworks.map(({ name, Logo }) => (
+        {heroStrip.map(({ name, Logo }) => (
           <span
             key={`mirror-${name}`}
             className="hero-marquee-item inline-flex items-center gap-1.5 opacity-70"
@@ -604,16 +639,16 @@ function InstallSection() {
             Install
           </div>
           <h2 className="mt-3 text-balance text-3xl font-semibold tracking-tight md:text-4xl">
-            One dashboard. Two ways to run it.
+            One dashboard. Three ways to run it.
           </h2>
           <p className="mt-3 text-[color:var(--color-muted-foreground)]">
-            Native macOS app for local debugging, or one command to mount the
-            same dashboard inside your Node server. Same UI, same open-source
-            core.
+            Native macOS app for local debugging, one command to mount the
+            dashboard inside your Node server, or a standalone Docker container
+            pointed at your Redis. Same UI, same open-source core.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <InstallCard
             eyebrow="Desktop"
             title="Native macOS app"
@@ -636,6 +671,15 @@ function InstallSection() {
             title="Drop into your Node app"
             body="One command wires the dashboard into your existing server. Works with Hono, Elysia, Express, Fastify, NestJS, AdonisJS, Next.js, TanStack Start, Koa, Astro, Nuxt, Bun, and h3 — share the same Redis as your workers."
             action={<CopyCommand command={INSTALL_COMMAND} variant="button" />}
+          />
+
+          <InstallCard
+            eyebrow="Docker"
+            title="Standalone container"
+            body="Run Workbench without embedding it in your app. Set REDIS_URL and QUEUE_NAMES — published to GHCR on every release tag."
+            action={
+              <CopyCommand command={DOCKER_RUN_COMMAND} variant="button" />
+            }
           />
         </div>
       </div>

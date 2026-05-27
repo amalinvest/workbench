@@ -10,8 +10,9 @@ Open-source BullMQ dashboard. Drop-in for any Node or Bun backend.
 
 Workbench is a modern dashboard for [BullMQ](https://docs.bullmq.io/). Runs jobs, flows, schedulers and metrics, all served from your own backend behind your own auth.
 
-- Zero infrastructure — mounts as a route in your existing app
+- Zero infrastructure — mounts as a route in your existing app, or run as a standalone Docker container
 - Adapters for Hono, Elysia, Express, Fastify, Koa, NestJS, AdonisJS, Next.js, TanStack Start, Astro, Nuxt, Bun.serve, and h3
+- Standalone image on GHCR (`ghcr.io/<owner>/workbench-standalone`) for Docker / Kubernetes deployments
 - MCP server for Cursor, Claude Desktop, Zed, and Continue.dev — drive your queues from your editor's chat
 - Flows & DAG view, metrics, schedulers, search
 - Dark-mode UI, basic-auth-protected by default
@@ -399,8 +400,22 @@ Visit `http://localhost:PORT/jobs`.
 | [`@getworkbench/bun`](./packages/bun)                                   | Bun.serve adapter            |
 | [`@getworkbench/cli`](./packages/cli)                                   | `npx @getworkbench/cli init` |
 | [`@getworkbench/mcp`](./packages/mcp)                                   | Model Context Protocol server — Cursor/Claude/Zed/Continue |
+| [`apps/standalone`](./apps/standalone)                                  | Standalone Bun server + Docker image (`ghcr.io/pontusab/workbench-standalone`) |
 
 [Hyper](https://hyperjs.ai) is distributed via a source-component registry, so its Workbench integration ships separately as a `hyper add @getworkbench` component in the [pontusab/hyper](https://github.com/pontusab/hyper) repo.
+
+## Docker (standalone)
+
+Run Workbench as its own container when you don't want to embed it in an app server. See [`apps/standalone`](./apps/standalone/README.md) for env vars and local dev.
+
+```bash
+docker run --rm -p 3000:3000 \
+  -e REDIS_URL=redis://host.docker.internal:6379 \
+  -e QUEUE_NAMES=email,image \
+  ghcr.io/pontusab/workbench-standalone:latest
+```
+
+Tagged releases publish `ghcr.io/pontusab/workbench-standalone:<version>` automatically.
 
 ## FAQ
 
@@ -412,7 +427,7 @@ Visit `http://localhost:PORT/jobs`.
 
 **Can I run it without auth?** Yes, omit the `auth` option. Don't do that in production.
 
-**Does it require a separate service?** No. It mounts as a route in your existing backend.
+**Does it require a separate service?** No for the embed path — it mounts as a route in your existing backend. Use the [standalone Docker image](./apps/standalone/README.md) when you want a separate container instead.
 
 ## Development
 
