@@ -46,6 +46,18 @@
         "vite": "^6.0.3",
       },
     },
+    "apps/standalone": {
+      "name": "@getworkbench/standalone",
+      "version": "0.0.0",
+      "dependencies": {
+        "@getworkbench/bun": "workspace:*",
+        "bullmq": "^5.71.1",
+      },
+      "devDependencies": {
+        "@types/bun": "^1.2.0",
+        "typescript": "^5.7.2",
+      },
+    },
     "apps/web": {
       "name": "@workbench/web",
       "version": "0.0.0",
@@ -863,7 +875,7 @@
 
     "@getworkbench/nuxt": ["@getworkbench/nuxt@workspace:packages/nuxt"],
 
-    "@getworkbench/tanstack-start": ["@getworkbench/tanstack-start@workspace:packages/tanstack-start"],
+    "@getworkbench/standalone": ["@getworkbench/standalone@workspace:apps/standalone"],
 
     "@hono/node-server": ["@hono/node-server@1.19.14", "", { "peerDependencies": { "hono": "^4" } }, "sha512-GwtvgtXxnWsucXvbQXkRgqksiH2Qed37H9xHZocE5sA3N8O8O8/8FA3uclQXxXVzc9XBZuEOMK7+r02FmSpHtw=="],
 
