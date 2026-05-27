@@ -16,6 +16,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { WorkbenchLogo } from "@/components/workbench-icon";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Tooltip,
@@ -77,29 +78,6 @@ function QueueCounts({ queueName }: { queueName: string }) {
   );
 }
 
-// Custom Workbench logo icon
-function WorkbenchIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-    >
-      {/* Hexagon outline */}
-      <path
-        d="M12 2L21 7V17L12 22L3 17V7L12 2Z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        fill="none"
-      />
-      {/* Inner processing bars */}
-      <rect x="7" y="9" width="10" height="2" rx="0.5" fill="currentColor" />
-      <rect x="7" y="13" width="6" height="2" rx="0.5" fill="currentColor" />
-    </svg>
-  );
-}
-
 export type NavItem =
   | "runs"
   | "metrics"
@@ -118,6 +96,7 @@ interface AppSidebarProps {
   isDark: boolean;
   onToggleTheme: () => void;
   title?: string;
+  logo?: string;
 }
 
 export function AppSidebar({
@@ -129,6 +108,7 @@ export function AppSidebar({
   onQueueSelect,
   isDark,
   onToggleTheme,
+  logo,
 }: AppSidebarProps) {
   const mainNavItems = [
     { id: "runs" as const, label: "Runs", icon: Play },
@@ -186,7 +166,7 @@ export function AppSidebar({
     <aside className="flex h-full w-[52px] flex-col border-r border-border bg-background">
       {/* Header */}
       <div className="flex h-14 items-center justify-center border-b border-border">
-        <WorkbenchIcon className="h-5 w-5" />
+        <WorkbenchLogo src={logo} />
       </div>
 
       {/* Navigation */}
@@ -225,12 +205,13 @@ export function AppSidebar({
                 side="right"
                 align="start"
                 sideOffset={16}
-                className="w-auto min-w-[140px] max-w-[260px] p-1"
+                collisionPadding={12}
+                className="w-auto min-w-[140px] max-w-[260px] overflow-hidden p-1"
               >
                 <div className="px-2 py-1.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
                   Queues
                 </div>
-                <div className="max-h-[min(70svh,32rem)] space-y-0.5 overflow-y-auto pr-0.5">
+                <div className="mb-3 max-h-[calc(var(--radix-hover-card-content-available-height)-25px)] space-y-0.5 overflow-y-auto pr-0.5">
                   {queues.map((queue) => (
                     <button
                       key={queue}

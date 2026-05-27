@@ -18,6 +18,7 @@ import {
   Play,
   RefreshCw,
   RotateCcw,
+  ScrollText,
   Trash2,
   XCircle,
 } from "lucide-react";
@@ -28,7 +29,7 @@ import { StatusBadge } from "@/components/shared/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useJob, usePromoteJob, useRemoveJob, useRetryJob } from "@/lib/hooks";
+import { useJob, useJobLogs, usePromoteJob, useRemoveJob, useRetryJob } from "@/lib/hooks";
 import { cn, formatAbsoluteTime, formatDuration } from "@/lib/utils";
 import type { JobSearch } from "@/router";
 
@@ -53,6 +54,12 @@ export function JobPage({
 }: JobPageProps) {
   const navigate = useNavigate();
   const { data: job, isLoading, error } = useJob(queueName, jobId);
+  const activeTab = search.tab || (job?.status === "failed" ? "error" : "payload");
+  const logsEnabled = activeTab === "logs";
+  const { data: jobLogs } = useJobLogs(queueName, jobId, {
+    enabled: logsEnabled,
+    pollWhileActive: job?.status === "active",
+  });
   const retryMutation = useRetryJob();
   const removeMutation = useRemoveJob();
   const promoteMutation = usePromoteJob();
@@ -335,7 +342,7 @@ export function JobPage({
 
       {/* Content Tabs */}
       <Tabs
-        value={search.tab || (job.status === "failed" ? "error" : "payload")}
+        value={activeTab}
         onValueChange={(tab) =>
           onSearchChange({
             ...search,
@@ -360,6 +367,17 @@ export function JobPage({
               </TabsTrigger>
             )}
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
+          <TabsTrigger value="logs" className="gap-1.5">
+            Logs
+            {jobLogs && jobLogs.count > 0 && (
+              <Badge
+                variant="secondary"
+                className="px-1.5 py-0 text-[10px] font-mono"
+              >
+                {jobLogs.count}
+              </Badge>
+            )}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="payload" className="mt-4">
@@ -410,6 +428,10 @@ export function JobPage({
 
         <TabsContent value="timeline" className="mt-4">
           <Timeline job={job} />
+        </TabsContent>
+
+        <TabsContent value="logs" className="mt-4">
+          <JobLogs logs={jobLogs?.logs} count={jobLogs?.count} />
         </TabsContent>
       </Tabs>
     </div>
@@ -530,6 +552,79 @@ function ErrorDisplay({
           </pre>
         </div>
       )}
+    </div>
+  );
+}
+
+function JobLogs({
+  logs,
+  count,
+}: {
+  logs?: string[];
+  count?: number;
+}) {
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+  const [copied, setCopied] = React.useState(false);
+
+  React.useEffect(() => {
+    const el = scrollRef.current;
+    if (el) {
+      el.scrollTop = el.scrollHeight;
+    }
+  }, [logs?.length]);
+
+  const handleCopy = async () => {
+    if (!logs?.length) return;
+    await navigator.clipboard.writeText(logs.join("\n"));
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  if (!logs?.length) {
+    return (
+      <div className="flex h-32 flex-col items-center justify-center gap-2 border bg-card text-muted-foreground">
+        <ScrollText className="h-5 w-5" />
+        <p className="text-sm">No logs yet</p>
+        <p className="text-xs">
+          Use <code className="font-mono">await job.log(&quot;...&quot;)</code>{" "}
+          in your worker
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col overflow-hidden border bg-card">
+      <div className="flex items-center justify-between border-b px-4 py-2">
+        <span className="text-sm text-muted-foreground">
+          {count ?? logs.length} log {(count ?? logs.length) === 1 ? "entry" : "entries"}
+        </span>
+        <button
+          type="button"
+          onClick={handleCopy}
+          className="inline-flex items-center gap-1.5 rounded px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          title="Copy logs"
+        >
+          {copied ? (
+            <Check className="h-3.5 w-3.5 text-status-success" />
+          ) : (
+            <Copy className="h-3.5 w-3.5" />
+          )}
+          Copy
+        </button>
+      </div>
+      <div ref={scrollRef} className="max-h-[calc(100vh-480px)] overflow-auto p-4">
+        <div className="font-mono text-xs leading-relaxed text-foreground">
+          {logs.map((line, index) => (
+            <div key={index.toString()} className="flex gap-3 whitespace-pre-wrap">
+              <span className="w-8 shrink-0 select-none text-right text-muted-foreground/60">
+                {index + 1}
+              </span>
+              <span>{line}</span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

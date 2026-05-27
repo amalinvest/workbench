@@ -266,6 +266,28 @@ export function buildRouteTable(core: WorkbenchCore): RouteDef[] {
 
     {
       method: "get",
+      path: "/jobs/:queue/:id/logs",
+      handler: async ({ params, query }) => {
+        const start = query.start !== undefined ? Number(query.start) : 0;
+        const end = query.end !== undefined ? Number(query.end) : -1;
+        const asc = query.asc !== "false";
+
+        const logs = await qm.getJobLogs(
+          params.queue!,
+          params.id!,
+          start,
+          end,
+          asc,
+        );
+        if (!logs) {
+          return { status: 404, body: { error: "Job not found" } };
+        }
+        return { status: 200, body: logs };
+      },
+    },
+
+    {
+      method: "get",
       path: "/jobs/:queue/:id",
       handler: async ({ params }) => {
         const job = await qm.getJob(params.queue!, params.id!);

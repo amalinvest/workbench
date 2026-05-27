@@ -10,6 +10,7 @@ import type {
   FlowSummary,
   HourlyBucket,
   JobInfo,
+  JobLogsResponse,
   JobStatus,
   JobTags,
   MetricsResponse,
@@ -936,6 +937,25 @@ export class QueueManager {
     if (!job) return null;
 
     return this.jobToInfo(job, "full") as Promise<JobInfo>;
+  }
+
+  /**
+   * Get worker logs written via job.log()
+   */
+  async getJobLogs(
+    queueName: string,
+    jobId: string,
+    start = 0,
+    end = -1,
+    asc = true,
+  ): Promise<JobLogsResponse | null> {
+    const queue = this.queues.get(queueName);
+    if (!queue) return null;
+
+    const job = await queue.getJob(jobId);
+    if (!job) return null;
+
+    return queue.getJobLogs(jobId, start, end, asc);
   }
 
   /**

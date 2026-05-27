@@ -47,9 +47,24 @@ const workers = queues.map(
   (queue) =>
     new Worker(
       queue.name,
-      async () => {
+      async (job) => {
+        await job.log(`Starting ${queue.name} job ${job.id}`);
+        await job.log(`Payload: ${JSON.stringify(job.data)}`);
+
+        const steps = ["validate", "process", "finalize"];
+        for (let i = 0; i < steps.length; i++) {
+          await sleep(80 + Math.random() * 200);
+          await job.log(`Step ${i + 1}/${steps.length}: ${steps[i]} ✓`);
+        }
+
         await sleep(200 + Math.random() * 800);
-        if (Math.random() < 0.05) throw new Error("simulated failure");
+
+        if (Math.random() < 0.05) {
+          await job.log("Error: simulated failure — retrying may succeed");
+          throw new Error("simulated failure");
+        }
+
+        await job.log(`Completed ${queue.name} job ${job.id}`);
         return { ok: true };
       },
       { connection, concurrency: 2 },
