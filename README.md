@@ -19,10 +19,6 @@ Workbench is a modern dashboard for [BullMQ](https://docs.bullmq.io/). Runs jobs
 
 Website: [getworkbench.dev](https://getworkbench.dev)
 
-## Standalone Docker Image
-
-Workbench can also run as a standalone Bun service for hosted deployments such as Railway. See [apps/standalone](./apps/standalone/) for the Dockerfile, environment variables, and GHCR image publishing workflow.
-
 ## Quick start
 
 ```bash
