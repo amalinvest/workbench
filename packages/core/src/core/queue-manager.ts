@@ -495,6 +495,8 @@ export class QueueManager {
               queueName: string;
               completed: number;
               failed: number;
+              latestFailedJobId?: string;
+              latestFailedAt?: number;
             }
           >();
 
@@ -613,6 +615,14 @@ export class QueueManager {
                 failed: 0,
               };
               stats.failed++;
+              if (
+                job.id &&
+                (!stats.latestFailedAt ||
+                  (job.finishedOn ?? 0) > stats.latestFailedAt)
+              ) {
+                stats.latestFailedJobId = job.id;
+                stats.latestFailedAt = job.finishedOn;
+              }
               jobTypeStats.set(key, stats);
             }
           }
@@ -696,6 +706,7 @@ export class QueueManager {
             .map((s) => ({
               name: s.name,
               queueName: s.queueName,
+              jobId: s.latestFailedJobId ?? "",
               failCount: s.failed,
               totalCount: s.completed + s.failed,
               errorRate: s.failed / (s.completed + s.failed),

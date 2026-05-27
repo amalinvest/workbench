@@ -186,9 +186,16 @@ function FailingJobsTable({ jobs }: { jobs: FailingJobType[] }) {
   return (
     <div className="divide-y divide-border">
       {jobs.map((job, index) => (
-        <div
+        <Link
           key={`${job.queueName}-${job.name}`}
-          className="flex items-center justify-between px-4 py-2.5"
+          to={
+            job.jobId
+              ? "/queues/$queueName/jobs/$jobId"
+              : "/queues/$queueName"
+          }
+          params={{ queueName: job.queueName, jobId: job.jobId }}
+          search={job.jobId ? undefined : { status: "failed" }}
+          className="flex items-center justify-between px-4 py-2.5 hover:bg-muted/30"
         >
           <div className="flex items-center gap-3 min-w-0">
             <span className="text-xs text-muted-foreground w-5 tabular-nums shrink-0">
@@ -219,7 +226,7 @@ function FailingJobsTable({ jobs }: { jobs: FailingJobType[] }) {
               {formatPercentage(job.errorRate)}
             </Badge>
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   );

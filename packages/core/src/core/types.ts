@@ -315,6 +315,7 @@ export interface SlowestJob {
 export interface FailingJobType {
   name: string;
   queueName: string;
+  jobId: string;
   failCount: number;
   totalCount: number;
   errorRate: number;
