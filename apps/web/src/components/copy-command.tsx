@@ -40,19 +40,23 @@ export function CopyCommand({ command, variant = "button" }: CopyCommandProps) {
   }
 
   return (
-    <button
-      type="button"
-      onClick={onCopy}
-      className="group inline-flex items-center gap-3 border border-[color:var(--color-border)] bg-[color:var(--color-muted)] px-5 py-3 font-mono text-sm transition hover:border-[color:var(--color-foreground)]/40"
-      aria-label={`Copy command: ${command}`}
-    >
-      <span className="text-[color:var(--color-muted-foreground)]">$</span>
-      <span>{command}</span>
-      {copied ? (
-        <CheckIcon className="h-4 w-4 text-emerald-400" />
-      ) : (
-        <CopyIcon className="h-4 w-4 text-[color:var(--color-muted-foreground)] transition group-hover:text-[color:var(--color-foreground)]" />
-      )}
-    </button>
+    <div className="group flex w-full items-center gap-3 border border-[color:var(--color-border)] bg-[color:var(--color-muted)] px-5 py-3 font-mono text-sm transition hover:border-[color:var(--color-foreground)]/40">
+      <span className="shrink-0 text-[color:var(--color-muted-foreground)]">$</span>
+      <div className="scrollbar-code min-w-0 flex-1 overflow-x-auto">
+        <span className="whitespace-pre">{command}</span>
+      </div>
+      <button
+        type="button"
+        onClick={onCopy}
+        className="shrink-0"
+        aria-label={`Copy command: ${command}`}
+      >
+        {copied ? (
+          <CheckIcon className="h-4 w-4 text-emerald-400" />
+        ) : (
+          <CopyIcon className="h-4 w-4 text-[color:var(--color-muted-foreground)] transition group-hover:text-[color:var(--color-foreground)]" />
+        )}
+      </button>
+    </div>
   );
 }
