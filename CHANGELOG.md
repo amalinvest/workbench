@@ -5,6 +5,12 @@ All notable changes to Workbench will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.1] - 2026-05-28
+
+### Changed
+
+- **`@getworkbench/core`** README updated: full adapter list, Redis auto-discovery, `WorkbenchOptions` table, `createFetchHandler` example, and `ioredis` peer in install instructions.
+
 ## [0.7.0] - 2026-05-27
 
 ### Added
