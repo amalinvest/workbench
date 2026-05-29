@@ -485,6 +485,43 @@ body {
   background-size: 12px 12px;
 }
 
+/* -------------------------------------------------------------------------- */
+/* Scrollbar — thin, themed, used on code snippet containers                  */
+/* -------------------------------------------------------------------------- */
+/*
+ * Firefox uses the two-value `scrollbar-color` shorthand.
+ * WebKit/Blink need the pseudo-element API. Both sets use the same
+ * design-token colours so the thumb adapts to dark ↔ light automatically.
+ *
+ * Thumb colour is the border token at 60 % opacity — visible but quiet.
+ * On hover it steps up to the muted-foreground token so there's clear
+ * feedback without the scrollbar competing with the code text.
+ */
+.scrollbar-code {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--border) 80%, transparent)
+    transparent;
+}
+
+.scrollbar-code::-webkit-scrollbar {
+  height: 4px;
+}
+
+.scrollbar-code::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 9999px;
+}
+
+.scrollbar-code::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--border) 80%, transparent);
+  border-radius: 9999px;
+  transition: background 150ms ease;
+}
+
+.scrollbar-code::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-fg);
+}
+
 /* The mockup ring + drop shadow is theme-aware. In dark mode a heavier
    shadow is needed to lift the frame off the near-black page; on cream
    the same shadow would smudge so we soften it. */
