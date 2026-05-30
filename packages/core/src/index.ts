@@ -10,12 +10,30 @@ export {
   type HttpMethod,
   type RouteDef,
 } from "./api/handlers";
-
+export { AlertManager } from "./core/alert-manager";
+export {
+  createAlertStore,
+  MemoryAlertStore,
+  toPublicContactPoint,
+} from "./core/alert-store";
 export { discoverQueues } from "./core/discover";
 export { QueueManager } from "./core/queue-manager";
+export { RedisAlertStore } from "./core/redis-alert-store";
 export type {
   ActivityBucket,
   ActivityStatsResponse,
+  AlertContactPoint,
+  AlertContactPointPreset,
+  AlertContactPointPublic,
+  AlertDeliveryRecord,
+  AlertEvent,
+  AlertPersistence,
+  AlertRule,
+  AlertRuntimeStatus,
+  AlertSeverity,
+  AlertStore,
+  AlertsOptions,
+  AlertTrigger,
   CreateFlowChildRequest,
   CreateFlowRequest,
   DelayedJobInfo,

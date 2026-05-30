@@ -48,6 +48,160 @@ export interface WorkbenchOptions {
    * 100. Ignored when `queues` is set explicitly.
    */
   maxQueues?: number;
+  /** Self-hosted alerting configuration */
+  alerts?: AlertsOptions;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Alert Types
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Supported alert trigger types */
+export type AlertTrigger =
+  | "job_failed"
+  | "job_stalled"
+  | "retries_exhausted"
+  | "failed_backlog"
+  | "no_workers_with_backlog";
+
+export type AlertSeverity = "critical" | "warning" | "info";
+
+export type AlertContactPointPreset = "slack" | "webhook";
+
+/** Where notifications are sent (Slack incoming webhook or generic webhook) */
+export interface AlertContactPoint {
+  id: string;
+  name: string;
+  preset: AlertContactPointPreset;
+  /** Webhook URL — stored server-side; API responses mask this value */
+  url: string;
+  enabled: boolean;
+  displayName?: string;
+  iconUrl?: string;
+  /** Extra headers for generic webhook preset */
+  headers?: Record<string, string>;
+  createdAt: number;
+  updatedAt: number;
+}
+
+/** Rule that maps a trigger to one or more contact points */
+export interface AlertRule {
+  id: string;
+  name: string;
+  enabled: boolean;
+  trigger: AlertTrigger;
+  severity: AlertSeverity;
+  /** Empty or omitted = all queues */
+  queues?: string[];
+  /** Optional job name filter for event triggers */
+  jobNames?: string[];
+  /** Threshold for backlog-style triggers (failed count or waiting count) */
+  threshold?: number;
+  contactPointIds: string[];
+  cooldownMs?: number;
+  createdAt: number;
+  updatedAt: number;
+}
+
+/** Pluggable persistence for alert contact points and rules */
+export interface AlertStore {
+  getContactPoints(): Promise<AlertContactPoint[]>;
+  getContactPoint(id: string): Promise<AlertContactPoint | undefined>;
+  createContactPoint(
+    input: Omit<AlertContactPoint, "id" | "createdAt" | "updatedAt">,
+  ): Promise<AlertContactPoint>;
+  updateContactPoint(
+    id: string,
+    input: Partial<Omit<AlertContactPoint, "id" | "createdAt" | "updatedAt">>,
+  ): Promise<AlertContactPoint | undefined>;
+  deleteContactPoint(id: string): Promise<boolean>;
+  getRules(): Promise<AlertRule[]>;
+  getRule(id: string): Promise<AlertRule | undefined>;
+  createRule(
+    input: Omit<AlertRule, "id" | "createdAt" | "updatedAt">,
+  ): Promise<AlertRule>;
+  updateRule(
+    id: string,
+    input: Partial<Omit<AlertRule, "id" | "createdAt" | "updatedAt">>,
+  ): Promise<AlertRule | undefined>;
+  deleteRule(id: string): Promise<boolean>;
+  close?(): Promise<void>;
+}
+
+export type AlertPersistence = "redis" | "memory" | "custom";
+
+export interface AlertsOptions {
+  /** Set to `false` to disable alerting entirely. Default: on. */
+  enabled?: boolean;
+  /** Seed data imported into Redis on first run when the store is empty */
+  contactPoints?: AlertContactPoint[];
+  /** Seed data imported into Redis on first run when the store is empty */
+  rules?: AlertRule[];
+  /** Override the config store entirely */
+  store?: AlertStore;
+  /** Where to persist dashboard-managed config. Default: `"redis"` when a connection exists */
+  persistence?: "redis" | "memory";
+  /** Redis key prefix for stored config. Default: Workbench `prefix` or `"bull"` */
+  storagePrefix?: string;
+  defaults?: {
+    cooldownMs?: number;
+    sendResolved?: boolean;
+  };
+  /** Public dashboard URL included in notification links */
+  dashboardUrl?: string;
+}
+
+/** Normalized alert event for delivery and activity log */
+export interface AlertEvent {
+  id: string;
+  ruleId: string;
+  ruleName: string;
+  trigger: AlertTrigger;
+  severity: AlertSeverity;
+  status: "firing" | "resolved";
+  fingerprint: string;
+  queue?: string;
+  jobId?: string;
+  jobName?: string;
+  message: string;
+  failedReason?: string;
+  attemptsMade?: number;
+  counts?: {
+    failed?: number;
+    backlog?: number;
+    workers?: number | null;
+  };
+  firedAt: number;
+  resolvedAt?: number;
+}
+
+/** Contact point as returned by the API (URL masked) */
+export type AlertContactPointPublic = Omit<AlertContactPoint, "url"> & {
+  urlMasked: string;
+};
+
+export interface AlertDeliveryRecord {
+  contactPointId: string;
+  contactPointName: string;
+  success: boolean;
+  error?: string;
+  at: number;
+}
+
+/** Runtime status exposed to the dashboard */
+export interface AlertRuntimeStatus {
+  enabled: boolean;
+  persistence: AlertPersistence;
+  listenerCount: number;
+  listeners: Array<{ queue: string; connected: boolean }>;
+  healthCheckIntervalMs: number;
+  lastHealthCheckAt?: number;
+  recentEvents: AlertEvent[];
+  lastDeliveries: AlertDeliveryRecord[];
+  defaults: {
+    cooldownMs: number;
+    sendResolved: boolean;
+  };
 }
 
 /**

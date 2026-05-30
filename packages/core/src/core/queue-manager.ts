@@ -319,6 +319,13 @@ export class QueueManager {
   }
 
   /**
+   * Internal map of queue instances (for alerting and advanced integrations)
+   */
+  getQueueMap(): Map<string, Queue> {
+    return this.queues;
+  }
+
+  /**
    * Get information for all queues (cached)
    */
   async getQueues(): Promise<QueueInfo[]> {

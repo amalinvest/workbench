@@ -5,6 +5,13 @@ All notable changes to Workbench will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **`@getworkbench/core`** Self-hosted alerting: BullMQ `QueueEvents` listeners, Slack/webhook presets, dashboard **Alerts** page, and Redis-backed persistence for contact points and rules (keys under `{prefix}:workbench:alerts:*`). Alerts are enabled by default; configure contact points and rules in the dashboard to start receiving notifications.
+- **`@getworkbench/core`** Slack incoming webhook validation, Block Kit payload fixes (HTTPS dashboard buttons, HTTP dev links), and in-dialog Slack setup instructions.
+
 ## [0.7.1] - 2026-05-28
 
 ### Changed
