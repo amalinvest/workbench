@@ -1,0 +1,45 @@
+---
+title: h3
+description: Mount Workbench with @getworkbench/h3 — also used by Nuxt, SolidStart, and Analog via Nitro.
+keywords:
+  - BullMQ dashboard h3
+  - "@getworkbench/h3"
+---
+
+## Install
+
+```bash
+npm i @getworkbench/h3 bullmq h3
+```
+
+## Mount
+
+```ts
+import { createServer } from "node:http";
+import { createApp, createRouter, toNodeListener } from "h3";
+import { Queue } from "bullmq";
+import { workbench } from "@getworkbench/h3";
+
+const emailQueue = new Queue("email", {
+  connection: { url: process.env.REDIS_URL! },
+});
+
+const handler = workbench({ queues: [emailQueue], basePath: "/jobs" });
+
+const router = createRouter()
+  .use("/jobs", handler)
+  .use("/jobs/**", handler);
+const app = createApp().use(router);
+
+createServer(toNodeListener(app)).listen(3000);
+```
+
+> h3's `**` only matches one-or-more sub-segments — register the handler at both `/jobs` and `/jobs/**`.
+
+For Nuxt, prefer [`@getworkbench/nuxt`](/docs/frameworks/nuxt) which wraps the h3 adapter.
+
+## Resources
+
+- npm: [@getworkbench/h3](https://www.npmjs.com/package/@getworkbench/h3)
+- Example: [examples/with-h3](https://github.com/pontusab/workbench/tree/main/examples/with-h3)
+- Blog: [BullMQ dashboard for h3](https://getworkbench.dev/blog/bullmq-dashboard-for-h3)

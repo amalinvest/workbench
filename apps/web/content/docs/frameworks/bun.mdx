@@ -1,0 +1,43 @@
+---
+title: Bun.serve
+description: Mount Workbench with @getworkbench/bun on Bun's native HTTP server.
+keywords:
+  - BullMQ dashboard Bun
+  - "@getworkbench/bun"
+---
+
+## Install
+
+```bash
+bun add @getworkbench/bun bullmq
+```
+
+Requires **Bun 1.1+**.
+
+## Mount
+
+```ts
+import { Queue } from "bullmq";
+import { workbench } from "@getworkbench/bun";
+
+const emailQueue = new Queue("email", {
+  connection: { url: process.env.REDIS_URL! },
+});
+
+const handler = workbench({ queues: [emailQueue], basePath: "/jobs" });
+
+Bun.serve({
+  port: 3000,
+  fetch(req) {
+    return handler(req, () => new Response("home"));
+  },
+});
+```
+
+The second argument to the handler is a fallback when the request doesn't match the dashboard routes.
+
+## Resources
+
+- npm: [@getworkbench/bun](https://www.npmjs.com/package/@getworkbench/bun)
+- Example: [examples/with-bun](https://github.com/pontusab/workbench/tree/main/examples/with-bun)
+- Blog: [BullMQ dashboard for Bun](https://getworkbench.dev/blog/bullmq-dashboard-for-bun)

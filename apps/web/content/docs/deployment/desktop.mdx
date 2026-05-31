@@ -1,0 +1,30 @@
+---
+title: Desktop app
+description: Native macOS app for local-first BullMQ queue inspection — same UI as the embedded dashboard.
+keywords:
+  - Workbench desktop app
+  - BullMQ macOS
+---
+
+Workbench ships as a **native macOS desktop app** for local-first queue inspection — discover queues automatically, watch runs in real time, and debug without SSH into Redis.
+
+## Download
+
+Download the latest release from [GitHub Releases](https://github.com/pontusab/workbench/releases/latest).
+
+Requires macOS 11+. The app is Apple-signed with auto-updates from signed releases.
+
+## When to use the desktop app vs embedded dashboard
+
+| Use case | Recommendation |
+| --- | --- |
+| Local development on your machine | Desktop app |
+| Production ops on shared Redis | Embedded mount or standalone Docker |
+| CI / staging environments | Embedded mount at `/jobs` behind auth |
+| AI-assisted debugging | Embedded mount + [MCP server](/docs/packages/mcp) |
+
+The desktop app and embedded dashboard share the same React UI — features like flows, schedulers, metrics, and alerts work identically.
+
+## Learn more
+
+Visit the [product page](https://getworkbench.dev) for screenshots and feature highlights.

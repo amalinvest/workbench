@@ -1,0 +1,48 @@
+---
+title: Hono
+description: Mount Workbench in a Hono app with @getworkbench/hono — the edge-ready Web Standard router.
+keywords:
+  - BullMQ dashboard Hono
+  - "@getworkbench/hono"
+---
+
+## Install
+
+```bash
+npm i @getworkbench/hono bullmq hono
+```
+
+Or use the CLI:
+
+<CopyCommand command="npx @getworkbench/cli init" />
+
+## Mount
+
+Add Workbench as a sub-app route:
+
+```ts
+import { Hono } from "hono";
+import { Queue } from "bullmq";
+import { workbench } from "@getworkbench/hono";
+
+const app = new Hono();
+const emailQueue = new Queue("email", {
+  connection: { url: process.env.REDIS_URL! },
+});
+
+app.route("/jobs", workbench({ queues: [emailQueue] }));
+
+export default app;
+```
+
+Visit `http://localhost:PORT/jobs`.
+
+## Resources
+
+- npm: [@getworkbench/hono](https://www.npmjs.com/package/@getworkbench/hono)
+- Example: [examples/with-hono](https://github.com/pontusab/workbench/tree/main/examples/with-hono)
+- Blog: [BullMQ dashboard for Hono](https://getworkbench.dev/blog/bullmq-dashboard-for-hono)
+
+## Configuration
+
+See [Configuration](/docs/guides/configuration) for all `workbench()` options including auth, alerts, and Redis auto-discovery.

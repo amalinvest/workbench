@@ -1,0 +1,49 @@
+---
+title: CLI
+description: npx @getworkbench/cli init — detect your framework, install the adapter, and scaffold the Workbench mount.
+keywords:
+  - "@getworkbench/cli"
+  - Workbench CLI
+---
+
+The CLI scaffolds Workbench into an existing project in one command.
+
+<CopyCommand command="npx @getworkbench/cli init" />
+
+## What it does
+
+1. Detects your framework from project dependencies and file structure
+2. Installs `@getworkbench/<framework>` and `bullmq`
+3. Injects the dashboard mount (or scaffolds a route file for Next.js)
+4. Writes `.env.example` with `REDIS_URL`, `WORKBENCH_USER`, and `WORKBENCH_PASS`
+5. Optionally creates `docker-compose.yml` for local Redis
+
+## Supported frameworks
+
+The CLI detects all thirteen first-party adapters:
+
+Hono, Elysia, Express, Fastify, Koa, NestJS, AdonisJS, Next.js, TanStack Start, Astro, Nuxt, Bun.serve, and h3.
+
+## Options
+
+```bash
+workbench init [options]
+
+  --cwd <path>      Project directory (default: cwd)
+  --mount <path>    Mount path for the dashboard (default: /jobs)
+  --no-auth         Skip basic auth setup
+  --no-docker       Skip docker-compose Redis setup
+  --yes             Skip all prompts, use defaults
+```
+
+Non-interactive:
+
+<CopyCommand command="npx @getworkbench/cli init --yes --no-docker" />
+
+## npm package
+
+[@getworkbench/cli](https://www.npmjs.com/package/@getworkbench/cli) — versions independently from the core/adapters packages.
+
+## Migrating from bull-board
+
+Run `npx @getworkbench/cli init` to remove bull-board wiring and scaffold Workbench. See [Migrating from bull-board](/docs/guides/migrating-from-bull-board).

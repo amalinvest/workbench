@@ -1,0 +1,34 @@
+---
+title: Introduction
+description: Workbench is an open-source BullMQ dashboard with first-party adapters for thirteen Node and Bun frameworks.
+keywords:
+  - BullMQ dashboard
+  - Workbench documentation
+  - open-source queue dashboard
+---
+
+Workbench is a modern dashboard for [BullMQ](https://docs.bullmq.io/). Inspect queues, jobs, flows, schedulers, and metrics — served from your own backend behind your own auth.
+
+## What you get
+
+- **Zero extra infrastructure** — mount as a route in your existing app, or run as a standalone Docker container
+- **13 framework adapters** — Hono, Elysia, Express, Fastify, Koa, NestJS, AdonisJS, Next.js, TanStack Start, Astro, Nuxt, Bun.serve, and h3
+- **Flows & DAG view**, metrics, schedulers, search, and keyboard-driven UI
+- **Built-in alerting** — Slack and webhook contact points with dashboard-managed rules
+- **MCP server** — drive queues from Cursor, Claude Desktop, Zed, and Continue.dev
+- **Dark-mode UI**, basic-auth-protected by default
+- **MIT licensed**, no telemetry
+
+## Quick start
+
+The fastest way to add Workbench is the CLI:
+
+<CopyCommand command="npx @getworkbench/cli init" />
+
+It detects your framework, installs the matching `@getworkbench/<framework>` package, injects the mount, writes `.env.example` entries, and optionally scaffolds Redis via Docker Compose.
+
+See [Quick start](/docs/getting-started/quick-start) for details, or pick your framework from the [framework guides](/docs/frameworks).
+
+## Migrating from bull-board?
+
+Workbench is a drop-in alternative with broader framework coverage, FlowProducer DAGs, error triage, and built-in alerting. See [Migrating from bull-board](/docs/guides/migrating-from-bull-board).

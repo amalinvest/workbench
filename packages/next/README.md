@@ -78,7 +78,9 @@ Visit `http://localhost:3000/<mount>`.
 
 ## Documentation
 
-[getworkbench.dev](https://getworkbench.dev) · [GitHub](https://github.com/pontusab/workbench)
+**https://getworkbench.dev/docs/frameworks/next** — full install guide, configuration, and examples.
+
+[getworkbench.dev](https://getworkbench.dev/docs) · [GitHub](https://github.com/pontusab/workbench)
 
 ## License
 

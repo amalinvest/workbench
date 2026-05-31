@@ -1,0 +1,10 @@
+{
+  "title": "Guides",
+  "pages": [
+    "configuration",
+    "redis-auto-discovery",
+    "alerts",
+    "migrating-from-bull-board",
+    "dashboard-features"
+  ]
+}

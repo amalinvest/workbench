@@ -1,0 +1,45 @@
+---
+title: Environment variables
+description: Environment variables used by Workbench adapters, the CLI, standalone Docker image, and MCP server.
+keywords:
+  - Workbench environment variables
+  - REDIS_URL Workbench
+---
+
+## Embedded adapters
+
+| Variable | Required | Description |
+| --- | --- | --- |
+| `REDIS_URL` | Yes | Redis connection URL for BullMQ |
+| `WORKBENCH_USER` | Recommended | Basic auth username (when using auth) |
+| `WORKBENCH_PASS` | Recommended | Basic auth password (when using auth) |
+
+Additional variables depend on your alerting setup — see [Alerts](/docs/guides/alerts).
+
+## Standalone Docker
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `REDIS_URL` | — | Redis connection URL |
+| `QUEUE_NAMES` | `default` | Comma-separated queue names |
+| `PORT` | `3000` | HTTP port |
+| `BASE_PATH` | `/` | Dashboard base path |
+| `AUTH_USERNAME` | — | Basic auth username |
+| `AUTH_PASSWORD` | — | Basic auth password |
+| `TITLE` | `Workbench` | Dashboard title |
+| `LOGO_URL` | — | Logo URL in the nav |
+| `READONLY` | `false` | Set to `true` to disable write actions |
+| `TAGS` | — | Comma-separated `job.data` fields for tag filters |
+
+See [Standalone Docker](/docs/deployment/standalone-docker) for run examples.
+
+## MCP server
+
+| Variable | Required | Description |
+| --- | --- | --- |
+| `WORKBENCH_URL` | Yes | Dashboard URL, e.g. `http://localhost:3000/jobs` |
+| `WORKBENCH_USERNAME` | No | Basic auth username |
+| `WORKBENCH_PASSWORD` | No | Basic auth password |
+| `WORKBENCH_TOKEN` | No | Bearer token (takes precedence over basic auth) |
+
+The MCP appends `/api/...` to `WORKBENCH_URL` — don't include `/api` in the URL yourself.

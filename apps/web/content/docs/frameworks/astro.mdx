@@ -1,0 +1,39 @@
+---
+title: Astro
+description: Mount Workbench in Astro server routes with @getworkbench/astro.
+keywords:
+  - BullMQ dashboard Astro
+  - "@getworkbench/astro"
+---
+
+## Install
+
+```bash
+npm i @getworkbench/astro bullmq
+```
+
+## Mount
+
+```ts
+// src/pages/jobs/[...workbench].ts
+import { Queue } from "bullmq";
+import { workbench } from "@getworkbench/astro";
+
+const emailQueue = new Queue("email", {
+  connection: { url: process.env.REDIS_URL! },
+});
+
+export const { GET, POST, PUT, PATCH, DELETE, prerender } = workbench({
+  queues: [emailQueue],
+  basePath: "/jobs",
+});
+```
+
+> Astro must be in **server output mode** (`output: "server"` or `"hybrid"`).
+> Workers run in a sibling process — see [SSR and workers](/docs/frameworks/ssr-workers).
+
+## Resources
+
+- npm: [@getworkbench/astro](https://www.npmjs.com/package/@getworkbench/astro)
+- Example: [examples/with-astro](https://github.com/pontusab/workbench/tree/main/examples/with-astro)
+- Blog: [BullMQ dashboard for Astro](https://getworkbench.dev/blog/bullmq-dashboard-for-astro)

@@ -1,0 +1,35 @@
+---
+title: Express
+description: Mount Workbench in an Express app with @getworkbench/express middleware.
+keywords:
+  - BullMQ dashboard Express
+  - "@getworkbench/express"
+---
+
+## Install
+
+```bash
+npm i @getworkbench/express bullmq express
+```
+
+## Mount
+
+```ts
+import express from "express";
+import { Queue } from "bullmq";
+import { workbench } from "@getworkbench/express";
+
+const app = express();
+const emailQueue = new Queue("email", {
+  connection: { url: process.env.REDIS_URL! },
+});
+
+app.use("/jobs", workbench({ queues: [emailQueue] }));
+app.listen(3000);
+```
+
+## Resources
+
+- npm: [@getworkbench/express](https://www.npmjs.com/package/@getworkbench/express)
+- Example: [examples/with-express](https://github.com/pontusab/workbench/tree/main/examples/with-express)
+- Blog: [BullMQ dashboard for Express](https://getworkbench.dev/blog/bullmq-dashboard-for-express)

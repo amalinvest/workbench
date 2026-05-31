@@ -1,0 +1,42 @@
+---
+title: Next.js
+description: Mount Workbench in a Next.js App Router app with @getworkbench/next catch-all route handlers.
+keywords:
+  - BullMQ dashboard Next.js
+  - "@getworkbench/next"
+---
+
+## Install
+
+```bash
+npm i @getworkbench/next bullmq
+```
+
+## Mount
+
+Create a catch-all route handler:
+
+```ts
+// app/jobs/[[...workbench]]/route.ts
+import { Queue } from "bullmq";
+import { workbench } from "@getworkbench/next";
+
+const emailQueue = new Queue("email", {
+  connection: { url: process.env.REDIS_URL! },
+});
+
+export const { GET, POST, PUT, PATCH, DELETE } = workbench({
+  queues: [emailQueue],
+  basePath: "/jobs",
+});
+```
+
+> **basePath required** — must match your route path.
+>
+> Next.js doesn't host BullMQ workers — run them in a sibling process. See [SSR and workers](/docs/frameworks/ssr-workers).
+
+## Resources
+
+- npm: [@getworkbench/next](https://www.npmjs.com/package/@getworkbench/next)
+- Example: [examples/with-next](https://github.com/pontusab/workbench/tree/main/examples/with-next)
+- Blog: [BullMQ dashboard for Next.js](https://getworkbench.dev/blog/bullmq-dashboard-for-next)

@@ -30,7 +30,7 @@ export function FrameworkAnnouncementBody({
   const cmd = `npx @getworkbench/cli init`;
   const adapterUrl = `https://www.npmjs.com/package/@getworkbench/${framework.slug}`;
   const exampleUrl = `https://github.com/pontusab/workbench/tree/main/examples/with-${framework.slug}`;
-  const readmeUrl = `https://github.com/pontusab/workbench/tree/main/packages/${framework.slug}#readme`;
+  const docsUrl = `/docs/frameworks/${framework.slug}`;
 
   return (
     <Prose>
@@ -170,14 +170,21 @@ export function FrameworkAnnouncementBody({
       <SectionHeading>Get started</SectionHeading>
 
       <p>
-        Adapter docs and a complete runnable example live in the{" "}
+        Full docs and a complete runnable example:{" "}
+        <Link
+          href={docsUrl}
+          className="underline decoration-[color:var(--color-border)] decoration-1 underline-offset-[6px] hover:decoration-[color:var(--color-foreground)]"
+        >
+          {framework.name} adapter guide
+        </Link>{" "}
+        ·{" "}
         <a
-          href={readmeUrl}
+          href={exampleUrl}
           target="_blank"
           rel="noreferrer"
           className="underline decoration-[color:var(--color-border)] decoration-1 underline-offset-[6px] hover:decoration-[color:var(--color-foreground)]"
         >
-          @getworkbench/{framework.slug} README
+          examples/with-{framework.slug}
         </a>
         . If anything trips up, open an issue on{" "}
         <a

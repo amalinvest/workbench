@@ -1,0 +1,37 @@
+---
+title: Framework adapters
+description: First-party @getworkbench adapters for Hono, Express, Next.js, NestJS, and ten other Node and Bun frameworks.
+keywords:
+  - BullMQ dashboard frameworks
+  - Workbench adapters
+---
+
+Workbench ships a first-party `@getworkbench/<framework>` package for each supported stack. Every adapter is a thin wrapper around `@getworkbench/core` — same dashboard, same API, different mount surface.
+
+<FrameworkGrid />
+
+## Choosing an adapter
+
+| bull-board | Workbench |
+| --- | --- |
+| `@bull-board/express` | `@getworkbench/express` |
+| `@bull-board/fastify` | `@getworkbench/fastify` |
+| `@bull-board/koa` | `@getworkbench/koa` |
+| `@bull-board/nestjs` | `@getworkbench/nestjs` |
+| `@bull-board/hono` | `@getworkbench/hono` |
+| `@bull-board/h3` | `@getworkbench/h3` |
+| `@bull-board/elysia` | `@getworkbench/elysia` |
+
+Run `npx @getworkbench/cli init` to swap a bull-board mount in one command.
+
+## SSR frameworks
+
+Next.js, Astro, Nuxt, and TanStack Start don't host BullMQ workers in the framework server process. Run workers in a **sibling process**. See [SSR and workers](/docs/frameworks/ssr-workers).
+
+## Need help picking?
+
+Use the CLI — it detects your framework automatically:
+
+<CopyCommand command="npx @getworkbench/cli init" />
+
+Each framework page below includes install steps, a mount snippet, links to the npm package and GitHub example, and a blog post with a longer walkthrough.

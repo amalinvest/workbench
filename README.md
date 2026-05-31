@@ -18,7 +18,7 @@ Workbench is a modern dashboard for [BullMQ](https://docs.bullmq.io/). Runs jobs
 - Dark-mode UI, basic-auth-protected by default
 - MIT licensed
 
-Website: [getworkbench.dev](https://getworkbench.dev)
+Website: [getworkbench.dev](https://getworkbench.dev) · [Documentation](https://getworkbench.dev/docs)
 
 ## Migrating from bull-board?
 

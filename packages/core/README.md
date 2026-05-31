@@ -190,7 +190,9 @@ Slack preset sends Block Kit messages with queue, job, and severity details. Set
 
 ## Documentation
 
-[getworkbench.dev](https://getworkbench.dev) · [GitHub](https://github.com/pontusab/workbench)
+**https://getworkbench.dev/docs/guides/configuration** — full API reference.
+
+[getworkbench.dev](https://getworkbench.dev/docs) · [GitHub](https://github.com/pontusab/workbench)
 
 ## License
 

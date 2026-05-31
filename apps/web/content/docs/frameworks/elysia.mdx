@@ -1,0 +1,39 @@
+---
+title: Elysia
+description: Mount Workbench in an Elysia app with @getworkbench/elysia on Bun.
+keywords:
+  - BullMQ dashboard Elysia
+  - "@getworkbench/elysia"
+---
+
+## Install
+
+```bash
+bun add @getworkbench/elysia bullmq elysia
+```
+
+Requires **Bun 1.1+**.
+
+## Mount
+
+```ts
+import { Elysia } from "elysia";
+import { Queue } from "bullmq";
+import { workbench } from "@getworkbench/elysia";
+
+const emailQueue = new Queue("email", {
+  connection: { url: process.env.REDIS_URL! },
+});
+
+new Elysia()
+  .mount("/jobs", workbench({ queues: [emailQueue], basePath: "/jobs" }))
+  .listen(3000);
+```
+
+> **basePath required** — pass `basePath: "/jobs"` matching your mount path.
+
+## Resources
+
+- npm: [@getworkbench/elysia](https://www.npmjs.com/package/@getworkbench/elysia)
+- Example: [examples/with-elysia](https://github.com/pontusab/workbench/tree/main/examples/with-elysia)
+- Blog: [BullMQ dashboard for Elysia](https://getworkbench.dev/blog/bullmq-dashboard-for-elysia)

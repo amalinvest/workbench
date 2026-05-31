@@ -1,0 +1,46 @@
+---
+title: Migrating from bull-board
+description: Swap bull-board for Workbench with the CLI or a manual adapter swap — same Redis, same queues.
+keywords:
+  - bull-board alternative
+  - migrate bull-board Workbench
+---
+
+Workbench is a drop-in alternative to `@bull-board/api` + `@bull-board/ui`. Same Redis, same queues — swap the mount and keep your workers unchanged.
+
+## One-command migration
+
+<CopyCommand command="npx @getworkbench/cli init" />
+
+The CLI detects bull-board wiring, removes it, installs the matching `@getworkbench/<framework>` package, and scaffolds the Workbench mount.
+
+## Manual adapter mapping
+
+| bull-board | Workbench |
+| --- | --- |
+| `@bull-board/express` | `@getworkbench/express` |
+| `@bull-board/fastify` | `@getworkbench/fastify` |
+| `@bull-board/koa` | `@getworkbench/koa` |
+| `@bull-board/nestjs` | `@getworkbench/nestjs` |
+| `@bull-board/hono` | `@getworkbench/hono` |
+| `@bull-board/h3` | `@getworkbench/h3` |
+| `@bull-board/elysia` | `@getworkbench/elysia` |
+
+Workbench also ships adapters bull-board doesn't cover: Next.js, Astro, Nuxt, TanStack Start, AdonisJS, and Bun.serve.
+
+## What you gain
+
+- **FlowProducer DAG view** for parent/child job flows
+- **Error triage** grouped by exception class with trend lines
+- **Scheduler timeline** for cron and delayed jobs
+- **Built-in alerting** with Slack/webhook contact points
+- **Keyboard-driven UI** for power users
+- **MCP server** for AI-assisted queue operations
+
+## Full comparison
+
+Read the detailed comparison: [Workbench vs Bull Board](https://getworkbench.dev/blog/workbench-vs-bull-board)
+
+## Pick your framework guide
+
+After migrating, see the [framework adapters](/docs/frameworks) section for mount snippets specific to your stack.

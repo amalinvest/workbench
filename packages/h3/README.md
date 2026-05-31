@@ -90,7 +90,9 @@ framework — exporting the `EventHandler` is enough.
 
 ## Documentation
 
-[getworkbench.dev](https://getworkbench.dev) · [GitHub](https://github.com/pontusab/workbench)
+**https://getworkbench.dev/docs/frameworks/h3** — full install guide, configuration, and examples.
+
+[getworkbench.dev](https://getworkbench.dev/docs) · [GitHub](https://github.com/pontusab/workbench)
 
 ## License
 

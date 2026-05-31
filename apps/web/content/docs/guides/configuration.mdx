@@ -1,0 +1,53 @@
+---
+title: Configuration
+description: WorkbenchOptions shared by every adapter — queues, auth, basePath, alerts, readonly, and more.
+keywords:
+  - Workbench configuration
+  - WorkbenchOptions
+---
+
+Every adapter accepts the same options object:
+
+```ts
+workbench({
+  queues: [emailQueue],
+  basePath: "/jobs",
+  auth: { username: "admin", password: "secret" },
+  title: "My Queues",
+  readonly: false,
+  tags: ["tenantId", "region"],
+  alerts: { /* ... */ },
+});
+```
+
+## Options reference
+
+| Option | Type | Description |
+| --- | --- | --- |
+| `queues` | `Queue[]` | BullMQ `Queue` instances to display. Required unless `redis` is set. |
+| `redis` | `string \| RedisOptions` | Redis connection for [auto-discovery](/docs/guides/redis-auto-discovery). |
+| `prefix` | `string` | BullMQ key prefix during auto-discovery. Default: `"bull"`. |
+| `maxQueues` | `number` | Cap on discovered queues. Default: `100`. |
+| `auth` | `{ username, password }` | HTTP basic auth. Strongly recommended in production. |
+| `title` | `string` | Dashboard title. Default: `"Workbench"`. |
+| `logo` | `string` | Logo URL in the nav. |
+| `basePath` | `string` | Override base path detection. **Required** for Elysia, Koa, Next.js, TanStack Start, Astro, Nuxt, h3, and Adonis. |
+| `readonly` | `boolean` | Disable retry, remove, promote, and other write actions. |
+| `tags` | `string[]` | Fields from `job.data` to extract as filterable tags. |
+| `alerts` | `AlertsOptions` | Self-hosted alerting. See [Alerts](/docs/guides/alerts). |
+
+## Advanced: direct core usage
+
+Most users should use a framework adapter. For unsupported frameworks, `@getworkbench/core` exposes:
+
+- **`createFetchHandler`** — returns a web-standard `(req: Request) => Response` handler for Fetch-native runtimes
+- **`buildRouteTable`** — Node HTTP route table for Express-style frameworks
+- **`WorkbenchCore.fromOptions`** — programmatic core with Redis auto-discovery
+
+See the [@getworkbench/core](https://github.com/pontusab/workbench/tree/main/packages/core) package for entry points including `@getworkbench/core/ui` for embedding the React dashboard in a custom Vite app.
+
+## TypeScript version
+
+- Node 18+ (Bun 1.1+ for Elysia and Bun adapters)
+- TypeScript 4.x or 5.x for main adapters
+- **TypeScript 5.0+ required** if you import from `@getworkbench/core/hono` directly

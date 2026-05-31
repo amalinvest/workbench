@@ -7,11 +7,10 @@ import {
   Command,
   Download,
   FlaskConical,
-  Github,
   Heart,
   Network,
   TerminalSquare,
-  Twitter,
+  X,
 } from "lucide-react";
 import Image from "next/image";
 import { ActionButton } from "../components/action-button";
@@ -46,7 +45,7 @@ import { ThemeToggle } from "../components/theme-toggle";
 const MAC_DOWNLOAD_URL =
   "https://github.com/pontusab/workbench/releases/latest";
 const GITHUB_URL = "https://github.com/pontusab/workbench";
-const STANDALONE_DOCS_URL = `${GITHUB_URL}/tree/main/apps/standalone`;
+const STANDALONE_DOCS_URL = "/docs/deployment/standalone-docker";
 const STANDALONE_IMAGE = "ghcr.io/pontusab/workbench-standalone:latest";
 const DOCKER_RUN_COMMAND = `docker run --rm -p 3000:3000 \\
   -e REDIS_URL=redis://host.docker.internal:6379 \\
@@ -54,7 +53,7 @@ const DOCKER_RUN_COMMAND = `docker run --rm -p 3000:3000 \\
   ${STANDALONE_IMAGE}`;
 const SPONSORS_URL = "https://github.com/sponsors/pontusab";
 const TWITTER_URL = "https://x.com/pontusab";
-const DOCS_URL = "https://github.com/pontusab/workbench#readme";
+const DOCS_URL = "/docs";
 const INSTALL_COMMAND = "npx @getworkbench/cli init";
 
 /**
@@ -308,9 +307,7 @@ function Nav() {
           Blog
         </a>
         <a
-          href={DOCS_URL}
-          target="_blank"
-          rel="noreferrer"
+          href="/docs"
           className="hidden transition hover:text-[color:var(--color-foreground)] md:inline"
         >
           Docs
@@ -729,7 +726,7 @@ function Footer() {
             rel="noreferrer"
             className="inline-flex items-center gap-1.5 transition hover:text-[color:var(--color-foreground)]"
           >
-            <Github className="h-3.5 w-3.5" />
+            <Code className="h-3.5 w-3.5" />
             <span>GitHub</span>
           </a>
           <a
@@ -738,13 +735,11 @@ function Footer() {
             rel="noreferrer"
             className="inline-flex items-center gap-1.5 transition hover:text-[color:var(--color-foreground)]"
           >
-            <Twitter className="h-3.5 w-3.5" />
+            <X className="h-3.5 w-3.5" />
             <span>@pontusab</span>
           </a>
           <a
             href={DOCS_URL}
-            target="_blank"
-            rel="noreferrer"
             className="transition hover:text-[color:var(--color-foreground)]"
           >
             Docs

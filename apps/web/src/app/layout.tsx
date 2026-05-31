@@ -1,4 +1,5 @@
 import { Analytics } from "@vercel/analytics/next";
+import { RootProvider } from "fumadocs-ui/provider/next";
 import { GeistMono } from "geist/font/mono";
 import { GeistPixelLine } from "geist/font/pixel";
 import { GeistSans } from "geist/font/sans";
@@ -133,12 +134,14 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${GeistSans.variable} ${GeistMono.variable} ${GeistPixelLine.variable}`}
     >
-      <body>
+      <body className="flex min-h-screen flex-col">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
         />
-        <ThemeProvider>{children}</ThemeProvider>
+        <RootProvider theme={{ enabled: false }}>
+          <ThemeProvider>{children}</ThemeProvider>
+        </RootProvider>
         <Analytics />
       </body>
     </html>

@@ -1,0 +1,102 @@
+---
+title: MCP server
+description: "@getworkbench/mcp — let Cursor, Claude Desktop, Zed, and Continue inspect and operate BullMQ queues via your running dashboard."
+keywords:
+  - Workbench MCP
+  - BullMQ MCP server
+  - Cursor MCP Workbench
+---
+
+The MCP server is a thin local proxy. It speaks **JSON-RPC over stdio** to your editor and **HTTP** to a running Workbench dashboard. The dashboard's auth and `readonly` flag are the source of truth.
+
+```
+Cursor / Claude Desktop ──┐
+Zed / Continue.dev ───────┼──▶ workbench-mcp (stdio) ──▶  https://your.app/jobs  ──▶  Redis
+any MCP client      ──────┘
+```
+
+## Install
+
+```bash
+npx @getworkbench/mcp
+```
+
+Verify it starts:
+
+```bash
+WORKBENCH_URL=http://localhost:3000/jobs \
+WORKBENCH_USERNAME=admin \
+WORKBENCH_PASSWORD=hunter2 \
+npx @getworkbench/mcp
+```
+
+## Environment variables
+
+| Variable | Required | Description |
+| --- | --- | --- |
+| `WORKBENCH_URL` | Yes | Dashboard URL, e.g. `http://localhost:3000/jobs` |
+| `WORKBENCH_USERNAME` | No | Basic auth username |
+| `WORKBENCH_PASSWORD` | No | Basic auth password |
+| `WORKBENCH_TOKEN` | No | Bearer token (overrides basic auth) |
+
+Don't append `/api` to `WORKBENCH_URL` — the MCP adds `/api/...` automatically.
+
+## Cursor
+
+Add to `~/.cursor/mcp.json` or your project's `.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "workbench": {
+      "command": "npx",
+      "args": ["-y", "@getworkbench/mcp"],
+      "env": {
+        "WORKBENCH_URL": "http://localhost:3000/jobs",
+        "WORKBENCH_USERNAME": "admin",
+        "WORKBENCH_PASSWORD": "hunter2"
+      }
+    }
+  }
+}
+```
+
+## Claude Desktop
+
+Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS):
+
+```json
+{
+  "mcpServers": {
+    "workbench": {
+      "command": "npx",
+      "args": ["-y", "@getworkbench/mcp"],
+      "env": {
+        "WORKBENCH_URL": "http://localhost:3000/jobs"
+      }
+    }
+  }
+}
+```
+
+## Tools
+
+18 tools grouped by intent:
+
+**Inspect:** overview, queues, metrics, activity, jobs, runs, search, schedulers, flows, tag values
+
+**Operate:** retry, remove, promote, pause/resume queue, run scheduler now, enqueue, clean, bulk retry/delete
+
+Write tools respect the dashboard's `readonly` mode and return clear errors on `403`.
+
+## Security
+
+- Run the dashboard with **auth** in any shared environment
+- Use **`readonly: true`** for unsupervised agents
+- The MCP runs locally as an editor subprocess — it never opens a port
+
+## Learn more
+
+Blog walkthrough: [BullMQ MCP server](https://getworkbench.dev/blog/bullmq-mcp-server)
+
+npm: [@getworkbench/mcp](https://www.npmjs.com/package/@getworkbench/mcp)

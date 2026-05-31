@@ -6,6 +6,8 @@
     "allowJs": true,
     "skipLibCheck": true,
     "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
     "incremental": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
@@ -13,9 +15,12 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "plugins": [{ "name": "next" }],
-    "paths": { "@/*": ["./src/*"] },
+    "paths": {
+      "@/*": ["./src/*"],
+      "collections/*": ["./.source/*"]
+    },
     "strict": false
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", ".source"]
 }

@@ -1,0 +1,38 @@
+---
+title: Nuxt
+description: Mount Workbench in Nuxt server routes with @getworkbench/nuxt on Nitro/h3.
+keywords:
+  - BullMQ dashboard Nuxt
+  - "@getworkbench/nuxt"
+---
+
+## Install
+
+```bash
+npm i @getworkbench/nuxt bullmq
+```
+
+## Mount
+
+```ts
+// server/routes/jobs/[...].ts
+import { Queue } from "bullmq";
+import { workbench } from "@getworkbench/nuxt";
+
+const emailQueue = new Queue("email", {
+  connection: { url: process.env.REDIS_URL! },
+});
+
+export default workbench({
+  queues: [emailQueue],
+  basePath: "/jobs",
+});
+```
+
+> Nuxt's server runtime (Nitro / h3) doesn't host BullMQ workers — run them in a sibling process. See [SSR and workers](/docs/frameworks/ssr-workers).
+
+## Resources
+
+- npm: [@getworkbench/nuxt](https://www.npmjs.com/package/@getworkbench/nuxt)
+- Example: [examples/with-nuxt](https://github.com/pontusab/workbench/tree/main/examples/with-nuxt)
+- Blog: [BullMQ dashboard for Nuxt](https://getworkbench.dev/blog/bullmq-dashboard-for-nuxt)

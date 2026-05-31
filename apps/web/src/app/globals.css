@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
 
 /* -------------------------------------------------------------------------- */
 /* Design tokens                                                              */
@@ -529,4 +531,268 @@ body {
   box-shadow:
     0 30px 60px -20px var(--mockup-shadow),
     0 0 0 1px var(--mockup-frame) inset;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Fumadocs — map fd tokens to Workbench palette (data-theme, not .dark)      */
+/* -------------------------------------------------------------------------- */
+[data-theme="dark"],
+:root {
+  --color-fd-background: var(--bg);
+  --color-fd-foreground: var(--fg);
+  --color-fd-muted: var(--muted);
+  --color-fd-muted-foreground: var(--muted-fg);
+  --color-fd-popover: var(--muted);
+  --color-fd-popover-foreground: var(--fg);
+  --color-fd-card: var(--muted);
+  --color-fd-card-foreground: var(--fg);
+  --color-fd-border: color-mix(in oklab, var(--border) 80%, transparent);
+  --color-fd-primary: var(--color-brand);
+  --color-fd-primary-foreground: #fff;
+  --color-fd-secondary: var(--muted);
+  --color-fd-secondary-foreground: var(--fg);
+  --color-fd-accent: color-mix(in oklab, var(--color-brand) 12%, transparent);
+  --color-fd-accent-foreground: var(--fg);
+  --color-fd-ring: var(--color-brand);
+}
+
+[data-theme="light"] {
+  --color-fd-background: var(--bg);
+  --color-fd-foreground: var(--fg);
+  --color-fd-muted: var(--muted);
+  --color-fd-muted-foreground: var(--muted-fg);
+  --color-fd-popover: var(--bg);
+  --color-fd-popover-foreground: var(--fg);
+  --color-fd-card: var(--muted);
+  --color-fd-card-foreground: var(--fg);
+  --color-fd-border: color-mix(in oklab, var(--border) 80%, transparent);
+  --color-fd-primary: var(--color-brand);
+  --color-fd-primary-foreground: #fff;
+  --color-fd-secondary: var(--muted);
+  --color-fd-secondary-foreground: var(--fg);
+  --color-fd-accent: color-mix(in oklab, var(--color-brand) 10%, transparent);
+  --color-fd-accent-foreground: var(--fg);
+  --color-fd-ring: var(--color-brand);
+
+  --docs-code-bg: #f5f2eb;
+  --docs-code-header: #ebe6dc;
+  --docs-code-fg: #1a1a1a;
+}
+
+[data-theme="dark"],
+:root {
+  --docs-code-bg: #0c0c0c;
+  --docs-code-header: #141414;
+  --docs-code-fg: #e4e4e7;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Docs layout — prose width, sidebar, page chrome                            */
+/* -------------------------------------------------------------------------- */
+/* Docs layout width — Fumadocs container token */
+:root,
+[data-theme="dark"],
+[data-theme="light"] {
+  --fd-layout-width: 72rem;
+  /* py-3 + h-7 logo + 1px border — matches SiteChrome nav */
+  --site-chrome-nav-height: 3.3125rem;
+}
+
+/* Offset Fumadocs sticky sidebar / collapse controls below SiteChrome nav */
+#nd-docs-layout {
+  --fd-docs-row-1: var(--site-chrome-nav-height);
+  --fd-docs-height: calc(100dvh - var(--site-chrome-nav-height));
+  padding-top: 1.5rem;
+  scroll-padding-top: var(--site-chrome-nav-height);
+}
+
+@media (min-width: 768px) {
+  #nd-docs-layout {
+    padding-top: 2rem;
+  }
+}
+
+#nd-page {
+  padding-top: 2.5rem;
+  scroll-padding-top: calc(var(--site-chrome-nav-height) + 1rem);
+}
+
+@media (min-width: 768px) {
+  #nd-page {
+    padding-top: 3rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  #nd-page {
+    padding-top: 3.5rem;
+  }
+}
+
+#nd-page h2,
+#nd-page h3 {
+  scroll-margin-top: calc(var(--site-chrome-nav-height) + 1.5rem);
+}
+
+/* Re-open control when sidebar is collapsed — default top sits under sticky nav */
+[data-sidebar-panel] {
+  top: calc(var(--site-chrome-nav-height) + 0.75rem) !important;
+  z-index: 40;
+}
+
+#nd-sidebar {
+  border-color: color-mix(in oklab, var(--border) 60%, transparent);
+}
+
+/* Sidebar footer GitHub icon */
+#nd-sidebar .flex.border.rounded-lg a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  min-height: 2rem;
+  color: var(--muted-fg);
+  transition: color 150ms ease;
+}
+
+#nd-sidebar .flex.border.rounded-lg a:hover {
+  color: var(--fg);
+}
+
+#nd-sidebar .flex.border.rounded-lg a svg {
+  display: block;
+  width: 1rem;
+  height: 1rem;
+}
+
+#nd-page article,
+#nd-page > div:not([id]) {
+  max-width: 42rem;
+}
+
+#nd-page .docs-code-block {
+  max-width: none;
+}
+
+#nd-page .prose {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--fg);
+}
+
+#nd-page .prose > :first-child {
+  margin-top: 0;
+}
+
+#nd-toc {
+  font-size: 13px;
+}
+
+/* Docs prose rhythm — shared by blog Prose and Fumadocs MDX body */
+.prose-body h2,
+#nd-page h2 {
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  font-size: 1.375rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.prose-body h3,
+#nd-page h3 {
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.prose-body p,
+#nd-page p {
+  margin-bottom: 1.25rem;
+}
+
+.prose-body ul,
+.prose-body ol,
+#nd-page ul,
+#nd-page ol {
+  margin-bottom: 1.25rem;
+  padding-left: 1.5rem;
+}
+
+.prose-body li,
+#nd-page li {
+  margin-bottom: 0.5rem;
+}
+
+.prose-body a:not([data-card]),
+#nd-page a:not([data-card]) {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--border) 100%, transparent);
+  text-underline-offset: 6px;
+  transition: text-decoration-color 150ms ease;
+}
+
+.prose-body a:not([data-card]):hover,
+#nd-page a:not([data-card]):hover {
+  text-decoration-color: var(--fg);
+}
+
+.prose-body table,
+#nd-page table {
+  width: 100%;
+  margin-bottom: 1.5rem;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.prose-body th,
+.prose-body td,
+#nd-page th,
+#nd-page td {
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.prose-body th,
+#nd-page th {
+  background: color-mix(in oklab, var(--muted) 50%, transparent);
+  font-weight: 500;
+}
+
+.prose-body code:not(pre code),
+#nd-page code:not(pre code):not(.docs-code-block code) {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  padding: 0.15em 0.4em;
+  border-radius: 0.3rem;
+  border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+  background: color-mix(in oklab, var(--muted) 55%, transparent);
+}
+
+/* Blockquotes in docs */
+#nd-page blockquote {
+  margin: 1.5rem 0;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--color-brand);
+  border-radius: 0 0.5rem 0.5rem 0;
+  background: color-mix(in oklab, var(--color-brand) 6%, transparent);
+  color: var(--muted-fg);
+  font-size: 0.9375rem;
+}
+
+#nd-page blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Stronger heading anchor links from Fumadocs */
+#nd-page h2 a,
+#nd-page h3 a {
+  text-decoration: none;
+  color: inherit;
+}
+
+#nd-page h2 a:hover,
+#nd-page h3 a:hover {
+  color: inherit;
 }

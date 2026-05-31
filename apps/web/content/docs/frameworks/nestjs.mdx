@@ -1,0 +1,41 @@
+---
+title: NestJS
+description: Mount Workbench in a NestJS app with @getworkbench/nestjs on Express or Fastify platform.
+keywords:
+  - BullMQ dashboard NestJS
+  - "@getworkbench/nestjs"
+---
+
+## Install
+
+```bash
+npm i @getworkbench/nestjs bullmq
+```
+
+## Mount
+
+```ts
+import { NestFactory } from "@nestjs/core";
+import { Queue } from "bullmq";
+import { workbench } from "@getworkbench/nestjs";
+import { AppModule } from "./app.module";
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  const emailQueue = new Queue("email", {
+    connection: { url: process.env.REDIS_URL! },
+  });
+
+  await workbench(app, "/jobs", { queues: [emailQueue] });
+  await app.listen(3000);
+}
+bootstrap();
+```
+
+Works on both the Express (default) and Fastify NestJS platforms.
+
+## Resources
+
+- npm: [@getworkbench/nestjs](https://www.npmjs.com/package/@getworkbench/nestjs)
+- Example: [examples/with-nestjs](https://github.com/pontusab/workbench/tree/main/examples/with-nestjs)
+- Blog: [BullMQ dashboard for NestJS](https://getworkbench.dev/blog/bullmq-dashboard-for-nestjs)

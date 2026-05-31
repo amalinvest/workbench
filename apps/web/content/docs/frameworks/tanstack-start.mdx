@@ -1,0 +1,63 @@
+---
+title: TanStack Start
+description: Mount Workbench in TanStack Start with @getworkbench/tanstack-start server route handlers.
+keywords:
+  - BullMQ dashboard TanStack Start
+  - "@getworkbench/tanstack-start"
+---
+
+## Install
+
+```bash
+npm i @getworkbench/tanstack-start bullmq @tanstack/react-start
+```
+
+## Mount
+
+Export handlers from a shared module:
+
+```ts
+// src/lib/workbench-handlers.ts
+import { Queue } from "bullmq";
+import { workbench } from "@getworkbench/tanstack-start";
+
+const emailQueue = new Queue("email", {
+  connection: { url: process.env.REDIS_URL! },
+});
+
+export const workbenchHandlers = workbench({
+  queues: [emailQueue],
+  basePath: "/jobs",
+});
+```
+
+Register on both `/jobs` and `/jobs/$`:
+
+```ts
+// src/routes/jobs.ts
+import { createFileRoute } from "@tanstack/react-router";
+import { workbenchHandlers } from "../lib/workbench-handlers";
+
+export const Route = createFileRoute("/jobs")({
+  server: { handlers: workbenchHandlers },
+});
+```
+
+```ts
+// src/routes/jobs/$.ts
+import { createFileRoute } from "@tanstack/react-router";
+import { workbenchHandlers } from "../../lib/workbench-handlers";
+
+export const Route = createFileRoute("/jobs/$")({
+  server: { handlers: workbenchHandlers },
+});
+```
+
+> Register handlers on **both** routes so the bare mount and nested paths work.
+> TanStack Start doesn't host workers — see [SSR and workers](/docs/frameworks/ssr-workers).
+
+## Resources
+
+- npm: [@getworkbench/tanstack-start](https://www.npmjs.com/package/@getworkbench/tanstack-start)
+- Example: [examples/with-tanstack-start](https://github.com/pontusab/workbench/tree/main/examples/with-tanstack-start)
+- Blog: [BullMQ dashboard for TanStack Start](https://getworkbench.dev/blog/bullmq-dashboard-for-tanstack-start)

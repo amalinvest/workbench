@@ -1,0 +1,44 @@
+---
+title: SSR and workers
+description: Run BullMQ workers in a sibling process when using Next.js, Astro, Nuxt, or TanStack Start.
+keywords:
+  - BullMQ workers Next.js
+  - SSR framework workers
+---
+
+Several Workbench adapters mount into **SSR frameworks** whose server processes are optimized for request handling, not long-running job consumption:
+
+- [Next.js](/docs/frameworks/next)
+- [Astro](/docs/frameworks/astro)
+- [Nuxt](/docs/frameworks/nuxt)
+- [TanStack Start](/docs/frameworks/tanstack-start)
+
+## The pattern
+
+1. **Web server** — your framework app mounts Workbench and serves the dashboard UI
+2. **Worker process** — a separate Node/Bun process runs `Worker` instances that consume jobs from Redis
+
+Both processes connect to the **same Redis**. Workbench reads queue state from Redis; workers mutate it. No duplicate config needed beyond shared `REDIS_URL`.
+
+## Example layout
+
+```
+my-app/
+├── app/                    # Next.js app with Workbench at /jobs
+├── worker/
+│   └── index.ts            # BullMQ Worker bootstrap
+└── package.json            # "dev": "concurrently \"next dev\" \"bun worker/index.ts\""
+```
+
+See the monorepo examples for working setups:
+
+- [examples/with-next](https://github.com/pontusab/workbench/tree/main/examples/with-next)
+- [examples/with-astro](https://github.com/pontusab/workbench/tree/main/examples/with-astro)
+- [examples/with-nuxt](https://github.com/pontusab/workbench/tree/main/examples/with-nuxt)
+- [examples/with-tanstack-start](https://github.com/pontusab/workbench/tree/main/examples/with-tanstack-start)
+
+## Why not run workers in the framework server?
+
+Serverless and edge deployments can't run persistent workers. Even on a long-lived Node server, mixing worker loops with SSR request handling makes scaling and deploys harder — workers and web traffic have different resource profiles.
+
+Mounting Workbench in the web server is fine: it's read-heavy HTTP. Workers belong in a dedicated process (or container) you scale independently.

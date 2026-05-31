@@ -1,0 +1,38 @@
+---
+title: AdonisJS
+description: Mount Workbench in AdonisJS 6 or 7 with @getworkbench/adonis.
+keywords:
+  - BullMQ dashboard AdonisJS
+  - "@getworkbench/adonis"
+---
+
+## Install
+
+```bash
+npm i @getworkbench/adonis bullmq @adonisjs/core
+```
+
+## Mount
+
+```ts
+// start/routes.ts
+import router from "@adonisjs/core/services/router";
+import { Queue } from "bullmq";
+import { mountWorkbench } from "@getworkbench/adonis";
+
+const emailQueue = new Queue("email", {
+  connection: { url: process.env.REDIS_URL! },
+});
+
+mountWorkbench(router, "/jobs", { queues: [emailQueue] });
+```
+
+> **basePath** — the mount path `/jobs` is passed to `mountWorkbench` and used internally.
+
+Works with AdonisJS 6 and 7.
+
+## Resources
+
+- npm: [@getworkbench/adonis](https://www.npmjs.com/package/@getworkbench/adonis)
+- Example: [examples/with-adonis](https://github.com/pontusab/workbench/tree/main/examples/with-adonis)
+- Blog: [BullMQ dashboard for AdonisJS](https://getworkbench.dev/blog/bullmq-dashboard-for-adonis)

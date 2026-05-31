@@ -1,0 +1,4 @@
+{
+  "title": "Deployment",
+  "pages": ["standalone-docker", "desktop"]
+}

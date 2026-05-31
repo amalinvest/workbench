@@ -1,0 +1,49 @@
+---
+title: Redis auto-discovery
+description: Pass a Redis connection instead of explicit Queue instances — Workbench discovers queues from BullMQ keys.
+keywords:
+  - Workbench Redis auto-discovery
+  - discoverQueues
+---
+
+Instead of passing explicit `Queue[]` instances, pass a Redis connection and let Workbench scan for BullMQ queues:
+
+```ts
+workbench({
+  redis: process.env.REDIS_URL!,
+  prefix: "bull", // optional, default "bull"
+  maxQueues: 100, // optional cap for large deployments
+});
+```
+
+Or via the core API:
+
+```ts
+import { WorkbenchCore } from "@getworkbench/core";
+
+const core = await WorkbenchCore.fromOptions({
+  redis: process.env.REDIS_URL!,
+  prefix: "bull",
+  maxQueues: 100,
+});
+```
+
+## When to use it
+
+- **Ops dashboards** where you want every queue in Redis visible without redeploying when a new queue appears
+- **Standalone Docker** deployments with `QUEUE_NAMES` for explicit lists (alternative approach)
+- **Large fleets** — set `maxQueues` to cap discovery cost
+
+## When to pass explicit queues
+
+- You only want specific queues visible (security / noise reduction)
+- Queue names aren't discoverable via standard BullMQ key patterns
+- You need custom `Queue` options per instance
+
+## Prefix
+
+If your BullMQ deployment uses a non-default prefix, pass it explicitly:
+
+```ts
+workbench({ redis: process.env.REDIS_URL!, prefix: "myapp" });
+```

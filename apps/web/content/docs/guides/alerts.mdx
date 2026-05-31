@@ -1,0 +1,83 @@
+---
+title: Alerts
+description: Self-hosted Slack and webhook alerting via BullMQ QueueEvents — contact points and rules in the dashboard.
+keywords:
+  - Workbench alerts
+  - BullMQ Slack alerts
+---
+
+Alerts are **enabled by default**. Configure contact points and rules from the dashboard **Alerts** page — nothing is sent until you add destinations and matching rules.
+
+## Configure in the dashboard
+
+1. Open your Workbench mount → **Alerts**
+2. **Add contact point** — Slack webhook or generic HTTP webhook
+3. **Add rule** — pick a trigger (job failed, stalled, retries exhausted, etc.) and link contact points
+
+## Optional seed in code
+
+```ts
+workbench({
+  queues: [emailQueue],
+  basePath: "/jobs",
+  alerts: {
+    dashboardUrl: "https://jobs.example.com/jobs",
+    contactPoints: [
+      {
+        id: "slack-prod",
+        name: "Slack #ops",
+        preset: "slack",
+        url: process.env.SLACK_WEBHOOK_URL!,
+        enabled: true,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+    ],
+    rules: [
+      {
+        id: "failed-jobs",
+        name: "Job failed",
+        enabled: true,
+        trigger: "job_failed",
+        severity: "warning",
+        contactPointIds: ["slack-prod"],
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+    ],
+  },
+});
+```
+
+## Supported triggers
+
+- `job_failed`
+- `job_stalled`
+- `retries_exhausted`
+- `failed_backlog`
+- `no_workers_with_backlog`
+
+## Persistence
+
+Dashboard-managed config is **persisted in Redis** at `{prefix}:workbench:alerts:*` using the same connection as your queues. Code-defined contact points and rules seed Redis once when the store is empty.
+
+- `alerts.persistence: "memory"` — in-process only (resets on restart)
+- `alerts.enabled: false` — disable alerting entirely
+
+## Slack setup
+
+1. Create a Slack app at [api.slack.com/apps](https://api.slack.com/apps)
+2. Enable **Incoming Webhooks** → **Add New Webhook to Workspace** → pick a channel
+3. Copy the webhook URL (`https://hooks.slack.com/services/...`)
+4. In Workbench **Alerts** → **Add contact point** → preset **Slack** → paste URL → **Test**
+
+Set `alerts.dashboardUrl` so notifications include an **Open in Workbench** link.
+
+## Comparison
+
+| Tool | Alert setup |
+| --- | --- |
+| **Bull Board** | No built-in alerting |
+| **Sidekiq** | Code hooks in initializer |
+| **Grafana** | UI contact points + rules |
+| **Workbench** | Dashboard contact points + rules via BullMQ `QueueEvents` |

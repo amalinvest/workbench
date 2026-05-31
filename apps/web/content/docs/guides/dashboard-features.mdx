@@ -1,0 +1,56 @@
+---
+title: Dashboard features
+description: Overview home, runs table, flows DAG, schedulers, metrics, search, and keyboard shortcuts in Workbench.
+keywords:
+  - Workbench dashboard features
+  - BullMQ FlowProducer UI
+---
+
+## Overview home
+
+The default landing page shows fleet-level KPIs:
+
+- Per-queue health cards with live counters
+- 24h throughput chart
+- Attention alerts for queues needing action
+- Quick navigation to runs, flows, and schedulers
+
+## Runs
+
+Virtualised runs table with:
+
+- Status filters (completed, failed, active, waiting, delayed)
+- Full job payloads and stack traces
+- Keyboard retry and navigation
+- Click stack-trace lines to open in Cursor or VS Code
+
+## Flows
+
+FlowProducer **DAG view** for parent/child job relationships — inspect multi-step workflows as a graph.
+
+## Schedulers
+
+Timeline for cron and delayed jobs:
+
+- Pause, resume, and edit cron expressions live
+- Run a scheduler immediately for verification
+
+## Metrics
+
+Per-queue p50/p95 latency and throughput sparklines. Activity buckets over the last 24 hours.
+
+## Search
+
+Free-text search across job IDs, names, and configured tag fields from `job.data`.
+
+## Tags
+
+Pass `tags: ["tenantId", "region"]` in options to expose fields from `job.data` as filterable tags in the UI.
+
+## Read-only mode
+
+Set `readonly: true` to disable all write actions — useful for shared ops dashboards or agent-facing MCP setups.
+
+## Desktop app
+
+The same UI ships in the native macOS desktop app for local-first queue inspection. See [Desktop app](/docs/deployment/desktop).

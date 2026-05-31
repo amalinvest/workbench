@@ -40,8 +40,10 @@ export function CopyCommand({ command, variant = "button" }: CopyCommandProps) {
   }
 
   return (
-    <div className="group flex w-full items-center gap-3 border border-[color:var(--color-border)] bg-[color:var(--color-muted)] px-5 py-3 font-mono text-sm transition hover:border-[color:var(--color-foreground)]/40">
-      <span className="shrink-0 text-[color:var(--color-muted-foreground)]">$</span>
+    <div className="group flex w-full items-center gap-3 rounded-xl border border-[color:var(--color-border)] bg-[color:var(--color-muted)]/40 px-5 py-3.5 font-mono text-sm shadow-sm transition hover:border-[color:var(--color-foreground)]/25">
+      <span className="shrink-0 text-[color:var(--color-muted-foreground)]">
+        $
+      </span>
       <div className="scrollbar-code min-w-0 flex-1 overflow-x-auto">
         <span className="whitespace-pre">{command}</span>
       </div>

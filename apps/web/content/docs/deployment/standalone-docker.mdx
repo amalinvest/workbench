@@ -1,0 +1,69 @@
+---
+title: Standalone Docker
+description: Run Workbench as a standalone Bun server in Docker without embedding it in your app.
+keywords:
+  - Workbench Docker
+  - workbench-standalone
+---
+
+Run Workbench without embedding it in your application server — useful for Kubernetes sidecars, ops dashboards, and teams that want queue visibility without touching app code.
+
+## Quick run
+
+```bash
+docker run --rm -p 3000:3000 \
+  -e REDIS_URL=redis://host.docker.internal:6379 \
+  -e QUEUE_NAMES=default \
+  ghcr.io/pontusab/workbench-standalone:latest
+```
+
+Open `http://localhost:3000`.
+
+## Build from source
+
+From the monorepo root:
+
+```bash
+docker build -f apps/standalone/Dockerfile -t workbench-standalone .
+```
+
+## Environment variables
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `REDIS_URL` | — | Redis connection URL |
+| `QUEUE_NAMES` | `default` | Comma-separated queue names |
+| `PORT` | `3000` | HTTP port |
+| `BASE_PATH` | `/` | Dashboard base path |
+| `AUTH_USERNAME` | — | Basic auth username |
+| `AUTH_PASSWORD` | — | Basic auth password |
+| `TITLE` | `Workbench` | Dashboard title |
+| `LOGO_URL` | — | Logo URL |
+| `READONLY` | `false` | Disable write actions |
+| `TAGS` | — | Comma-separated tag fields |
+
+Unauthenticated mode is allowed when `AUTH_USERNAME` and `AUTH_PASSWORD` are unset — use only for local development.
+
+## Health check
+
+```bash
+curl http://localhost:3000/healthcheck
+```
+
+## Local development
+
+```bash
+docker compose up -d redis
+REDIS_URL=redis://localhost:6379 bun run --filter @getworkbench/standalone dev
+```
+
+## Image publishing
+
+GitHub Actions publishes versioned images to GHCR:
+
+```text
+ghcr.io/<owner>/workbench-standalone:<version>
+ghcr.io/<owner>/workbench-standalone:latest
+```
+
+See [Environment variables](/docs/getting-started/environment-variables) for the full reference.

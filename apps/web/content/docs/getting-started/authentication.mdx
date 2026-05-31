@@ -1,0 +1,62 @@
+---
+title: Authentication
+description: Protect your Workbench dashboard with HTTP basic auth in production.
+keywords:
+  - Workbench basic auth
+  - BullMQ dashboard security
+---
+
+Workbench supports HTTP basic auth. **Strongly recommended in production** — the dashboard can retry, remove, and promote jobs.
+
+## Configure in code
+
+Pass credentials to any adapter:
+
+```ts
+workbench({
+  queues: [emailQueue],
+  auth: {
+    username: process.env.WORKBENCH_USER!,
+    password: process.env.WORKBENCH_PASS!,
+  },
+});
+```
+
+## Environment variables
+
+The CLI scaffolds these in `.env.example`:
+
+| Variable | Description |
+| --- | --- |
+| `WORKBENCH_USER` | Basic auth username |
+| `WORKBENCH_PASS` | Basic auth password |
+
+## Standalone Docker
+
+The standalone image uses `AUTH_USERNAME` and `AUTH_PASSWORD` instead. Both must be set to enable auth; omit them only for local development.
+
+## Read-only mode
+
+For dashboards that should only be viewed (not mutated), set `readonly: true`:
+
+```ts
+workbench({
+  queues: [emailQueue],
+  readonly: true,
+});
+```
+
+This disables retry, remove, promote, and other write actions in the UI. The MCP server inherits this flag — write tools return a clear error when the dashboard is read-only.
+
+## MCP authentication
+
+When connecting the MCP server to an authenticated dashboard, pass the same credentials:
+
+```bash
+WORKBENCH_URL=http://localhost:3000/jobs \
+WORKBENCH_USERNAME=admin \
+WORKBENCH_PASSWORD=hunter2 \
+npx @getworkbench/mcp
+```
+
+See the [MCP package docs](/docs/packages/mcp) for editor-specific configuration.

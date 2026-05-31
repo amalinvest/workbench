@@ -24,19 +24,19 @@
 Each adapter is a `@getworkbench/<framework>` package with a smoke-tested
 example app in the monorepo.
 
-- Hono — https://www.npmjs.com/package/@getworkbench/hono
-- Elysia — https://www.npmjs.com/package/@getworkbench/elysia
-- Express — https://www.npmjs.com/package/@getworkbench/express
-- Fastify — https://www.npmjs.com/package/@getworkbench/fastify
-- NestJS — https://www.npmjs.com/package/@getworkbench/nestjs
-- AdonisJS — https://www.npmjs.com/package/@getworkbench/adonis
-- Next.js — https://www.npmjs.com/package/@getworkbench/next
-- TanStack Start — https://www.npmjs.com/package/@getworkbench/tanstack-start
-- Koa — https://www.npmjs.com/package/@getworkbench/koa
-- Astro — https://www.npmjs.com/package/@getworkbench/astro
-- Nuxt — https://www.npmjs.com/package/@getworkbench/nuxt
-- Bun (Bun.serve) — https://www.npmjs.com/package/@getworkbench/bun
-- h3 — https://www.npmjs.com/package/@getworkbench/h3
+- Hono — https://getworkbench.dev/docs/frameworks/hono
+- Elysia — https://getworkbench.dev/docs/frameworks/elysia
+- Express — https://getworkbench.dev/docs/frameworks/express
+- Fastify — https://getworkbench.dev/docs/frameworks/fastify
+- NestJS — https://getworkbench.dev/docs/frameworks/nestjs
+- AdonisJS — https://getworkbench.dev/docs/frameworks/adonis
+- Next.js — https://getworkbench.dev/docs/frameworks/next
+- TanStack Start — https://getworkbench.dev/docs/frameworks/tanstack-start
+- Koa — https://getworkbench.dev/docs/frameworks/koa
+- Astro — https://getworkbench.dev/docs/frameworks/astro
+- Nuxt — https://getworkbench.dev/docs/frameworks/nuxt
+- Bun (Bun.serve) — https://getworkbench.dev/docs/frameworks/bun
+- h3 — https://getworkbench.dev/docs/frameworks/h3
 
 ## Docker (standalone)
 
@@ -49,7 +49,7 @@ docker run --rm -p 3000:3000 \
   ghcr.io/pontusab/workbench-standalone:latest
 ```
 
-Docs: https://github.com/pontusab/workbench/tree/main/apps/standalone
+Docs: https://getworkbench.dev/docs/deployment/standalone-docker
 
 ## AI agent integrations (MCP)
 
@@ -63,12 +63,13 @@ inspect (overview, queues, runs, jobs, metrics, schedulers, flows,
 search) and operate (retry, remove, promote, pause/resume queue, run
 scheduler now, enqueue, clean, bulk retry/delete).
 
-- @getworkbench/mcp — https://www.npmjs.com/package/@getworkbench/mcp
+- @getworkbench/mcp — https://getworkbench.dev/docs/packages/mcp
 
 ## Docs
 
-- Marketing site: https://getworkbench.dev
-- README / docs: https://github.com/pontusab/workbench#readme
+- Documentation: https://getworkbench.dev/docs
+- Quick start: https://getworkbench.dev/docs/getting-started/quick-start
+- Configuration: https://getworkbench.dev/docs/guides/configuration
 - Blog: https://getworkbench.dev/blog
 - Comparison vs bull-board: https://getworkbench.dev/blog/workbench-vs-bull-board
 
