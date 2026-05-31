@@ -1,6 +1,6 @@
 {
   "name": "@getworkbench/fastify",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Fastify adapter for Workbench — modern BullMQ dashboard, drop-in alternative to `@bull-board/fastify`.",
   "type": "module",
   "main": "./dist/index.js",

@@ -118,6 +118,70 @@ Shared by every adapter and by `createFetchHandler` / `WorkbenchCore`:
 | `basePath` | `string` | Override base path detection. Required for some adapters (Elysia, Koa, Next.js, TanStack Start, Astro, Nuxt, h3, Adonis). |
 | `readonly` | `boolean` | Disable actions (retry, remove, promote). |
 | `tags` | `string[]` | Fields from `job.data` to extract as filterable tags. |
+| `alerts` | `AlertsOptions` | Self-hosted alerting via BullMQ `QueueEvents`, Slack/webhook contact points, and dashboard-managed rules. |
+
+## Alerts
+
+Alerts are enabled by default. Configure contact points and rules from the dashboard **Alerts** page — nothing is sent until you add destinations and matching rules.
+
+Optional seed data and settings in code:
+
+```ts
+workbench({
+  queues: [emailQueue],
+  basePath: "/jobs",
+  alerts: {
+    dashboardUrl: "https://jobs.example.com/jobs",
+    contactPoints: [
+      {
+        id: "slack-prod",
+        name: "Slack #ops",
+        preset: "slack",
+        url: process.env.SLACK_WEBHOOK_URL!,
+        enabled: true,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+    ],
+    rules: [
+      {
+        id: "failed-jobs",
+        name: "Job failed",
+        enabled: true,
+        trigger: "job_failed",
+        severity: "warning",
+        contactPointIds: ["slack-prod"],
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+    ],
+  },
+});
+```
+
+Supported triggers: `job_failed`, `job_stalled`, `retries_exhausted`, `failed_backlog`, `no_workers_with_backlog`.
+
+Dashboard-managed config is **persisted in Redis** at `{prefix}:workbench:alerts:*` using the same connection as your queues. Code-defined `contactPoints` / `rules` seed Redis once when the store is empty.
+
+Set `alerts.persistence: "memory"` to keep config in-process only (resets on restart). Set `alerts.enabled: false` to disable alerting entirely.
+
+### How this compares
+
+| Tool | Alert setup |
+| --- | --- |
+| **Bull Board** | No built-in alerting — you wire Slack/webhooks in worker code |
+| **Sidekiq** | Code hooks (`death_handlers`) in your initializer |
+| **Grafana** | UI contact points + alert rules + optional routing tree |
+| **Workbench** | Grafana-style **contact points** and **rules** in the dashboard; event-driven via BullMQ `QueueEvents` |
+
+### Slack setup
+
+1. Create a Slack app at [api.slack.com/apps](https://api.slack.com/apps)
+2. Enable **Incoming Webhooks** → **Add New Webhook to Workspace** → pick a channel
+3. Copy the webhook URL (`https://hooks.slack.com/services/...`)
+4. In Workbench **Alerts** → **Add contact point** → preset **Slack** → paste URL → **Test**
+
+Slack preset sends Block Kit messages with queue, job, and severity details. Set `alerts.dashboardUrl` so notifications include an **Open in Workbench** link (HTTPS links render as buttons; HTTP dev URLs use a text link). Generic webhook preset sends a stable JSON payload for automation.
 
 ## Requirements
 

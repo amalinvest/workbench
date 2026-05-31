@@ -46,6 +46,11 @@ export const queryKeys = {
   flows: ["flows"] as const,
   flow: (queueName: string, jobId: string) =>
     ["flow", queueName, jobId] as const,
+  alerts: {
+    status: ["alerts", "status"] as const,
+    contactPoints: ["alerts", "contact-points"] as const,
+    rules: ["alerts", "rules"] as const,
+  },
 };
 
 /**
@@ -517,6 +522,122 @@ export function useCreateFlow() {
       queryClient.invalidateQueries({ queryKey: queryKeys.flows });
       queryClient.invalidateQueries({ queryKey: queryKeys.runsAll });
       queryClient.invalidateQueries({ queryKey: queryKeys.queues });
+    },
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Alerts
+// ─────────────────────────────────────────────────────────────────────────────
+
+export function useAlertStatus() {
+  return useQuery({
+    queryKey: queryKeys.alerts.status,
+    queryFn: () => api.getAlertStatus(),
+    refetchInterval: 10_000,
+    retry: false,
+  });
+}
+
+export function useAlertContactPoints() {
+  return useQuery({
+    queryKey: queryKeys.alerts.contactPoints,
+    queryFn: () => api.getAlertContactPoints(),
+    retry: false,
+  });
+}
+
+export function useAlertRules() {
+  return useQuery({
+    queryKey: queryKeys.alerts.rules,
+    queryFn: () => api.getAlertRules(),
+    retry: false,
+  });
+}
+
+export function useCreateAlertContactPoint() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: Parameters<typeof api.createAlertContactPoint>[0]) =>
+      api.createAlertContactPoint(input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.alerts.contactPoints,
+      });
+    },
+  });
+}
+
+export function useUpdateAlertContactPoint() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      id,
+      ...input
+    }: { id: string } & Parameters<typeof api.updateAlertContactPoint>[1]) =>
+      api.updateAlertContactPoint(id, input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.alerts.contactPoints,
+      });
+    },
+  });
+}
+
+export function useDeleteAlertContactPoint() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.deleteAlertContactPoint(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.alerts.contactPoints,
+      });
+      queryClient.invalidateQueries({ queryKey: queryKeys.alerts.rules });
+    },
+  });
+}
+
+export function useTestAlertContactPoint() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.testAlertContactPoint(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.alerts.status });
+    },
+  });
+}
+
+export function useCreateAlertRule() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: Parameters<typeof api.createAlertRule>[0]) =>
+      api.createAlertRule(input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.alerts.rules });
+    },
+  });
+}
+
+export function useUpdateAlertRule() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      id,
+      ...input
+    }: { id: string } & Parameters<typeof api.updateAlertRule>[1]) =>
+      api.updateAlertRule(id, input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.alerts.rules });
+    },
+  });
+}
+
+export function useDeleteAlertRule() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.deleteAlertRule(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.alerts.rules });
     },
   });
 }

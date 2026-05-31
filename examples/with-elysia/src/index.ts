@@ -26,6 +26,9 @@ new Elysia()
       title: "Elysia · Workbench",
       basePath: "/jobs",
       auth,
+      alerts: {
+        dashboardUrl: `http://localhost:${port}/jobs`,
+      },
     }),
   )
   .listen(port, ({ port }) => {

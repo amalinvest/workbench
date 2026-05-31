@@ -1,6 +1,7 @@
 import {
   ArrowRight,
   BarChart3,
+  Bell,
   Calendar,
   FileText,
   FlaskConical,
@@ -82,6 +83,13 @@ const navigationItems: NavigationItem[] = [
     path: "/flows",
     icon: <Network className="h-4 w-4" />,
     keywords: ["flows", "workflows", "graph"],
+  },
+  {
+    id: "alerts",
+    label: "Alerts",
+    path: "/alerts",
+    icon: <Bell className="h-4 w-4" />,
+    keywords: ["alerts", "notifications", "slack", "webhook"],
   },
   {
     id: "test",

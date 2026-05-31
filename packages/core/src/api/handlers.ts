@@ -1,4 +1,8 @@
+import { validateContactPointUrl } from "../core/alert-destinations";
+import { toPublicContactPoint } from "../core/alert-store";
 import type {
+  AlertContactPoint,
+  AlertRule,
   CreateFlowRequest,
   JobStatus,
   SortOptions,
@@ -66,6 +70,205 @@ const readonlyError = {
   status: 403 as const,
   body: { error: "Dashboard is in readonly mode" },
 };
+
+function alertsRoutes(core: WorkbenchCore): RouteDef[] {
+  const am = core.alertManager;
+  if (!am) return [];
+
+  const store = am.getStore();
+  const isReadonly = () => !!core.options.readonly;
+
+  return [
+    {
+      method: "get",
+      path: "/alerts/status",
+      handler: async () => ({
+        status: 200,
+        body: await am.getStatus(),
+      }),
+    },
+    {
+      method: "get",
+      path: "/alerts/contact-points",
+      handler: async () => {
+        const points = await store.getContactPoints();
+        return {
+          status: 200,
+          body: points.map(toPublicContactPoint),
+        };
+      },
+    },
+    {
+      method: "post",
+      path: "/alerts/contact-points",
+      handler: async ({ body }) => {
+        if (isReadonly()) return readonlyError;
+        const input = body as Partial<AlertContactPoint> | undefined;
+        if (!input?.name || !input.url || !input.preset) {
+          return {
+            status: 400,
+            body: { error: "name, url, and preset are required" },
+          };
+        }
+        const urlError = validateContactPointUrl(input.preset, input.url);
+        if (urlError) {
+          return { status: 400, body: { error: urlError } };
+        }
+        const created = await store.createContactPoint({
+          name: input.name,
+          preset: input.preset,
+          url: input.url,
+          enabled: input.enabled ?? true,
+          displayName: input.displayName,
+          iconUrl: input.iconUrl,
+          headers: input.headers,
+        });
+        return { status: 201, body: toPublicContactPoint(created) };
+      },
+    },
+    {
+      method: "put",
+      path: "/alerts/contact-points/:id",
+      handler: async ({ params, body }) => {
+        if (isReadonly()) return readonlyError;
+        const input = body as Partial<AlertContactPoint> | undefined;
+        if (input?.url && input.preset) {
+          const urlError = validateContactPointUrl(input.preset, input.url);
+          if (urlError) {
+            return { status: 400, body: { error: urlError } };
+          }
+        } else if (input?.url) {
+          const existing = await store.getContactPoint(params.id!);
+          if (existing) {
+            const urlError = validateContactPointUrl(
+              existing.preset,
+              input.url,
+            );
+            if (urlError) {
+              return { status: 400, body: { error: urlError } };
+            }
+          }
+        }
+        const updated = await store.updateContactPoint(params.id!, {
+          name: input?.name,
+          preset: input?.preset,
+          url: input?.url,
+          enabled: input?.enabled,
+          displayName: input?.displayName,
+          iconUrl: input?.iconUrl,
+          headers: input?.headers,
+        });
+        if (!updated) {
+          return { status: 404, body: { error: "Contact point not found" } };
+        }
+        return { status: 200, body: toPublicContactPoint(updated) };
+      },
+    },
+    {
+      method: "delete",
+      path: "/alerts/contact-points/:id",
+      handler: async ({ params }) => {
+        if (isReadonly()) return readonlyError;
+        const ok = await store.deleteContactPoint(params.id!);
+        if (!ok) {
+          return { status: 404, body: { error: "Contact point not found" } };
+        }
+        return { status: 200, body: { success: true } };
+      },
+    },
+    {
+      method: "post",
+      path: "/alerts/contact-points/:id/test",
+      handler: async ({ params }) => {
+        if (isReadonly()) return readonlyError;
+        const record = await am.sendTest(params.id!);
+        return { status: 200, body: record };
+      },
+    },
+    {
+      method: "get",
+      path: "/alerts/rules",
+      handler: async () => ({
+        status: 200,
+        body: await store.getRules(),
+      }),
+    },
+    {
+      method: "post",
+      path: "/alerts/rules",
+      handler: async ({ body }) => {
+        if (isReadonly()) return readonlyError;
+        const input = body as Partial<AlertRule> | undefined;
+        if (!input?.name || !input.trigger || !input.contactPointIds?.length) {
+          return {
+            status: 400,
+            body: {
+              error: "name, trigger, and contactPointIds are required",
+            },
+          };
+        }
+        const created = await store.createRule({
+          name: input.name,
+          enabled: input.enabled ?? true,
+          trigger: input.trigger,
+          severity: input.severity ?? "warning",
+          queues: input.queues,
+          jobNames: input.jobNames,
+          threshold: input.threshold,
+          contactPointIds: input.contactPointIds,
+          cooldownMs: input.cooldownMs,
+        });
+        return { status: 201, body: created };
+      },
+    },
+    {
+      method: "put",
+      path: "/alerts/rules/:id",
+      handler: async ({ params, body }) => {
+        if (isReadonly()) return readonlyError;
+        const input = body as Partial<AlertRule> | undefined;
+        const updated = await store.updateRule(params.id!, {
+          name: input?.name,
+          enabled: input?.enabled,
+          trigger: input?.trigger,
+          severity: input?.severity,
+          queues: input?.queues,
+          jobNames: input?.jobNames,
+          threshold: input?.threshold,
+          contactPointIds: input?.contactPointIds,
+          cooldownMs: input?.cooldownMs,
+        });
+        if (!updated) {
+          return { status: 404, body: { error: "Rule not found" } };
+        }
+        return { status: 200, body: updated };
+      },
+    },
+    {
+      method: "delete",
+      path: "/alerts/rules/:id",
+      handler: async ({ params }) => {
+        if (isReadonly()) return readonlyError;
+        const ok = await store.deleteRule(params.id!);
+        if (!ok) {
+          return { status: 404, body: { error: "Rule not found" } };
+        }
+        return { status: 200, body: { success: true } };
+      },
+    },
+    {
+      method: "post",
+      path: "/alerts/rules/:id/preview",
+      handler: async ({ params }) => {
+        const rule = await store.getRule(params.id!);
+        if (!rule) {
+          return { status: 404, body: { error: "Rule not found" } };
+        }
+        return { status: 200, body: am.previewRule(rule) };
+      },
+    },
+  ];
+}
 
 /**
  * Build the framework-agnostic route table for the Workbench API.
@@ -537,5 +740,7 @@ export function buildRouteTable(core: WorkbenchCore): RouteDef[] {
         }
       },
     },
+
+    ...alertsRoutes(core),
   ];
 }

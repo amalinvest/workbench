@@ -395,6 +395,11 @@ Visit `http://localhost:PORT/jobs`.
 | `basePath` | `string`                            | Override base path detection. Required for `@getworkbench/elysia`, `@getworkbench/koa`, `@getworkbench/next`, `@getworkbench/tanstack-start`, `@getworkbench/astro`, `@getworkbench/nuxt`, and `@getworkbench/h3`. |
 | `readonly` | `boolean`                           | Disable actions (retry, remove, promote).                  |
 | `tags`     | `string[]`                          | Fields from `job.data` to extract as filterable tags.      |
+| `alerts`   | `AlertsOptions`                     | Self-hosted Slack/webhook alerting via BullMQ QueueEvents. |
+
+### Alerts
+
+Alerts are on by default. Configure Slack or webhook **contact points** and **rules** in the dashboard **Alerts** page — notifications are only sent after you set that up. The model follows Grafana-style contact points + rules (unlike Bull Board, which has no built-in alerting). See [`@getworkbench/core` README](./packages/core/README.md) for Slack setup steps.
 
 ## Packages
 

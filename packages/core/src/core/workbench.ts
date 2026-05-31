@@ -1,4 +1,6 @@
 import type { Queue, RedisOptions } from "bullmq";
+import { AlertManager } from "./alert-manager";
+import { createAlertStore } from "./alert-store";
 import { discoverQueues } from "./discover";
 import { QueueManager } from "./queue-manager";
 import type { WorkbenchOptions } from "./types";
@@ -24,6 +26,8 @@ export class WorkbenchCore {
     WorkbenchOptions;
   readonly queueManager: QueueManager;
   readonly discovery: DiscoveryMeta | null;
+  readonly alertManager: AlertManager | null;
+  readonly alertsPersistence: "redis" | "memory" | "custom" | null;
 
   constructor(
     options: WorkbenchOptions | Queue[],
@@ -49,6 +53,30 @@ export class WorkbenchCore {
     }
 
     this.queueManager = new QueueManager(explicit, this.options.tags || []);
+
+    if (this.options.alerts?.enabled !== false) {
+      const alertsOpts = this.options.alerts ?? {};
+      const queueConnection = explicit[0]?.opts?.connection;
+      const { store, persistence } = createAlertStore(alertsOpts, {
+        queueConnection,
+        redis: this.options.redis,
+        prefix: this.options.prefix ?? "bull",
+      });
+      this.alertsPersistence = persistence;
+      this.alertManager = new AlertManager(
+        this.queueManager,
+        () => this.queueManager.getQueueMap(),
+        alertsOpts,
+        store,
+        persistence,
+      );
+      void this.alertManager.start().catch((err) => {
+        console.error("[workbench] Failed to start alert manager:", err);
+      });
+    } else {
+      this.alertsPersistence = null;
+      this.alertManager = null;
+    }
   }
 
   /**
@@ -121,6 +149,8 @@ export class WorkbenchCore {
       queues: this.queueManager.getQueueNames(),
       tags: this.queueManager.getTagFields(),
       discovery: this.discovery,
+      alertsEnabled: this.alertManager !== null,
+      alertsPersistence: this.alertsPersistence,
     };
   }
 }

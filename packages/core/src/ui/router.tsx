@@ -16,6 +16,7 @@ import { HeaderSearch } from "@/components/layout/header-search";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { useConfig, useQueueNames, useQueues } from "@/lib/hooks";
+import { AlertsPage } from "@/pages/alerts";
 import { FlowPage } from "@/pages/flow";
 import { FlowsPage } from "@/pages/flows";
 import { JobPage } from "@/pages/job";
@@ -177,6 +178,9 @@ function RootLayout() {
     if (path === "/test") {
       return { activeNav: "test" as NavItem, activeQueue: undefined };
     }
+    if (path === "/alerts") {
+      return { activeNav: "alerts" as NavItem, activeQueue: undefined };
+    }
     if (path.startsWith("/queues/")) {
       const queueName = path.split("/")[2];
       return { activeNav: "queues" as NavItem, activeQueue: queueName };
@@ -248,6 +252,9 @@ function RootLayout() {
         break;
       case "flows":
         navigate({ to: "/flows" });
+        break;
+      case "alerts":
+        navigate({ to: "/alerts" });
         break;
       case "test":
         navigate({ to: "/test" });
@@ -473,6 +480,14 @@ function TestRoute() {
   );
 }
 
+function AlertsRoute() {
+  return (
+    <PageLayout title="Alerts">
+      <AlertsPage />
+    </PageLayout>
+  );
+}
+
 function QueueRoute() {
   const { queueName } = useParams({ from: "/queues/$queueName" });
   const { data: config } = useConfig();
@@ -591,6 +606,12 @@ const testRoute = createRoute({
   validateSearch: testSearchSchema,
 });
 
+const alertsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/alerts",
+  component: AlertsRoute,
+});
+
 const queueRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/queues/$queueName",
@@ -614,6 +635,7 @@ const routeTree = rootRoute.addChildren([
   flowsRoute,
   flowDetailRoute,
   testRoute,
+  alertsRoute,
   queueRoute,
   jobRoute,
 ]);

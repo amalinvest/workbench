@@ -1,5 +1,11 @@
 import type {
   ActivityStatsResponse,
+  AlertContactPoint,
+  AlertContactPointPublic,
+  AlertDeliveryRecord,
+  AlertEvent,
+  AlertRule,
+  AlertRuntimeStatus,
   CreateFlowRequest,
   DelayedJobInfo,
   FlowNode,
@@ -299,6 +305,8 @@ export const api = {
       capped: boolean;
       cap: number;
     } | null;
+    alertsEnabled: boolean;
+    alertsPersistence: "redis" | "memory" | "custom" | null;
   }> {
     return fetchJson(getConfigUrl());
   },
@@ -532,5 +540,89 @@ export const api = {
       method: "POST",
       body: JSON.stringify(request),
     });
+  },
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // Alerts
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  async getAlertStatus(): Promise<AlertRuntimeStatus> {
+    return fetchJson(`${API_BASE}/alerts/status`);
+  },
+
+  async getAlertContactPoints(): Promise<AlertContactPointPublic[]> {
+    return fetchJson(`${API_BASE}/alerts/contact-points`);
+  },
+
+  async createAlertContactPoint(
+    input: Omit<AlertContactPoint, "id" | "createdAt" | "updatedAt">,
+  ): Promise<AlertContactPointPublic> {
+    return fetchJson(`${API_BASE}/alerts/contact-points`, {
+      method: "POST",
+      body: JSON.stringify(input),
+    });
+  },
+
+  async updateAlertContactPoint(
+    id: string,
+    input: Partial<Omit<AlertContactPoint, "id" | "createdAt" | "updatedAt">>,
+  ): Promise<AlertContactPointPublic> {
+    return fetchJson(
+      `${API_BASE}/alerts/contact-points/${encodeURIComponent(id)}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(input),
+      },
+    );
+  },
+
+  async deleteAlertContactPoint(id: string): Promise<{ success: boolean }> {
+    return fetchJson(
+      `${API_BASE}/alerts/contact-points/${encodeURIComponent(id)}`,
+      { method: "DELETE" },
+    );
+  },
+
+  async testAlertContactPoint(id: string): Promise<AlertDeliveryRecord> {
+    return fetchJson(
+      `${API_BASE}/alerts/contact-points/${encodeURIComponent(id)}/test`,
+      { method: "POST" },
+    );
+  },
+
+  async getAlertRules(): Promise<AlertRule[]> {
+    return fetchJson(`${API_BASE}/alerts/rules`);
+  },
+
+  async createAlertRule(
+    input: Omit<AlertRule, "id" | "createdAt" | "updatedAt">,
+  ): Promise<AlertRule> {
+    return fetchJson(`${API_BASE}/alerts/rules`, {
+      method: "POST",
+      body: JSON.stringify(input),
+    });
+  },
+
+  async updateAlertRule(
+    id: string,
+    input: Partial<Omit<AlertRule, "id" | "createdAt" | "updatedAt">>,
+  ): Promise<AlertRule> {
+    return fetchJson(`${API_BASE}/alerts/rules/${encodeURIComponent(id)}`, {
+      method: "PUT",
+      body: JSON.stringify(input),
+    });
+  },
+
+  async deleteAlertRule(id: string): Promise<{ success: boolean }> {
+    return fetchJson(`${API_BASE}/alerts/rules/${encodeURIComponent(id)}`, {
+      method: "DELETE",
+    });
+  },
+
+  async previewAlertRule(id: string): Promise<AlertEvent> {
+    return fetchJson(
+      `${API_BASE}/alerts/rules/${encodeURIComponent(id)}/preview`,
+      { method: "POST" },
+    );
   },
 };

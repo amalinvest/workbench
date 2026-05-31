@@ -3,6 +3,7 @@
 import type { LucideIcon } from "lucide-react";
 import {
   BarChart3,
+  Bell,
   Clock,
   FlaskConical,
   Hourglass,
@@ -59,6 +60,7 @@ export type NavItem =
   | "schedulers"
   | "flows"
   | "queues"
+  | "alerts"
   | "test";
 
 interface AppSidebarProps {
@@ -80,6 +82,7 @@ const mainNavItems = [
   { id: "metrics" as const, label: "Metrics", icon: BarChart3 },
   { id: "schedulers" as const, label: "Schedulers", icon: Clock },
   { id: "flows" as const, label: "Flows", icon: Network },
+  { id: "alerts" as const, label: "Alerts", icon: Bell },
   { id: "test" as const, label: "Test", icon: FlaskConical },
 ];
 
