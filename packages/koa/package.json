@@ -1,6 +1,6 @@
 {
   "name": "@getworkbench/koa",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Koa adapter for Workbench — modern BullMQ dashboard, drop-in alternative to `@bull-board/koa`.",
   "type": "module",
   "main": "./dist/index.js",

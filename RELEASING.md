@@ -57,8 +57,8 @@ packages must bump together** because they share `@getworkbench/core` via
 # 1. Bump core + every adapter in lockstep. `npm version` does not handle
 #    `workspace:*` deps, so edit the `"version"` field in each package.json
 #    directly (or use a tiny sed script).
-for p in core express fastify next nestjs elysia hono; do
-  sed -i.bak -E "s/(\"version\": )\"[^\"]+\"/\\1\"0.3.0\"/" "packages/$p/package.json"
+for p in core express fastify hono elysia next nestjs koa astro nuxt bun h3 adonis tanstack-start; do
+  sed -i.bak -E "s/(\"version\": )\"[^\"]+\"/\\1\"0.8.0\"/" "packages/$p/package.json"
   rm "packages/$p/package.json.bak"
 done
 
@@ -76,8 +76,15 @@ bun run typecheck
 (cd packages/fastify && bun publish --access public)
 (cd packages/hono    && bun publish --access public)
 (cd packages/elysia  && bun publish --access public)
+(cd packages/koa     && bun publish --access public)
 (cd packages/next    && bun publish --access public)
-(cd packages/nestjs  && bun publish --access public)  # depends on express + fastify, publish last
+(cd packages/nestjs  && bun publish --access public)
+(cd packages/astro   && bun publish --access public)
+(cd packages/nuxt    && bun publish --access public)
+(cd packages/bun     && bun publish --access public)
+(cd packages/h3      && bun publish --access public)
+(cd packages/adonis  && bun publish --access public)
+(cd packages/tanstack-start && bun publish --access public)
 # (cd packages/cli   && bun publish --access public)  # only if you bumped it
 
 # 5. Commit, tag, push.
