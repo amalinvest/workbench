@@ -27,15 +27,13 @@ export function SiteChrome({
   section,
   active = "product",
 }: SiteChromeProps) {
-  const homeHref = section === "docs" ? "/docs" : "/";
-
   return (
     <main className="relative isolate min-h-screen">
       <nav
         className="site-chrome-nav sticky top-0 z-50 flex items-center justify-between border-b border-[color:var(--color-border)]/60 bg-[color:var(--color-background)]/70 px-6 py-3 backdrop-blur-md md:px-10"
         style={{ ["--site-chrome-nav-height" as string]: "3.3125rem" }}
       >
-        <Link href={homeHref} className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           <Image
             src="/app-icon.svg"
             alt=""
