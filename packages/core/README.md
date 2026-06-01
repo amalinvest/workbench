@@ -118,7 +118,7 @@ Shared by every adapter and by `createFetchHandler` / `WorkbenchCore`:
 | `basePath` | `string` | Override base path detection. Required for some adapters (Elysia, Koa, Next.js, TanStack Start, Astro, Nuxt, h3, Adonis). |
 | `readonly` | `boolean` | Disable actions (retry, remove, promote). |
 | `tags` | `string[]` | Fields from `job.data` to extract as filterable tags. |
-| `alerts` | `AlertsOptions` | Self-hosted alerting via BullMQ `QueueEvents`, Slack/webhook contact points, and dashboard-managed rules. |
+| `alerts` | `AlertsOptions` | Self-hosted alerting via BullMQ `QueueEvents`, Slack/Discord/webhook contact points, and dashboard-managed rules. |
 
 ## Alerts
 

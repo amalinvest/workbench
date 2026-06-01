@@ -66,9 +66,9 @@ export type AlertTrigger =
 
 export type AlertSeverity = "critical" | "warning" | "info";
 
-export type AlertContactPointPreset = "slack" | "webhook";
+export type AlertContactPointPreset = "slack" | "webhook" | "discord";
 
-/** Where notifications are sent (Slack incoming webhook or generic webhook) */
+/** Where notifications are sent (Slack/Discord incoming webhook or generic webhook) */
 export interface AlertContactPoint {
   id: string;
   name: string;
