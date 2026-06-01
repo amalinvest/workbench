@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-06-01
+
+### Added
+
+- **`@getworkbench/core`** Discord as an official alert contact point: webhook URL validation (`discord.com` / `ptb.discord.com`), embed payload formatting with severity colors, and dashboard setup instructions alongside Slack and generic webhooks.
+
+### Fixed
+
+- **`@getworkbench/core@0.9.0`** Republished as `0.9.1` — the initial `0.9.0` tarball was missing `dist/` (published before build artifacts were present).
+
+### Changed
+
+- All 14 publishable adapter packages bump together to `0.9.1`.
+
+## [0.9.0] - 2026-06-01
+
+Withdrawn on npm (empty tarball). Use `0.9.1` instead.
+
 ## [0.8.0] - 2026-05-30
 
 ### Added

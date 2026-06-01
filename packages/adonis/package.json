@@ -1,6 +1,6 @@
 {
   "name": "@getworkbench/adonis",
-  "version": "0.8.0",
+  "version": "0.9.1",
   "description": "AdonisJS adapter for Workbench — modern BullMQ dashboard with broader framework coverage than bull-board.",
   "type": "module",
   "main": "./dist/index.js",

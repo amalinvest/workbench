@@ -1,6 +1,6 @@
 {
   "name": "@getworkbench/h3",
-  "version": "0.8.0",
+  "version": "0.9.1",
   "description": "h3 adapter for Workbench — modern BullMQ dashboard, drop-in alternative to `@bull-board/h3`.",
   "type": "module",
   "main": "./dist/index.js",
