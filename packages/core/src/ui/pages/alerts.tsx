@@ -2,6 +2,7 @@ import {
   Bell,
   CheckCircle2,
   Loader2,
+  MessageSquare,
   Plus,
   Send,
   Trash2,
@@ -105,6 +106,11 @@ const DESTINATION_TYPES: {
     value: "slack",
     label: "Slack",
     description: "Incoming webhook to a channel",
+  },
+  {
+    value: "discord",
+    label: "Discord",
+    description: "Webhook to a Discord channel",
   },
   {
     value: "webhook",
@@ -246,9 +252,40 @@ function ContactPointForm({
               </AlertDescription>
             </Alert>
           )}
+          {preset === "discord" && (
+            <Alert>
+              <AlertTitle>Discord webhook</AlertTitle>
+              <AlertDescription className="text-xs space-y-2">
+                <ol className="list-decimal list-inside space-y-1">
+                  <li>
+                    Open your server → <strong>Server Settings</strong> →{" "}
+                    <strong>Integrations</strong> → <strong>Webhooks</strong>
+                  </li>
+                  <li>
+                    Click <strong>New Webhook</strong>, pick a channel, then{" "}
+                    <strong>Copy Webhook URL</strong>
+                  </li>
+                  <li>
+                    Paste the URL (
+                    <code className="text-[10px]">
+                      https://discord.com/api/webhooks/…
+                    </code>
+                    ) below
+                  </li>
+                  <li>
+                    Save, then use <strong>Test</strong> to verify delivery
+                  </li>
+                </ol>
+              </AlertDescription>
+            </Alert>
+          )}
           <div>
             <p className="text-xs text-muted-foreground mb-1">
-              {preset === "slack" ? "Slack webhook URL" : "Webhook URL"}
+              {preset === "slack"
+                ? "Slack webhook URL"
+                : preset === "discord"
+                  ? "Discord webhook URL"
+                  : "Webhook URL"}
               {initial ? " (leave blank to keep current)" : ""}
             </p>
             <Input
@@ -256,7 +293,9 @@ function ContactPointForm({
               placeholder={
                 preset === "slack"
                   ? "https://hooks.slack.com/services/..."
-                  : "https://..."
+                  : preset === "discord"
+                    ? "https://discord.com/api/webhooks/..."
+                    : "https://..."
               }
               value={url}
               onChange={(e) => setUrl(e.target.value)}
@@ -273,7 +312,7 @@ function ContactPointForm({
               onChange={(e) => setDisplayName(e.target.value)}
             />
             <p className="text-xs text-muted-foreground mt-1">
-              Shown on Slack messages when your workspace allows it.
+              Shown on Slack and Discord messages when allowed.
             </p>
           </div>
         </div>
@@ -529,7 +568,7 @@ function SetupGuide({
     {
       done: hasDestinations,
       label: "Add a destination",
-      detail: "Slack channel or webhook URL",
+      detail: "Slack, Discord, or webhook URL",
     },
     {
       done: hasRules,
@@ -572,7 +611,8 @@ function SetupGuide({
 }
 
 function DestinationIcon({ preset }: { preset: AlertContactPointPreset }) {
-  const Icon = preset === "slack" ? Bell : Webhook;
+  const Icon =
+    preset === "slack" ? Bell : preset === "discord" ? MessageSquare : Webhook;
   return (
     <div className="flex size-9 shrink-0 items-center justify-center rounded-md bg-muted">
       <Icon className="size-4 text-muted-foreground" />
@@ -743,7 +783,7 @@ export function AlertsPage() {
             <EmptyState
               icon={Bell}
               title="No destinations yet"
-              description="Connect Slack or a webhook URL where notifications should be delivered."
+              description="Connect Slack, Discord, or a webhook URL where notifications should be delivered."
               action={
                 !readonly ? (
                   <Button

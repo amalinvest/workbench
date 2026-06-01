@@ -22,6 +22,27 @@ export function isSlackIncomingWebhookUrl(url: string): boolean {
   }
 }
 
+const DISCORD_WEBHOOK_HOSTS = new Set([
+  "discord.com",
+  "discordapp.com",
+  "canary.discord.com",
+  "ptb.discord.com",
+]);
+
+/** Discord channel webhook URLs (https://discord.com/api/webhooks/:id/:token). */
+export function isDiscordWebhookUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return (
+      parsed.protocol === "https:" &&
+      DISCORD_WEBHOOK_HOSTS.has(parsed.hostname) &&
+      parsed.pathname.startsWith("/api/webhooks/")
+    );
+  } catch {
+    return false;
+  }
+}
+
 export function validateContactPointUrl(
   preset: AlertContactPoint["preset"],
   url: string,
@@ -39,6 +60,10 @@ export function validateContactPointUrl(
     return "Slack contact points require an incoming webhook URL (https://hooks.slack.com/services/...)";
   }
 
+  if (preset === "discord" && !isDiscordWebhookUrl(url)) {
+    return "Discord contact points require a webhook URL (https://discord.com/api/webhooks/...)";
+  }
+
   return undefined;
 }
 
@@ -49,6 +74,16 @@ const SEVERITY_EMOJI: Record<string, string> = {
   warning: "🟡",
   info: "🔵",
 };
+
+const DISCORD_NEUTRAL_COLOR = 0x6b7280;
+
+const SEVERITY_COLOR: Record<string, number> = {
+  critical: 0xef4444,
+  warning: 0xf59e0b,
+  info: 0x3b82f6,
+};
+
+const DISCORD_FIELD_MAX = 1024;
 
 function severityLabel(severity: string): string {
   return severity.charAt(0).toUpperCase() + severity.slice(1);
@@ -226,6 +261,79 @@ export function formatWebhookPayload(
   };
 }
 
+export function formatDiscordPayload(
+  contactPoint: AlertContactPoint,
+  event: AlertEvent,
+  dashboardUrl?: string,
+): FormattedDestinationPayload {
+  const emoji = SEVERITY_EMOJI[event.severity] ?? "⚪";
+  const link = buildDashboardLink(dashboardUrl, event);
+  const senderName = contactPoint.displayName ?? DEFAULT_ALERT_SENDER_NAME;
+  const iconUrl = contactPoint.iconUrl ?? DEFAULT_WORKBENCH_ICON_URL;
+
+  const fields: Array<{ name: string; value: string; inline?: boolean }> = [];
+  const pushField = (name: string, value: string, inline = true) => {
+    const trimmed = value.trim();
+    if (trimmed) {
+      fields.push({ name, value: trimmed.slice(0, DISCORD_FIELD_MAX), inline });
+    }
+  };
+
+  if (event.queue) {
+    pushField("Queue", event.queue);
+  }
+  if (event.jobName || event.jobId) {
+    pushField("Job", `${event.jobName ?? "—"} (\`${event.jobId ?? "—"}\`)`);
+  }
+  if (event.failedReason) {
+    pushField("Reason", event.failedReason.slice(0, 500), false);
+  }
+  if (event.counts) {
+    const parts: string[] = [];
+    if (event.counts.failed !== undefined) {
+      parts.push(`Failed: ${event.counts.failed}`);
+    }
+    if (event.counts.backlog !== undefined) {
+      parts.push(`Backlog: ${event.counts.backlog}`);
+    }
+    if (event.counts.workers !== undefined && event.counts.workers !== null) {
+      parts.push(`Workers: ${event.counts.workers}`);
+    }
+    pushField("Counts", parts.join(" · "));
+  }
+
+  let description = `**${severityLabel(event.severity)}** · \`${event.trigger}\`\n${event.message}`;
+  if (link?.startsWith("https://")) {
+    description += `\n\n**[Open in Workbench](${link})**`;
+  } else if (link) {
+    description += `\n\n${link}`;
+  }
+
+  const body = {
+    username: senderName,
+    avatar_url: iconUrl,
+    content: `${emoji} ${event.ruleName}: ${event.message}`,
+    embeds: [
+      {
+        title: `${emoji} ${event.ruleName}`,
+        description,
+        color: SEVERITY_COLOR[event.severity] ?? DISCORD_NEUTRAL_COLOR,
+        fields,
+        footer: {
+          text: event.status === "resolved" ? "✅ Resolved" : "🔔 Firing",
+        },
+        timestamp: new Date(event.firedAt).toISOString(),
+      },
+    ],
+  };
+
+  return {
+    url: contactPoint.url,
+    headers: { "Content-Type": "application/json" },
+    body,
+  };
+}
+
 export function formatDestinationPayload(
   contactPoint: AlertContactPoint,
   event: AlertEvent,
@@ -233,6 +341,9 @@ export function formatDestinationPayload(
 ): FormattedDestinationPayload {
   if (contactPoint.preset === "slack") {
     return formatSlackPayload(contactPoint, event, dashboardUrl);
+  }
+  if (contactPoint.preset === "discord") {
+    return formatDiscordPayload(contactPoint, event, dashboardUrl);
   }
   return formatWebhookPayload(contactPoint, event, dashboardUrl);
 }
