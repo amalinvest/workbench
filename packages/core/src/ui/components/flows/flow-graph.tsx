@@ -49,7 +49,7 @@ function flowToGraph(
         type: "smoothstep",
         animated: node.job.status === "active",
         style: {
-          stroke: "hsl(var(--border))",
+          stroke: "var(--border)",
           strokeWidth: 2,
         },
       });
