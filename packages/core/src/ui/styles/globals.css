@@ -5,96 +5,106 @@
 @layer base {
   :root {
     /* Light theme - Neutral UI with vibrant data colors */
-    --background: 0 0% 98%;
-    --foreground: 0 0% 9%;
-    --card: 0 0% 98%;
-    --card-foreground: 0 0% 9%;
-    --popover: 0 0% 98%;
-    --popover-foreground: 0 0% 9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 98%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 98%;
-    --muted-foreground: 0 0% 45%;
-    --accent: 0 0% 98%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 0 0% 9%;
+    --background: hsl(0 0% 98%);
+    --foreground: hsl(0 0% 9%);
+    --card: hsl(0 0% 98%);
+    --card-foreground: hsl(0 0% 9%);
+    --popover: hsl(0 0% 98%);
+    --popover-foreground: hsl(0 0% 9%);
+    --primary: hsl(0 0% 9%);
+    --primary-foreground: hsl(0 0% 98%);
+    --secondary: hsl(0 0% 98%);
+    --secondary-foreground: hsl(0 0% 9%);
+    --muted: hsl(0 0% 98%);
+    --muted-foreground: hsl(0 0% 45%);
+    --accent: hsl(0 0% 98%);
+    --accent-foreground: hsl(0 0% 9%);
+    --destructive: hsl(0 84% 60%);
+    --destructive-foreground: hsl(0 0% 100%);
+    --border: hsl(0 0% 90%);
+    --input: hsl(0 0% 90%);
+    --ring: hsl(0 0% 9%);
 
     /* Status colors - vibrant data colors */
-    --status-success: 134 90% 40%;
-    --status-error: 0 90% 55%;
-    --status-warning: 45 95% 50%;
-    --status-pending: 0 0% 45%;
-    --status-active: 210 90% 50%;
+    --status-success: hsl(134 90% 40%);
+    --status-error: hsl(0 90% 55%);
+    --status-warning: hsl(45 95% 50%);
+    --status-pending: hsl(0 0% 45%);
+    --status-active: hsl(210 90% 50%);
 
     /* Chart colors - Electric monitoring colors */
-    --chart-1: 134 90% 40%;
-    --chart-2: 210 90% 50%;
-    --chart-3: 270 70% 55%;
-    --chart-4: 350 80% 55%;
-    --chart-5: 45 95% 50%;
-    --chart-completed: 134 90% 40%;
-    --chart-failed: 0 90% 55%;
-    --chart-duration: 210 90% 50%;
-    --chart-wait: 45 95% 50%;
+    --chart-1: hsl(134 90% 40%);
+    --chart-2: hsl(210 90% 50%);
+    --chart-3: hsl(270 70% 55%);
+    --chart-4: hsl(350 80% 55%);
+    --chart-5: hsl(45 95% 50%);
+    --chart-completed: hsl(134 90% 40%);
+    --chart-failed: hsl(0 90% 55%);
+    --chart-duration: hsl(210 90% 50%);
+    --chart-wait: hsl(45 95% 50%);
 
     --radius: 0;
 
     /* Sidebar */
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 0 0% 9%;
-    --sidebar-border: 0 0% 90%;
+    --sidebar: hsl(0 0% 98%);
+    --sidebar-foreground: hsl(0 0% 9%);
+    --sidebar-border: hsl(0 0% 90%);
+    --sidebar-accent: hsl(0 0% 98%);
+    --sidebar-accent-foreground: hsl(0 0% 9%);
+    --sidebar-primary: hsl(0 0% 9%);
+    --sidebar-primary-foreground: hsl(0 0% 98%);
+    --sidebar-ring: hsl(0 0% 9%);
   }
 
   .dark {
     /* Dark theme - Neutral UI with vibrant data colors */
-    --background: 0 0% 4%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 4%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 7%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 4%;
-    --secondary: 0 0% 10%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 10%;
-    --muted-foreground: 0 0% 55%;
-    --accent: 0 0% 14%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14%;
-    --input: 0 0% 14%;
-    --ring: 0 0% 83%;
+    --background: hsl(0 0% 4%);
+    --foreground: hsl(0 0% 98%);
+    --card: hsl(0 0% 4%);
+    --card-foreground: hsl(0 0% 98%);
+    --popover: hsl(0 0% 7%);
+    --popover-foreground: hsl(0 0% 98%);
+    --primary: hsl(0 0% 98%);
+    --primary-foreground: hsl(0 0% 4%);
+    --secondary: hsl(0 0% 10%);
+    --secondary-foreground: hsl(0 0% 98%);
+    --muted: hsl(0 0% 10%);
+    --muted-foreground: hsl(0 0% 55%);
+    --accent: hsl(0 0% 14%);
+    --accent-foreground: hsl(0 0% 98%);
+    --destructive: hsl(0 72% 51%);
+    --destructive-foreground: hsl(0 0% 98%);
+    --border: hsl(0 0% 14%);
+    --input: hsl(0 0% 14%);
+    --ring: hsl(0 0% 83%);
 
     /* Status colors - electric neon for dark mode */
-    --status-success: 120 100% 45%;
-    --status-error: 4 90% 58%;
-    --status-warning: 45 100% 50%;
-    --status-pending: 0 0% 50%;
-    --status-active: 199 100% 55%;
+    --status-success: hsl(120 100% 45%);
+    --status-error: hsl(4 90% 58%);
+    --status-warning: hsl(45 100% 50%);
+    --status-pending: hsl(0 0% 50%);
+    --status-active: hsl(199 100% 55%);
 
     /* Chart colors - Electric neon monitoring colors */
-    --chart-1: 120 100% 45%;
-    --chart-2: 199 100% 55%;
-    --chart-3: 265 85% 65%;
-    --chart-4: 4 90% 58%;
-    --chart-5: 45 100% 50%;
-    --chart-completed: 120 100% 45%;
-    --chart-failed: 4 90% 58%;
-    --chart-duration: 199 100% 55%;
-    --chart-wait: 45 100% 50%;
+    --chart-1: hsl(120 100% 45%);
+    --chart-2: hsl(199 100% 55%);
+    --chart-3: hsl(265 85% 65%);
+    --chart-4: hsl(4 90% 58%);
+    --chart-5: hsl(45 100% 50%);
+    --chart-completed: hsl(120 100% 45%);
+    --chart-failed: hsl(4 90% 58%);
+    --chart-duration: hsl(199 100% 55%);
+    --chart-wait: hsl(45 100% 50%);
 
     /* Sidebar */
-    --sidebar-background: 0 0% 4%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-border: 0 0% 14%;
+    --sidebar: hsl(0 0% 4%);
+    --sidebar-foreground: hsl(0 0% 98%);
+    --sidebar-border: hsl(0 0% 14%);
+    --sidebar-accent: hsl(0 0% 14%);
+    --sidebar-accent-foreground: hsl(0 0% 98%);
+    --sidebar-primary: hsl(0 0% 98%);
+    --sidebar-primary-foreground: hsl(0 0% 4%);
+    --sidebar-ring: hsl(0 0% 83%);
   }
 }
 
@@ -205,7 +215,7 @@
   .dotted-bg {
     background-image: radial-gradient(
       circle,
-      hsl(var(--border)) 0.5px,
+      var(--border) 0.5px,
       transparent 0.5px
     );
     background-size: 8px 8px;
@@ -252,49 +262,54 @@
     "Geist Mono", "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Menlo,
     monospace;
 
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-  --color-popover: hsl(var(--popover));
-  --color-popover-foreground: hsl(var(--popover-foreground));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
-  --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 
-  --color-status-success: hsl(var(--status-success));
-  --color-status-error: hsl(var(--status-error));
-  --color-status-warning: hsl(var(--status-warning));
-  --color-status-pending: hsl(var(--status-pending));
-  --color-status-active: hsl(var(--status-active));
+  --color-status-success: var(--status-success);
+  --color-status-error: var(--status-error);
+  --color-status-warning: var(--status-warning);
+  --color-status-pending: var(--status-pending);
+  --color-status-active: var(--status-active);
 
-  --color-chart-1: hsl(var(--chart-1));
-  --color-chart-2: hsl(var(--chart-2));
-  --color-chart-3: hsl(var(--chart-3));
-  --color-chart-4: hsl(var(--chart-4));
-  --color-chart-5: hsl(var(--chart-5));
-  --color-chart-completed: hsl(var(--chart-completed));
-  --color-chart-failed: hsl(var(--chart-failed));
-  --color-chart-error: hsl(var(--chart-failed));
-  --color-chart-success: hsl(var(--chart-1));
-  --color-chart-duration: hsl(var(--chart-duration));
-  --color-chart-wait: hsl(var(--chart-wait));
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-completed: var(--chart-completed);
+  --color-chart-failed: var(--chart-failed);
+  --color-chart-error: var(--chart-failed);
+  --color-chart-success: var(--chart-1);
+  --color-chart-duration: var(--chart-duration);
+  --color-chart-wait: var(--chart-wait);
 
   --radius-sm: calc(var(--radius) - 2px);
   --radius-md: var(--radius);
   --radius-lg: calc(var(--radius) + 2px);
 
-  --color-sidebar: hsl(var(--sidebar-background));
-  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
-  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-ring: var(--sidebar-ring);
 }

@@ -216,6 +216,11 @@ function RootLayout() {
     });
   }, [isDark]);
 
+  // Reflect a custom dashboard title in the browser tab
+  React.useEffect(() => {
+    if (config?.title) document.title = config.title;
+  }, [config?.title]);
+
   // Keyboard shortcuts
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -296,6 +301,7 @@ function RootLayout() {
           onQueueSelect={handleQueueSelect}
           isDark={isDark}
           onToggleTheme={() => setIsDark(!isDark)}
+          title={config.title}
           logo={config.logo}
         />
 

@@ -31,22 +31,22 @@ import { cn, formatDuration } from "@/lib/utils";
 const throughputChartConfig = {
   completed: {
     label: "Completed",
-    color: "hsl(var(--chart-completed))",
+    color: "var(--chart-completed)",
   },
   failed: {
     label: "Failed",
-    color: "hsl(var(--chart-failed))",
+    color: "var(--chart-failed)",
   },
 } satisfies ChartConfig;
 
 const durationChartConfig = {
   duration: {
     label: "Duration",
-    color: "hsl(var(--chart-duration))",
+    color: "var(--chart-duration)",
   },
   waitTime: {
     label: "Wait Time",
-    color: "hsl(var(--chart-wait))",
+    color: "var(--chart-wait)",
   },
 } satisfies ChartConfig;
 
@@ -105,9 +105,9 @@ function DurationTooltip({ active, payload, label }: ChartTooltipProps) {
 
   // Map dataKey to chart config colors
   const getColor = (dataKey: string, fallbackColor?: string) => {
-    if (dataKey === "duration") return "hsl(var(--chart-duration))";
-    if (dataKey === "waitTime") return "hsl(var(--chart-wait))";
-    return fallbackColor || "hsl(var(--muted-foreground))";
+    if (dataKey === "duration") return "var(--chart-duration)";
+    if (dataKey === "waitTime") return "var(--chart-wait)";
+    return fallbackColor || "var(--muted-foreground)";
   };
 
   return (
@@ -378,7 +378,7 @@ export function MetricsPage() {
             <AreaChart data={throughputData}>
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="hsl(var(--border))"
+                stroke="var(--border)"
                 strokeOpacity={0.5}
               />
               <XAxis
@@ -386,7 +386,7 @@ export function MetricsPage() {
                 tickFormatter={formatHourShort}
                 tick={{
                   fontSize: 11,
-                  fill: "hsl(var(--muted-foreground))",
+                  fill: "var(--muted-foreground)",
                 }}
                 tickLine={false}
                 axisLine={false}
@@ -394,7 +394,7 @@ export function MetricsPage() {
               <YAxis
                 tick={{
                   fontSize: 11,
-                  fill: "hsl(var(--muted-foreground))",
+                  fill: "var(--muted-foreground)",
                 }}
                 tickLine={false}
                 axisLine={false}
@@ -408,7 +408,7 @@ export function MetricsPage() {
                 iconSize={8}
                 wrapperStyle={{ fontSize: 12 }}
                 formatter={(value) => (
-                  <span style={{ color: "hsl(var(--foreground))" }}>
+                  <span style={{ color: "var(--foreground)" }}>
                     {value}
                   </span>
                 )}
@@ -499,7 +499,7 @@ export function MetricsPage() {
             <BarChart data={durationData}>
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="hsl(var(--border))"
+                stroke="var(--border)"
                 strokeOpacity={0.5}
               />
               <XAxis
@@ -507,7 +507,7 @@ export function MetricsPage() {
                 tickFormatter={formatHourShort}
                 tick={{
                   fontSize: 11,
-                  fill: "hsl(var(--muted-foreground))",
+                  fill: "var(--muted-foreground)",
                 }}
                 tickLine={false}
                 axisLine={false}
@@ -516,7 +516,7 @@ export function MetricsPage() {
                 tickFormatter={(v) => formatDuration(v)}
                 tick={{
                   fontSize: 11,
-                  fill: "hsl(var(--muted-foreground))",
+                  fill: "var(--muted-foreground)",
                 }}
                 tickLine={false}
                 axisLine={false}
@@ -530,7 +530,7 @@ export function MetricsPage() {
                 iconSize={8}
                 wrapperStyle={{ fontSize: 12 }}
                 formatter={(value) => (
-                  <span style={{ color: "hsl(var(--foreground))" }}>
+                  <span style={{ color: "var(--foreground)" }}>
                     {value}
                   </span>
                 )}

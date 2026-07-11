@@ -31,6 +31,12 @@ export interface WorkbenchOptions {
   title?: string;
   /** Logo URL */
   logo?: string;
+  /**
+   * Custom CSS injected into the dashboard `<head>` after the bundled
+   * stylesheet. Use it to re-theme the UI with standard shadcn tokens, e.g.
+   * `:root { --background: hsl(0 0% 100%); } .dark { --background: … }`.
+   */
+  themeCss?: string;
   /** Override base path detection */
   basePath?: string;
   /** Disable actions (retry, remove, promote) */

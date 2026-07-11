@@ -22,6 +22,10 @@ const handler = workbench({
     }),
   ...(Bun.env.TITLE && { title: Bun.env.TITLE }),
   ...(Bun.env.LOGO_URL && { logo: Bun.env.LOGO_URL }),
+  ...(Bun.env.THEME_CSS && { themeCss: Bun.env.THEME_CSS }),
+  ...(Bun.env.THEME_CSS_FILE && {
+    themeCss: await Bun.file(Bun.env.THEME_CSS_FILE).text(),
+  }),
   ...(Bun.env.READONLY === "true" && { readonly: true }),
   ...(Bun.env.TAGS && { tags: Bun.env.TAGS.split(",") }),
 });

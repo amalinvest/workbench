@@ -16,11 +16,11 @@ import { cn } from "@/lib/utils";
 const throughputChartConfig = {
   completed: {
     label: "Completed",
-    color: "hsl(var(--chart-completed))",
+    color: "var(--chart-completed)",
   },
   failed: {
     label: "Failed",
-    color: "hsl(var(--chart-failed))",
+    color: "var(--chart-failed)",
   },
 };
 
@@ -98,7 +98,7 @@ export function ThroughputChart({
         <AreaChart data={throughputData}>
           <CartesianGrid
             strokeDasharray="3 3"
-            stroke="hsl(var(--border))"
+            stroke="var(--border)"
             strokeOpacity={0.5}
           />
           <XAxis
@@ -106,7 +106,7 @@ export function ThroughputChart({
             tickFormatter={formatHourShort}
             tick={{
               fontSize: 11,
-              fill: "hsl(var(--muted-foreground))",
+              fill: "var(--muted-foreground)",
             }}
             tickLine={false}
             axisLine={false}
@@ -114,7 +114,7 @@ export function ThroughputChart({
           <YAxis
             tick={{
               fontSize: 11,
-              fill: "hsl(var(--muted-foreground))",
+              fill: "var(--muted-foreground)",
             }}
             tickLine={false}
             axisLine={false}
@@ -128,7 +128,7 @@ export function ThroughputChart({
             iconSize={8}
             wrapperStyle={{ fontSize: 12 }}
             formatter={(value) => (
-              <span style={{ color: "hsl(var(--foreground))" }}>{value}</span>
+              <span style={{ color: "var(--foreground)" }}>{value}</span>
             )}
           />
           <defs>

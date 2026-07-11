@@ -119,7 +119,12 @@ export function workbench(options: WorkbenchOptions | Queue[]): Router {
     }
     const pathname = (req.originalUrl ?? req.url).split("?")[0] ?? "/";
     const basePath = resolveBasePath(core.options.basePath, pathname);
-    const html = renderIndexHtml(basePath, core.options.title || "Workbench");
+    const html = renderIndexHtml(
+      basePath,
+      core.options.title || "Workbench",
+      core.options.logo,
+      core.options.themeCss,
+    );
     res.status(200).type("text/html; charset=utf-8").send(html.body);
   });
 
