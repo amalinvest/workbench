@@ -96,12 +96,19 @@ export function QueueHealthCard({
         <MiniSparkline data={sparklineData} />
       )}
 
-      <div className="grid grid-cols-4 gap-2 text-sm">
+      <div className="grid grid-cols-5 gap-2 text-sm">
         <CountCell label="Waiting" value={queue.counts.waiting} />
         <CountCell
           label="Active"
           value={queue.counts.active}
           className="text-warning"
+        />
+        <CountCell
+          label="Completed"
+          value={queue.counts.completed}
+          className={
+            queue.counts.completed > 0 ? "text-status-success" : undefined
+          }
         />
         <CountCell
           label="Failed"

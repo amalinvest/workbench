@@ -201,7 +201,7 @@ function QueueList({
         "space-y-0.5",
         compact
           ? "mb-3 max-h-[calc(var(--radix-hover-card-content-available-height)-25px)] overflow-y-auto pr-0.5"
-          : "max-h-64 overflow-y-auto",
+          : "min-h-0 flex-1 overflow-y-auto",
       )}
     >
       {queues.map((queue) => (
@@ -229,11 +229,11 @@ function QueuesSection({
   onQueueSelect: (queue: string) => void;
 }) {
   return (
-    <SidebarGroup>
+    <SidebarGroup className="min-h-32 flex-1">
       <SidebarGroupLabel className="text-[10px] uppercase tracking-wider">
         Queues
       </SidebarGroupLabel>
-      <SidebarGroupContent>
+      <SidebarGroupContent className="flex min-h-0 flex-1 flex-col">
         <QueueList
           queues={queues}
           pausedQueues={pausedQueues}

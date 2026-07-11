@@ -129,15 +129,16 @@ export function OverviewPage({
   const firstHalfFailed = firstHalf.reduce((sum, b) => sum + b.failed, 0);
   const secondHalfFailed = secondHalf.reduce((sum, b) => sum + b.failed, 0);
   const throughputSparkline = buckets.map((b) => b.completed + b.failed);
+  const completedSparkline = buckets.map((b) => b.completed);
   const errorSparkline = buckets.map((b) =>
     b.completed + b.failed > 0 ? b.failed / (b.completed + b.failed) : 0,
   );
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {metricsLoading || !summary ? (
-          [...Array(4)].map((_, i) => (
+          [...Array(5)].map((_, i) => (
             <div
               key={i.toString()}
               className="border border-dashed bg-card p-4"
@@ -157,6 +158,19 @@ export function OverviewPage({
               trend={{
                 current: secondHalfCompleted + secondHalfFailed,
                 previous: firstHalfCompleted + firstHalfFailed,
+                higherIsBetter: true,
+              }}
+            />
+            <SummaryCard
+              title="Completed"
+              value={summary.totalCompleted.toLocaleString()}
+              subtitle="last 24h"
+              sparklineData={completedSparkline}
+              sparklineColor="success"
+              icon={<CheckCircle2 className="h-4 w-4" />}
+              trend={{
+                current: secondHalfCompleted,
+                previous: firstHalfCompleted,
                 higherIsBetter: true,
               }}
             />
