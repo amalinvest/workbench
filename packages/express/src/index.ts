@@ -123,6 +123,7 @@ export function workbench(options: WorkbenchOptions | Queue[]): Router {
       basePath,
       core.options.title || "Workbench",
       core.options.logo,
+      core.options.themeCss,
     );
     res.status(200).type("text/html; charset=utf-8").send(html.body);
   });

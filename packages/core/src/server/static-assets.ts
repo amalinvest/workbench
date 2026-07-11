@@ -65,8 +65,9 @@ function escapeHtml(value: string): string {
 /**
  * Read the bundled `index.html`, inject a `<base href>` matching the request's
  * mount path so client-side asset URLs resolve correctly, and return it.
- * A custom `title` replaces the bundled `<title>`, and a custom `logo` URL
- * replaces the bundled favicon links.
+ * A custom `title` replaces the bundled `<title>`, a custom `logo` URL
+ * replaces the bundled favicon links, and `themeCss` is appended to `<head>`
+ * so its un-layered token overrides win over the bundled `@layer base` theme.
  *
  * Falls back to a tiny "UI assets not found" stub when the core package has
  * not been built yet — useful for `bun run dev` against a fresh checkout.
@@ -75,6 +76,7 @@ export function renderIndexHtml(
   basePath: string,
   title: string,
   logo?: string,
+  themeCss?: string,
 ): IndexHtmlResult {
   const indexPath = join(UI_DIST_PATH, "index.html");
 
@@ -91,6 +93,14 @@ export function renderIndexHtml(
       html = html.replace(
         /<link rel="(icon|apple-touch-icon)"[^>]*\/>/g,
         (_match, rel) => `<link rel="${rel}" href="${escapeHtml(logo)}" />`,
+      );
+    }
+    if (themeCss) {
+      // Only guard against </style> breakout — CSS must not be HTML-escaped.
+      const safeCss = themeCss.replace(/<\/style/gi, "<\\/style");
+      html = html.replace(
+        "</head>",
+        `<style data-workbench-theme>\n${safeCss}\n</style>\n  </head>`,
       );
     }
     return { body: html, contentType: "text/html; charset=utf-8" };

@@ -72,6 +72,7 @@ export function buildWorkbenchApp(core: WorkbenchCore): Hono {
       basePath,
       core.options.title || "Workbench",
       core.options.logo,
+      core.options.themeCss,
     );
     return c.html(html.body);
   });

@@ -29,12 +29,45 @@ workbench({
 | `prefix` | `string` | BullMQ key prefix during auto-discovery. Default: `"bull"`. |
 | `maxQueues` | `number` | Cap on discovered queues. Default: `100`. |
 | `auth` | `{ username, password }` | HTTP basic auth. Strongly recommended in production. |
-| `title` | `string` | Dashboard title. Default: `"Workbench"`. |
-| `logo` | `string` | Logo URL in the nav. |
+| `title` | `string` | Dashboard title, shown in the sidebar and browser tab. Default: `"Workbench"`. |
+| `logo` | `string` | Logo URL, shown in the sidebar and used as the favicon. |
+| `themeCss` | `string` | Custom CSS injected into the dashboard `<head>`. See [Custom branding](#custom-branding). |
 | `basePath` | `string` | Override base path detection. **Required** for Elysia, Koa, Next.js, TanStack Start, Astro, Nuxt, h3, and Adonis. |
 | `readonly` | `boolean` | Disable retry, remove, promote, and other write actions. |
 | `tags` | `string[]` | Fields from `job.data` to extract as filterable tags. |
 | `alerts` | `AlertsOptions` | Self-hosted alerting. See [Alerts](/docs/guides/alerts). |
+
+## Custom branding
+
+`title` and `logo` rebrand the dashboard chrome, and `themeCss` re-themes the
+whole UI. The dashboard is built on standard shadcn tokens (full color values,
+e.g. `--background: hsl(0 0% 98%)`), so you can paste the `:root` / `.dark`
+variable blocks straight from your own shadcn theme:
+
+```ts
+workbench({
+  queues: [emailQueue],
+  title: "Acme Jobs",
+  logo: "https://acme.com/logo.png",
+  themeCss: `
+    :root {
+      --background: hsl(0 0% 100%);
+      --primary: hsl(262.1 83.3% 57.8%);
+      --radius: 0.5rem;
+      /* … any shadcn tokens, including --sidebar-* */
+    }
+    .dark {
+      --background: hsl(220 21% 16%);
+      --primary: hsl(40 100% 70%);
+    }
+  `,
+});
+```
+
+Overrides are injected after the bundled stylesheet, so any token you set wins
+over the shipped theme; everything you omit keeps its default. Chart and status
+colors are themeable too (`--chart-1`…`--chart-5`, `--chart-completed`,
+`--chart-failed`, `--status-success`, `--status-error`, and friends).
 
 ## Advanced: direct core usage
 

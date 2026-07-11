@@ -26,8 +26,10 @@ Additional variables depend on your alerting setup — see [Alerts](/docs/guides
 | `BASE_PATH` | `/` | Dashboard base path |
 | `AUTH_USERNAME` | — | Basic auth username |
 | `AUTH_PASSWORD` | — | Basic auth password |
-| `TITLE` | `Workbench` | Dashboard title |
-| `LOGO_URL` | — | Logo URL in the nav |
+| `TITLE` | `Workbench` | Dashboard title, shown in the sidebar and browser tab |
+| `LOGO_URL` | — | Logo URL, shown in the sidebar and used as the favicon |
+| `THEME_CSS` | — | Inline CSS injected into the dashboard — see [Custom branding](/docs/guides/configuration#custom-branding) |
+| `THEME_CSS_FILE` | — | Path to a mounted CSS file (takes precedence over `THEME_CSS`) |
 | `READONLY` | `false` | Set to `true` to disable write actions |
 | `TAGS` | — | Comma-separated `job.data` fields for tag filters |
 

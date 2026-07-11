@@ -138,6 +138,7 @@ export function workbench(
         basePath,
         core.options.title || "Workbench",
         core.options.logo,
+        core.options.themeCss,
       );
       reply.code(200).type("text/html; charset=utf-8").send(html.body);
       return reply;
