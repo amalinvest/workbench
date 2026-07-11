@@ -295,7 +295,7 @@ export const api = {
    * Get dashboard config
    */
   async getConfig(): Promise<{
-    title: string;
+    title?: string;
     logo?: string;
     readonly: boolean;
     queues: string[];

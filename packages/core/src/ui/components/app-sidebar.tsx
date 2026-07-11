@@ -388,6 +388,7 @@ export function AppSidebar({
   onQueueSelect,
   isDark,
   onToggleTheme,
+  title,
   logo,
 }: AppSidebarProps) {
   const { state } = useSidebar();
@@ -407,9 +408,9 @@ export function AppSidebar({
               : "gap-2 px-2",
           )}
         >
-          <WorkbenchLogo src={logo} />
+          <WorkbenchLogo src={logo} alt={title} />
           {!isCollapsed && (
-            <WorkbenchWordmark className="min-w-0 truncate pr-3" />
+            <WorkbenchWordmark text={title} className="min-w-0 truncate pr-3" />
           )}
         </button>
       </SidebarHeader>

@@ -68,7 +68,11 @@ export function buildWorkbenchApp(core: WorkbenchCore): Hono {
   app.get("*", (c) => {
     const url = new URL(c.req.url);
     const basePath = resolveBasePath(core.options.basePath, url.pathname);
-    const html = renderIndexHtml(basePath, core.options.title || "Workbench");
+    const html = renderIndexHtml(
+      basePath,
+      core.options.title || "Workbench",
+      core.options.logo,
+    );
     return c.html(html.body);
   });
 

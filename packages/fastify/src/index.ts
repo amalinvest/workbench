@@ -134,7 +134,11 @@ export function workbench(
     fastify.get("/*", async (req, reply) => {
       const pathname = (req.url ?? "/").split("?")[0] ?? "/";
       const basePath = resolveBasePath(core.options.basePath, pathname);
-      const html = renderIndexHtml(basePath, core.options.title || "Workbench");
+      const html = renderIndexHtml(
+        basePath,
+        core.options.title || "Workbench",
+        core.options.logo,
+      );
       reply.code(200).type("text/html; charset=utf-8").send(html.body);
       return reply;
     });

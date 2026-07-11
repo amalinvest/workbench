@@ -54,9 +54,19 @@ export interface IndexHtmlResult {
   contentType: "text/html; charset=utf-8";
 }
 
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 /**
  * Read the bundled `index.html`, inject a `<base href>` matching the request's
  * mount path so client-side asset URLs resolve correctly, and return it.
+ * A custom `title` replaces the bundled `<title>`, and a custom `logo` URL
+ * replaces the bundled favicon links.
  *
  * Falls back to a tiny "UI assets not found" stub when the core package has
  * not been built yet — useful for `bun run dev` against a fresh checkout.
@@ -64,12 +74,25 @@ export interface IndexHtmlResult {
 export function renderIndexHtml(
   basePath: string,
   title: string,
+  logo?: string,
 ): IndexHtmlResult {
   const indexPath = join(UI_DIST_PATH, "index.html");
 
   if (existsSync(indexPath)) {
     let html = readFileSync(indexPath, "utf-8");
     html = html.replace("<head>", `<head>\n    <base href="${basePath}">`);
+    html = html.replace(
+      /<title>.*?<\/title>/,
+      `<title>${escapeHtml(title)}</title>`,
+    );
+    if (logo) {
+      // Drop the bundled type="image/svg+xml" too — the custom logo may be
+      // a PNG, and a mismatched type makes browsers skip the icon.
+      html = html.replace(
+        /<link rel="(icon|apple-touch-icon)"[^>]*\/>/g,
+        (_match, rel) => `<link rel="${rel}" href="${escapeHtml(logo)}" />`,
+      );
+    }
     return { body: html, contentType: "text/html; charset=utf-8" };
   }
 

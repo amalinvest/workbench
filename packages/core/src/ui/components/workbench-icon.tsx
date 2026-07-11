@@ -62,16 +62,25 @@ function isBundledAppIcon(src: string): boolean {
 
 /**
  * Wordmark as rendered on getworkbench.dev nav (mono, lowercase).
+ * A custom `text` (dashboard title) renders verbatim, without the
+ * lowercase transform.
  */
-export function WorkbenchWordmark({ className }: { className?: string }) {
+export function WorkbenchWordmark({
+  text,
+  className,
+}: {
+  text?: string;
+  className?: string;
+}) {
   return (
     <span
       className={cn(
-        "font-mono text-sm lowercase tracking-tight text-foreground",
+        "font-mono text-sm tracking-tight text-foreground",
+        !text && "lowercase",
         className,
       )}
     >
-      workbench
+      {text || "workbench"}
     </span>
   );
 }
@@ -81,10 +90,12 @@ export function WorkbenchWordmark({ className }: { className?: string }) {
  */
 export function WorkbenchLogo({
   src,
+  alt,
   className,
   showWordmark = false,
 }: {
   src?: string;
+  alt?: string;
   className?: string;
   showWordmark?: boolean;
 }) {
@@ -92,7 +103,7 @@ export function WorkbenchLogo({
     return (
       <img
         src={src}
-        alt="Workbench"
+        alt={alt || "Workbench"}
         className={cn("h-5 w-5 shrink-0", className)}
       />
     );
