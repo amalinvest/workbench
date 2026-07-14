@@ -3,7 +3,9 @@ import {
   AlertTriangle,
   CheckCircle2,
   ChevronDown,
+  X,
 } from "lucide-react";
+import * as React from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +22,12 @@ export interface AttentionAlert {
   description: string;
   actionLabel?: string;
   onAction?: () => void;
+  /**
+   * Present when the alert can be dismissed. A dismissal only holds while the
+   * fingerprint stays the same, so the alert resurfaces when the underlying
+   * state changes (e.g. the failed count moves).
+   */
+  dismissFingerprint?: string;
 }
 
 interface AttentionAlertsProps {
@@ -66,6 +74,7 @@ export function buildAttentionAlerts(
           "New jobs will not be processed until the queue is resumed.",
         actionLabel: "Open queue",
         onAction: () => onQueueSelect(queue.name),
+        dismissFingerprint: "paused",
       });
     }
 
@@ -77,6 +86,7 @@ export function buildAttentionAlerts(
         description: "Review failures and retry or remove stale jobs.",
         actionLabel: "View failed",
         onAction: () => onViewFailed(queue.name),
+        dismissFingerprint: String(queue.counts.failed),
       });
     }
   }
@@ -84,7 +94,60 @@ export function buildAttentionAlerts(
   return alerts;
 }
 
-function AlertItem({ alert }: { alert: AttentionAlert }) {
+const DISMISSED_ALERTS_KEY = "workbench:dismissed-alerts";
+
+function readDismissedAlerts(): Record<string, string> {
+  try {
+    const raw = localStorage.getItem(DISMISSED_ALERTS_KEY);
+    if (!raw) return {};
+    const parsed: unknown = JSON.parse(raw);
+    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed))
+      return {};
+    return Object.fromEntries(
+      Object.entries(parsed).filter(([, v]) => typeof v === "string"),
+    ) as Record<string, string>;
+  } catch {
+    return {};
+  }
+}
+
+function writeDismissedAlerts(dismissed: Record<string, string>) {
+  try {
+    localStorage.setItem(DISMISSED_ALERTS_KEY, JSON.stringify(dismissed));
+  } catch {
+    // Storage unavailable (private browsing, quota) — dismissals just won't persist.
+  }
+}
+
+function useDismissedAlerts() {
+  const [dismissed, setDismissed] =
+    React.useState<Record<string, string>>(readDismissedAlerts);
+
+  const dismiss = React.useCallback((id: string, fingerprint: string) => {
+    setDismissed((prev) => {
+      const next = { ...prev, [id]: fingerprint };
+      writeDismissedAlerts(next);
+      return next;
+    });
+  }, []);
+
+  const restoreAll = React.useCallback(() => {
+    setDismissed(() => {
+      writeDismissedAlerts({});
+      return {};
+    });
+  }, []);
+
+  return { dismissed, dismiss, restoreAll };
+}
+
+function AlertItem({
+  alert,
+  onDismiss,
+}: {
+  alert: AttentionAlert;
+  onDismiss?: () => void;
+}) {
   const Icon =
     alert.variant === "destructive"
       ? AlertCircle
@@ -107,17 +170,32 @@ function AlertItem({ alert }: { alert: AttentionAlert }) {
             {alert.description}
           </AlertDescription>
         </div>
-        {alert.actionLabel && alert.onAction && (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="h-7 shrink-0 self-start px-2.5 text-xs sm:self-center"
-            onClick={alert.onAction}
-          >
-            {alert.actionLabel}
-          </Button>
-        )}
+        <div className="flex shrink-0 items-center gap-1 self-start sm:self-center">
+          {alert.actionLabel && alert.onAction && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-7 shrink-0 px-2.5 text-xs"
+              onClick={alert.onAction}
+            >
+              {alert.actionLabel}
+            </Button>
+          )}
+          {onDismiss && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-7 w-7 shrink-0 p-0 text-muted-foreground"
+              aria-label={`Dismiss alert: ${alert.title}`}
+              title="Dismiss (kept until this alert changes)"
+              onClick={onDismiss}
+            >
+              <X className="h-3.5 w-3.5" />
+            </Button>
+          )}
+        </div>
       </div>
     </Alert>
   );
@@ -128,30 +206,60 @@ export function AttentionAlerts({
   onQueueSelect,
   onViewFailed,
 }: AttentionAlertsProps) {
+  const { dismissed, dismiss, restoreAll } = useDismissedAlerts();
   const alerts = buildAttentionAlerts(queues, onQueueSelect, onViewFailed);
 
-  if (alerts.length === 0) {
+  const active = alerts.filter(
+    (alert) =>
+      alert.dismissFingerprint === undefined ||
+      dismissed[alert.id] !== alert.dismissFingerprint,
+  );
+  const dismissedCount = alerts.length - active.length;
+
+  const restoreLine =
+    dismissedCount > 0 ? (
+      <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+        <span>
+          {dismissedCount} dismissed alert{dismissedCount === 1 ? "" : "s"}
+        </span>
+        <Button
+          type="button"
+          variant="link"
+          size="sm"
+          className="h-auto p-0 text-[11px]"
+          onClick={restoreAll}
+        >
+          Restore
+        </Button>
+      </div>
+    ) : null;
+
+  if (alerts.length === 0 || active.length === 0) {
     return (
-      <Alert
-        variant="default"
-        className="px-3 py-2.5 [&>svg]:left-3 [&>svg]:top-3 [&>svg~*]:pl-6"
-      >
-        <CheckCircle2 className="size-3.5" />
-        <div className="min-w-0 space-y-0.5">
-          <AlertTitle className="mb-0 text-sm font-medium leading-snug">
-            No issues detected
-          </AlertTitle>
-          <AlertDescription className="text-[11px] leading-relaxed">
-            All queues look healthy. Metrics refresh every few seconds while the
-            dashboard is open.
-          </AlertDescription>
-        </div>
-      </Alert>
+      <div className="space-y-3">
+        <Alert
+          variant="default"
+          className="px-3 py-2.5 [&>svg]:left-3 [&>svg]:top-3 [&>svg~*]:pl-6"
+        >
+          <CheckCircle2 className="size-3.5" />
+          <div className="min-w-0 space-y-0.5">
+            <AlertTitle className="mb-0 text-sm font-medium leading-snug">
+              {alerts.length === 0 ? "No issues detected" : "No active alerts"}
+            </AlertTitle>
+            <AlertDescription className="text-[11px] leading-relaxed">
+              {alerts.length === 0
+                ? "All queues look healthy. Metrics refresh every few seconds while the dashboard is open."
+                : "Remaining alerts were dismissed. They resurface automatically when their queue state changes."}
+            </AlertDescription>
+          </div>
+        </Alert>
+        {restoreLine}
+      </div>
     );
   }
 
-  const visible = alerts.slice(0, 3);
-  const hidden = alerts.slice(3);
+  const visible = active.slice(0, 3);
+  const hidden = active.slice(3);
 
   return (
     <div className="space-y-3">
@@ -159,7 +267,15 @@ export function AttentionAlerts({
         Needs attention
       </h3>
       {visible.map((alert) => (
-        <AlertItem key={alert.id} alert={alert} />
+        <AlertItem
+          key={alert.id}
+          alert={alert}
+          onDismiss={
+            alert.dismissFingerprint !== undefined
+              ? () => dismiss(alert.id, alert.dismissFingerprint as string)
+              : undefined
+          }
+        />
       ))}
       {hidden.length > 0 && (
         <Collapsible>
@@ -176,11 +292,21 @@ export function AttentionAlerts({
           </CollapsibleTrigger>
           <CollapsibleContent className="space-y-3 pt-3">
             {hidden.map((alert) => (
-              <AlertItem key={alert.id} alert={alert} />
+              <AlertItem
+                key={alert.id}
+                alert={alert}
+                onDismiss={
+                  alert.dismissFingerprint !== undefined
+                    ? () =>
+                        dismiss(alert.id, alert.dismissFingerprint as string)
+                    : undefined
+                }
+              />
             ))}
           </CollapsibleContent>
         </Collapsible>
       )}
+      {restoreLine}
     </div>
   );
 }
